@@ -1,163 +1,142 @@
 <title>学科趋势四模型对照</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700;800;900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap">
 <style>
-/* Layout: one consensus matrix (fields x 4 models) as the centerpiece, then disagreements, then how each model answered. */
+/* Layout: Pratt-style poster grid. Black on white, heavy grotesque, thick rules, one vermilion accent for "decline". */
 :root {
-  --bg: #f7f8fa;
-  --surface: #ffffff;
-  --ink: #14181f;
-  --ink2: #4a5260;
-  --ink3: #7a8290;
-  --line: #e1e5eb;
-  --up: #2a78d6;
-  --up-bg: #e3eefc;
-  --down: #d9531e;
-  --down-bg: #fbe6dc;
-  --mix: #6b7280;
-  --mix-bg: #eceef2;
-  --f-display: "Noto Serif SC", "Songti SC", "SimSun", serif;
-  --f-body: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --bg: #ffffff;
+  --ink: #0a0a0a;
+  --ink2: #4d4d4d;
+  --ink3: #8a8a8a;
+  --soft: #efefef;
+  --accent: #ff3b1f;
+  --on-ink: #ffffff;
+  --on-accent: #ffffff;
+  --f: "Archivo", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #101317; --surface: #181c22; --ink: #eceef2; --ink2: #b4bac5; --ink3: #8a919d; --line: #2a303a;
-    --up: #5a9df0; --up-bg: #1b2e48; --down: #ef7a4a; --down-bg: #3b2418; --mix: #9aa1ad; --mix-bg: #272c34;
+    --bg: #0b0b0b; --ink: #f5f5f5; --ink2: #b5b5b5; --ink3: #7c7c7c; --soft: #1d1d1d; --accent: #ff5a3d; --on-ink: #0b0b0b; --on-accent: #0b0b0b;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #101317; --surface: #181c22; --ink: #eceef2; --ink2: #b4bac5; --ink3: #8a919d; --line: #2a303a;
-  --up: #5a9df0; --up-bg: #1b2e48; --down: #ef7a4a; --down-bg: #3b2418; --mix: #9aa1ad; --mix-bg: #272c34;
+  --bg: #0b0b0b; --ink: #f5f5f5; --ink2: #b5b5b5; --ink3: #7c7c7c; --soft: #1d1d1d; --accent: #ff5a3d; --on-ink: #0b0b0b; --on-accent: #0b0b0b;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
-body { background: var(--bg); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.65; padding-inline: 16px; padding-block: 32px 64px; }
-main { max-width: 920px; margin: 0 auto; display: flex; flex-direction: column; gap: 44px; }
-h1, h2 { font-family: var(--f-display); text-wrap: balance; margin: 0; line-height: 1.25; }
-h1 { font-size: clamp(26px, 5vw, 38px); }
-h2 { font-size: 21px; }
-p { margin: 0; }
-.lede { color: var(--ink2); max-width: 62ch; margin-top: 12px; }
-.eyebrow { font-size: 12px; letter-spacing: .12em; color: var(--ink3); text-transform: uppercase; margin-bottom: 8px; }
-.sec-head { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
-.sec-head p { color: var(--ink2); max-width: 64ch; }
+body { background: var(--bg); color: var(--ink); font-family: var(--f); font-size: 15px; line-height: 1.6; padding-inline: 16px; padding-block: 24px 72px; }
+main { max-width: 880px; margin: 0 auto; display: flex; flex-direction: column; gap: 64px; }
+h1, h2, h3, p { margin: 0; }
+h1, h2, h3 { text-wrap: balance; }
 
-.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13px; color: var(--ink2); margin-bottom: 12px; }
-.legend span { display: inline-flex; align-items: center; gap: 6px; }
-.key { width: 22px; height: 22px; border-radius: 4px; display: inline-grid; place-items: center; font-size: 11px; font-weight: 700; }
+.top { display: flex; justify-content: space-between; gap: 16px; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; border-bottom: 4px solid var(--ink); padding-bottom: 10px; }
+h1 { font-size: clamp(40px, 10vw, 92px); font-weight: 900; line-height: 1.02; letter-spacing: -.02em; margin-top: 28px; }
+h1 em { font-style: normal; background: var(--ink); color: var(--on-ink); padding-inline: .12em; }
+h1 u { text-decoration: none; color: var(--accent); }
+.sub { margin-top: 18px; color: var(--ink2); font-size: 16px; max-width: 40ch; }
 
-.tablewrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
-table { border-collapse: separate; border-spacing: 0; width: 100%; min-width: 560px; }
-th, td { padding: 7px 8px; text-align: center; }
-thead th { font-size: 12.5px; font-weight: 500; color: var(--ink2); border-bottom: 1px solid var(--line); position: sticky; top: 0; background: var(--surface); }
-th.f, td.f { text-align: left; padding-left: 14px; }
-td.f { font-size: 14px; }
-td.f small { display: block; color: var(--ink3); font-size: 12px; line-height: 1.4; }
-tr.grp td { font-size: 12px; letter-spacing: .1em; color: var(--ink3); padding: 14px 14px 6px; text-align: left; background: var(--surface); }
-tbody tr:not(.grp) td { border-top: 1px solid var(--line); }
-tbody tr:not(.grp):hover td { background: var(--bg); }
-.cell { width: 34px; height: 30px; border-radius: 5px; display: inline-grid; place-items: center; font-size: 12px; font-weight: 700; cursor: help; border: 0; padding: 0; font-family: inherit; }
-.cell:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-.u { background: var(--up-bg); color: var(--up); }
-.d { background: var(--down-bg); color: var(--down); }
-.m { background: var(--mix-bg); color: var(--mix); }
-.n { color: var(--line); cursor: default; }
-.score { width: 92px; }
-.bar { display: flex; gap: 2px; justify-content: center; }
-.bar i { width: 14px; height: 8px; border-radius: 2px; background: var(--line); display: block; }
-.bar i.u { background: var(--up); } .bar i.d { background: var(--down); } .bar i.m { background: var(--mix); }
+.figs { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--ink); margin-top: 36px; }
+.fig { padding: 14px 12px 0 0; display: flex; flex-direction: column; }
+.fig + .fig { padding-left: 14px; border-left: 1px solid var(--ink); }
+.fig b { font-size: clamp(44px, 9vw, 76px); font-weight: 900; line-height: 1; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.fig span { font-size: 13px; color: var(--ink2); margin-top: 4px; }
+.fig.dn b { color: var(--accent); }
 
-#tip { position: fixed; z-index: 10; max-width: 260px; background: var(--ink); color: var(--bg); font-size: 12.5px; line-height: 1.5; padding: 8px 10px; border-radius: 6px; pointer-events: none; opacity: 0; transition: opacity .1s; }
-#tip b { display: block; margin-bottom: 2px; }
+.sh { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; border-bottom: 4px solid var(--ink); padding-bottom: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+h2 { font-size: clamp(24px, 4.5vw, 34px); font-weight: 900; letter-spacing: -.01em; }
+.sh small { font-size: 12px; color: var(--ink2); }
 
-.split { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
-.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-.card h3 { margin: 0; font-size: 16px; }
-.card p { color: var(--ink2); font-size: 14px; }
-.card .who { display: flex; flex-wrap: wrap; gap: 6px; }
-.chip { font-size: 12px; padding: 1px 8px; border-radius: 99px; background: var(--mix-bg); color: var(--ink2); }
-.chip.u { background: var(--up-bg); color: var(--up); } .chip.d { background: var(--down-bg); color: var(--down); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: 13px; margin-bottom: 14px; }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
 
-.models { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
-.models .card h3 span { color: var(--ink3); font-weight: 400; font-size: 12.5px; display: block; }
-.takeaway { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; display: grid; gap: 10px; }
-.takeaway ul { margin: 0; padding-left: 1.2em; color: var(--ink2); }
-.takeaway li { margin-block: 3px; }
-.takeaway strong { color: var(--ink); }
+.tablewrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; min-width: 540px; }
+th { font-size: 12px; font-weight: 700; letter-spacing: .04em; padding: 6px 4px; text-align: center; border-bottom: 1px solid var(--ink); }
+th.f { text-align: left; padding-left: 0; }
+td { padding: 9px 4px; text-align: center; border-bottom: 1px solid var(--soft); }
+td.f { text-align: left; padding-left: 0; font-size: 15px; font-weight: 700; line-height: 1.35; }
+td.f small { display: block; font-weight: 400; font-size: 12px; color: var(--ink3); }
+tr.grp td { background: var(--ink); color: var(--on-ink); font-size: 13px; font-weight: 700; letter-spacing: .14em; padding: 7px 10px; text-align: left; border: 0; }
+tbody tr:not(.grp):hover td { background: var(--soft); }
+
+.cell { width: 28px; height: 28px; border-radius: 50%; display: inline-grid; place-items: center; font-size: 11px; font-weight: 900; border: 2px solid var(--ink); padding: 0; font-family: inherit; cursor: help; background: none; color: var(--ink); line-height: 1; }
+.cell.u { background: var(--ink); color: var(--on-ink); }
+.cell.d { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.cell.m { background: none; }
+.cell.n { border: 0; width: auto; color: var(--ink3); opacity: .5; cursor: default; }
+.cell:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+td.score { width: 76px; white-space: nowrap; font-size: 15px; font-weight: 900; font-variant-numeric: tabular-nums; text-align: right; padding-right: 2px; }
+td.score.d { color: var(--accent); }
+td.score small { font-weight: 400; font-size: 11px; color: var(--ink3); }
+
+#tip { position: fixed; z-index: 10; max-width: 250px; background: var(--ink); color: var(--on-ink); font-size: 12.5px; line-height: 1.5; padding: 8px 10px; pointer-events: none; opacity: 0; transition: opacity .1s; }
+#tip b { display: block; }
+
+.rule { font-size: clamp(24px, 5vw, 40px); font-weight: 900; line-height: 1.2; letter-spacing: -.01em; border-top: 4px solid var(--ink); padding-top: 18px; max-width: 22ch; }
+.rule u { text-decoration: none; background: var(--accent); color: var(--on-accent); padding-inline: .1em; }
+
+.rows { display: flex; flex-direction: column; }
+.r { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 6px 28px; padding-block: 16px; border-bottom: 1px solid var(--ink); }
+.r h3 { font-size: 18px; font-weight: 900; line-height: 1.3; }
+.r .who { font-size: 12px; color: var(--ink3); margin-top: 4px; }
+.r p { color: var(--ink2); }
+@media (max-width: 600px) { .r { grid-template-columns: 1fr; } }
+
+.models { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); border-top: 1px solid var(--ink); }
+.mc { padding: 14px 14px 4px 0; display: flex; flex-direction: column; gap: 4px; }
+.mc h3 { font-size: 22px; font-weight: 900; }
+.mc b { font-size: 12px; letter-spacing: .08em; color: var(--accent); }
+.mc p { color: var(--ink2); font-size: 14px; }
+@media (min-width: 640px) { .mc + .mc { padding-left: 14px; border-left: 1px solid var(--ink); } }
 </style>
 
 <main>
   <header>
-    <div class="eyebrow">Claude · DeepSeek · GPT · Gemini</div>
-    <h1>未来哪些学科会兴起，哪些会衰落：四个模型的共识与分歧</h1>
-    <p class="lede">把四份回答拆成同一组领域，逐个对照。蓝色代表看好，橙色代表看衰，灰色代表认为会分化或需要谨慎。空白表示该模型没有提到。</p>
+    <div class="top"><span>Claude · DeepSeek · GPT · Gemini</span><span>学科趋势对照</span></div>
+    <h1>哪些学科会<em>兴起</em>，<br>哪些会<u>衰落</u></h1>
+    <p class="sub">四个模型的回答，按同一组领域逐项对照。</p>
+    <div class="figs">
+      <div class="fig"><b>5</b><span>个领域四家一致看好</span></div>
+      <div class="fig dn"><b>1</b><span>个领域四家一致看衰</span></div>
+      <div class="fig"><b>21</b><span>个领域被对照</span></div>
+    </div>
   </header>
 
   <section>
-    <div class="sec-head">
-      <h2>共识矩阵</h2>
-      <p>把鼠标移到格子上，或用键盘聚焦，可以看到该模型对这个领域的具体说法。</p>
-    </div>
+    <div class="sh"><h2>共识矩阵</h2><small>悬停或聚焦格子，查看原话要点</small></div>
     <div class="legend">
-      <span><i class="key u">▲</i>快速发展</span>
-      <span><i class="key d">▼</i>衰落或收缩</span>
-      <span><i class="key m">◆</i>分化 / 不确定</span>
-      <span><i class="key n">·</i>未提及</span>
+      <span><i class="cell u">▲</i>看好</span>
+      <span><i class="cell d">▼</i>看衰</span>
+      <span><i class="cell m">◆</i>分化 / 不确定</span>
+      <span><i class="cell n">·</i>未提及</span>
     </div>
     <div class="tablewrap">
       <table id="matrix">
-        <thead><tr><th class="f">领域</th><th>Claude</th><th>DeepSeek</th><th>GPT</th><th>Gemini</th><th class="score">共识</th></tr></thead>
+        <thead><tr><th class="f">领域</th><th>Claude</th><th>DeepSeek</th><th>GPT</th><th>Gemini</th><th></th></tr></thead>
         <tbody></tbody>
       </table>
     </div>
   </section>
 
-  <section class="takeaway">
-    <h2>一句话结论</h2>
-    <ul>
-      <li><strong>四家完全一致看好的有五块：</strong>AI 与计算、生物医药与计算生物、医疗与养老、能源与电网、机器人与先进制造。</li>
-      <li><strong>四家完全一致看衰的只有一块：</strong>初级、重复的编程工作。翻译外语和基础会计事务有三家同意。</li>
-      <li><strong>共同的判断逻辑：</strong>衰落的是可被自动化的重复脑力工作，而不是整个学科。凡是和 AI、算力、真实产业结合的方向都在上升。</li>
-    </ul>
-  </section>
+  <p class="rule">衰落的是<u>可自动化的重复脑力工作</u>，不是整个学科。</p>
 
   <section>
-    <div class="sec-head">
-      <h2>分歧最大的四个问题</h2>
-    </div>
-    <div class="split">
-      <div class="card">
-        <h3>人文社科会不会整体衰落</h3>
-        <div class="who"><span class="chip d">DeepSeek 看衰</span><span class="chip d">Gemini 看衰纯传统分支</span><span class="chip">Claude 分化</span><span class="chip">GPT 不会整体消失</span></div>
-        <p>DeepSeek 给的证据最多（芝加哥大学暂停人文博士招生，哈佛人文专业占比从 27% 降到 6.9%），但它也指出哲学毕业生失业率低于计算机。四家都认为衰落的是窄口径、不赋能的方向。</p>
-      </div>
-      <div class="card">
-        <h3>计算机科学到底算不算衰落</h3>
-        <div class="who"><span class="chip d">四家都看衰初级编码</span><span class="chip u">四家都看好 AI</span></div>
-        <p>没有分歧的部分是：入门写代码的岗位在收缩。DeepSeek 补充了数据，美国计算机专业入学人数出现约 20 年来首次下降。其余三家强调学科重心上移到架构、算法和安全。</p>
-      </div>
-      <div class="card">
-        <h3>量子计算要不要押注</h3>
-        <div class="who"><span class="chip u">Gemini 看好</span><span class="chip">GPT 研究增长，商业化不确定</span><span class="chip">Claude 可能炒得太早</span><span class="chip">DeepSeek 未提</span></div>
-        <p>只有 Gemini 把它列为明确的快速发展方向。GPT 和 Claude 都提醒短期商业化容易被高估。</p>
-      </div>
-      <div class="card">
-        <h3>传统能源和建设类专业</h3>
-        <div class="who"><span class="chip d">Claude 看衰土木与石油煤炭</span><span class="chip d">GPT 部分承压</span></div>
-        <p>只有 Claude 给出了按国家区分的判断：中国大规模建设期已过，土木和房地产需求下降；师范类则受低生育率影响。其他模型没有按地区拆分。</p>
-      </div>
+    <div class="sh"><h2>四个分歧</h2></div>
+    <div class="rows">
+      <div class="r"><div><h3>人文社科会整体衰落吗</h3><div class="who">DeepSeek、Gemini 看衰；Claude、GPT 持保留</div></div><p>DeepSeek 数据最多：芝加哥大学暂停人文博士招生，哈佛人文专业占比从 27% 降到 6.9%。四家都认为衰落的是窄口径、不赋能的方向。</p></div>
+      <div class="r"><div><h3>计算机科学算衰落吗</h3><div class="who">四家一致：初级编码收缩</div></div><p>收缩的是入门写代码的岗位。美国计算机专业入学人数 20 年来首次下降，但学科重心在上移到架构、算法和安全。</p></div>
+      <div class="r"><div><h3>量子计算要押注吗</h3><div class="who">Gemini 看好；Claude、GPT 保留</div></div><p>只有 Gemini 明确看好。另外两家提醒短期商业化容易被高估。</p></div>
+      <div class="r"><div><h3>建设与传统能源</h3><div class="who">Claude 看衰；GPT 部分承压</div></div><p>只有 Claude 按国家区分：中国大规模建设期已过，土木和房地产需求下降；低生育率国家的师范类也在收缩。</p></div>
     </div>
   </section>
 
   <section>
-    <div class="sec-head">
-      <h2>四个回答各自的特点</h2>
-    </div>
+    <div class="sh"><h2>各家特点</h2></div>
     <div class="models">
-      <div class="card"><h3>Claude<span>三个硬因素</span></h3><p>先给判断标准：AI 能否替代、人口结构、资金流向。结论最直接，还额外列出“分化”一栏，覆盖计算机、金融法律、人文和量子。</p></div>
-      <div class="card"><h3>DeepSeek<span>数据最多</span></h3><p>引用中科院、世界经济论坛、教育部 2026 年专业目录和高校个案。看衰部分最具体，也最强调“分化而非消亡”。</p></div>
-      <div class="card"><h3>GPT<span>最谨慎</span></h3><p>区分科研投入、学科扩张和就业三件事，并把判断分成高、中确定性和容易被高估三档。只谈 10 到 20 年的全球趋势。</p></div>
-      <div class="card"><h3>Gemini<span>最简洁</span></h3><p>按“不可替代、前沿、刚需”归类，每个方向列出分支和驱动力。看好部分偏重前沿科学，看衰部分只有四类。</p></div>
+      <div class="mc"><b>标准清晰</b><h3>Claude</h3><p>先给三条判断标准，再列“分化”一栏。</p></div>
+      <div class="mc"><b>数据最多</b><h3>DeepSeek</h3><p>引用机构报告和高校个案，看衰部分最具体。</p></div>
+      <div class="mc"><b>最谨慎</b><h3>GPT</h3><p>按确定性分三档，单列“容易被高估”。</p></div>
+      <div class="mc"><b>最简洁</b><h3>Gemini</h3><p>每个方向只列分支和驱动力，偏重前沿科学。</p></div>
     </div>
   </section>
 </main>
@@ -167,36 +146,35 @@ tbody tr:not(.grp):hover td { background: var(--bg); }
 const M = ["Claude", "DeepSeek", "GPT", "Gemini"];
 const G = { u: "▲", d: "▼", m: "◆" };
 const LBL = { u: "看好", d: "看衰", m: "分化/不确定" };
-// [领域, 说明, {模型索引: [方向, 原话要点]}]
 const UP = [
-  ["AI 与计算科学", "机器学习、数据科学、AI 基础设施", [["u","这一轮技术变化的源头"],["u","AI 成为所有学科的基础设施"],["u","能赋能几乎所有学科"],["u","AI 从处理文本转向加速科研"]]],
-  ["生物医药与计算生物", "生物信息、合成生物、基因治疗", [["u","AI 药物研发、基因与细胞治疗"],["u","工程化人类生物学"],["u","生物信息学、合成生物学"],["u","合成生物学、基因编辑、再生医学"]]],
-  ["医疗、老年与护理", "老龄化带来的刚性需求", [["u","需要面对面，AI 难以取代"],["u","护理、公共卫生稳定增长"],["u","老年医学、神经科学"],["u","精准医疗、脑机接口"]]],
+  ["AI 与计算科学", "机器学习、数据科学", [["u","这一轮技术变化的源头"],["u","AI 成为所有学科的基础设施"],["u","能赋能几乎所有学科"],["u","AI 从处理文本转向加速科研"]]],
+  ["生物医药与计算生物", "生物信息、合成生物", [["u","AI 药物研发、基因与细胞治疗"],["u","工程化人类生物学"],["u","生物信息学、合成生物学"],["u","合成生物学、基因编辑、再生医学"]]],
+  ["医疗、老年与护理", "老龄化的刚性需求", [["u","需要面对面，AI 难以取代"],["u","护理、公共卫生稳定增长"],["u","老年医学、神经科学"],["u","精准医疗、脑机接口"]]],
   ["能源、电网与储能", "电池、核能、氢能", [["u","AI 数据中心拉动用电"],["u","可再生能源、新型储能"],["u","电气化、储能和数据中心"],["u","储能、氢能、核聚变、CCS"]]],
   ["机器人与先进制造", "具身智能、自动化", [["u","AI 进入实体世界"],["u","具身智能、未来机器人"],["u","机器人、自动化、控制"],["u","具身智能、传感器"]]],
-  ["半导体与芯片", "算力硬件与供应链", [["u","芯片是战略资源"],null,["u","AI 算力与供应链安全"],["u","微电子与半导体工程"]]],
+  ["半导体与芯片", "算力硬件、供应链", [["u","芯片是战略资源"],null,["u","AI 算力与供应链安全"],["u","微电子与半导体工程"]]],
   ["网络安全", "含隐私计算", [["u","地缘冲突，AI 让攻击更容易"],["u","全球增长最快方向之一"],["u","数字化扩大安全风险"],null]],
-  ["材料科学", "计算化学、AI 辅助设计", [null,null,["u","新材料研发与 AI 辅助设计"],["u","计算材料学、智能化学"]]],
-  ["航天与国防", "卫星、遥感、空间工程", [["u","网络安全、国防、航天"],null,["u","卫星通信、地球观测"],null]],
+  ["材料科学", "计算化学", [null,null,["u","新材料研发与 AI 辅助设计"],["u","计算材料学、智能化学"]]],
+  ["航天与国防", "卫星、遥感", [["u","网络安全、国防、航天"],null,["u","卫星通信、地球观测"],null]],
   ["气候与环境", "气候科学、环境工程", [null,["u","政策与资本双驱动"],["u","中高增长"],null]],
   ["量子科学", "量子计算、通信", [["m","潜力大，但过去被炒得太早"],null,["m","研究增长快，商业化不确定"],["u","突破硅基芯片物理极限"]]],
 ];
 const DOWN = [
   ["初级、重复性编程", "纯写代码的入门岗位", [["d","初级岗位已在收缩"],["d","美国 CS 入学 20 年来首降"],["d","AI 自动生成代码"],["d","重心转向架构与算法"]]],
   ["翻译与基础外语", "通用翻译、应用型外语", [["d","机器翻译在日常场景已够用"],["d","英国 17 所大学关闭现代语言学位"],null,["d","同传、文本翻译被多模态 AI 取代"]]],
-  ["基础会计与事务性工作", "簿记、审计助理、行政文书", [["d","规则明确的重复工作"],null,["d","文书与信息整理类工作"],["d","基础财会被自动化取代"]]],
+  ["基础会计与事务工作", "簿记、审计助理、文书", [["d","规则明确的重复工作"],null,["d","文书与信息整理类工作"],["d","基础财会被自动化取代"]]],
   ["传统人文社科", "纯理论、不赋能的分支", [["m","招生就业下滑，但伦理治理需要人"],["d","芝大暂停人文博士招生"],["m","不会整体消失"],["d","纯传统分支招生收缩"]]],
-  ["管理类“万金油”专业", "公共事业管理、市场营销、人力资源", [null,["d","撤销数量最多的本科专业"],null,null]],
   ["化石能源相关", "石油、煤炭工程", [["d","长期衰落，十年内不会消失"],null,["d","部分领域承压"],null]],
+  ["管理类“万金油”专业", "公共事业管理、市场营销", [null,["d","撤销数量最多的本科专业"],null,null]],
   ["师范（学前与小学）", "低生育率国家", [["d","孩子少了，老师需求下降"],null,null,null]],
-  ["土木、房地产、城市规划", "以中国为主", [["d","大规模建设时代已过"],null,null,null]],
-  ["基础内容生产", "普通文案、平面设计、通稿", [["d","生成成本接近零"],null,null,null]],
-  ["成熟的传统制造与重复数据分析", "无新技术融合的流程", [null,null,["d","自动化与成本竞争"],null]],
+  ["土木、房地产、城规", "以中国为主", [["d","大规模建设时代已过"],null,null,null]],
+  ["基础内容生产", "普通文案、平面设计", [["d","生成成本接近零"],null,null,null]],
+  ["成熟传统制造与重复数据分析", "无新技术融合", [null,null,["d","自动化与成本竞争"],null]],
 ];
 
 const tip = document.getElementById("tip");
 function showTip(el, f, i, c) {
-  tip.innerHTML = "<b>" + M[i] + " · " + LBL[c[0]] + "</b>" + f + "：" + c[1];
+  tip.innerHTML = "<b>" + M[i] + " · " + LBL[c[0]] + "</b>" + c[1];
   const r = el.getBoundingClientRect();
   tip.style.opacity = 1;
   const w = tip.offsetWidth, h = tip.offsetHeight;
@@ -220,12 +198,11 @@ function row(tbody, f, desc, cells) {
     } else td.innerHTML = '<span class="cell n" aria-label="' + M[i] + '未提及">·</span>';
     tr.appendChild(td);
   });
-  const s = document.createElement("td"); s.className = "score";
   const n = k => cells.filter(c => c && c[0] === k).length;
   const dom = n("u") >= n("d") ? "u" : "d";
-  const cnt = n(dom);
-  s.innerHTML = '<div class="bar" title="' + cnt + '/4">' + [0,1,2,3].map(j => '<i class="' + (j < cnt ? dom : "") + '"></i>').join("") + "</div>" +
-    '<div style="font-size:11px;color:var(--ink3)">' + cnt + "/4" + (n("m") ? " +" + n("m") + "持保留" : "") + "</div>";
+  const s = document.createElement("td");
+  s.className = "score " + dom;
+  s.innerHTML = n(dom) + '<small>/4</small>';
   tr.appendChild(s);
   tbody.appendChild(tr);
 }
@@ -235,6 +212,6 @@ function group(label, list) {
   g.innerHTML = '<td colspan="6">' + label + "</td>"; tb.appendChild(g);
   list.forEach(([f, d, c]) => row(tb, f, d, c));
 }
-group("大概率快速发展", UP);
-group("大概率衰落或收缩", DOWN);
+group("看好", UP);
+group("看衰", DOWN);
 </script>
