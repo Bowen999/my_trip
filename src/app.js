@@ -65,7 +65,7 @@
     if (!h) return;
     const a = h.closest('.acc');
     setAcc(a, !a.classList.contains('open'));
-    if (a.classList.contains('open') && a.id && /^(s-|d\d)/.test(a.id)) history.replaceState(null, '', '#' + a.id);
+    if (a.classList.contains('open') && a.id && /^(s-|sc-|w-|d\d)/.test(a.id)) history.replaceState(null, '', '#' + a.id);
   });
   $$('[data-expand]').forEach((b) => b.addEventListener('click', () => $$('.acc', $('#' + b.dataset.expand)).forEach((a) => setAcc(a, true))));
   $$('[data-collapse]').forEach((b) => b.addEventListener('click', () => $$('.acc', $('#' + b.dataset.collapse)).forEach((a) => setAcc(a, false))));
@@ -95,9 +95,9 @@
 
   /* ================= scroll: progress, nav, parallax ================= */
   const prog = $('#progress'), totop = $('#totop');
-  const navIds = ['top', 'culture', 'route', 'sights', 'plan'];
-  const navEls = navIds.map((id) => document.getElementById(id));
   const navLinks = $$('[data-nav]');
+  const navIds = Array.from(new Set(navLinks.map((a) => a.dataset.nav)));
+  const navEls = navIds.map((id) => document.getElementById(id));
   const px = $$('.px');
   const heroEl = $('.hero');
   let ticking = false;
@@ -154,14 +154,15 @@
   const clocks = $$('.clk');
   const offset = (tz) => { const d = new Date(); return (new Date(d.toLocaleString('en-US', { timeZone: tz })) - new Date(d.toLocaleString('en-US', { timeZone: 'UTC' }))) / 60000; };
   function tickClocks() {
+    if (!clocks.length) return;
     const now = new Date();
-    const base = offset('America/Vancouver');
-    clocks.forEach((c) => {
+    const base = offset(clocks[0].dataset.tz), baseName = clocks[0].querySelector('.z').textContent;
+    clocks.forEach((c, i) => {
       const tz = c.dataset.tz;
       c.querySelector('.tm').textContent = new Intl.DateTimeFormat('zh-CN', { timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false }).format(now);
       c.querySelector('.dt').textContent = new Intl.DateTimeFormat('zh-CN', { timeZone: tz, month: 'long', day: 'numeric', weekday: 'short' }).format(now);
       const diff = (offset(tz) - base) / 60;
-      c.querySelector('.df').textContent = tz === 'America/Vancouver' ? '基准(太平洋时间)' : '比温哥华' + (diff >= 0 ? '快 ' : '慢 ') + Math.abs(diff) + ' 小时';
+      c.querySelector('.df').textContent = i === 0 ? c.dataset.base || '基准' : diff === 0 ? '与' + baseName + '相同' : '比' + baseName + (diff >= 0 ? '快 ' : '慢 ') + Math.abs(diff) + ' 小时';
     });
   }
   tickClocks();
@@ -169,6 +170,7 @@
 
   /* ================= tip + currency ================= */
   (() => {
+    if (!$('#tip-bill')) return;
     const bill = $('#tip-bill'), n = $('#tip-n'), v = $('#tip-v'), t = $('#tip-t'), e = $('#tip-e');
     let p = 20;
     const f = (x) => x.toFixed(2);
@@ -190,6 +192,7 @@
 
   /* ================= packing ================= */
   (() => {
+    if (!$('#pk-reset')) return;
     const boxes = $$('.ck input'), saved = LS.get('pack', {});
     const nEl = $('#pk-n'), tEl = $('#pk-t'), bar = $('#pk-bar');
     function upd() {
@@ -216,6 +219,7 @@
 
   /* ================= wildlife game ================= */
   (() => {
+    if (!$('#wild')) return;
     const hits = $$('#wild .hit'), info = $('#wild-info'), cnt = $('#wild-n'), sc = $('#wild-scroll');
     const D = {
       bear: ['黑熊', '体型不大,一样危险。别靠近、别喂、别跑;熊喷雾放在手边,不是背包底。距离 100 米以上。'],
@@ -430,6 +434,11 @@
 
   const MAP = [
     [/C\$\s?([\d.,]+)/g, '$1加元'],
+    [/US\$\s?([\d.,]+)/g, '$1美元'],
+    [/S\$\s?([\d.,]+)/g, '$1新元'],
+    [/RM\s?([\d.,]+)/g, '$1令吉'],
+    [/IDR\s?([\d.,]+)/g, '$1印尼盾'],
+    [/UTC\+8/g, '东八区'],
     [/(\d)\s?[–-]\s?(\d)/g, '$1到$2'],
     [/(\d{1,2})\/(\d{1,2})/g, '$1月$2日'],
     [/(\d)\s?km\b/gi, '$1公里'],
@@ -550,7 +559,7 @@
   });
   $('#btn-read').addEventListener('click', () => {
     if (T.state !== 'idle') { stop(); return; }
-    const secs = ['top', 'overview', 'map', 'culture', 'route', 'sights', 'plan'].map((id) => document.getElementById(id)).filter(Boolean);
+    const secs = $$('main > [id]');
     let cur = secs[0];
     secs.forEach((s) => { if (s.getBoundingClientRect().top <= BAR + 60) cur = s; });
     const rootEl = cur.id === 'top' ? $('.cover') : cur;

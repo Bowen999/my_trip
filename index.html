@@ -760,7 +760,7 @@ svg.art .aur { animation: aur 9s ease-in-out infinite alternate; transform-box: 
   <h3><button class="acc-h sec-h" type="button" aria-expanded="false" aria-controls="c-time-b"><span class="no">1.6</span><span class="t"><span class="lbl">时差</span><small>实时时钟</small></span><svg class="ic chev" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button></h3>
   <button class="spk" type="button" data-speak="c-time-b" aria-label="朗读这一部分" title="朗读这一部分"><svg class="ic " viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg></button>
   <div class="acc-b" id="c-time-b" role="region"><div class="acc-in"><div class="sec-body"><div class="clocks">
-    <div class="clk" data-tz="America/Vancouver" data-k="vc"><div class="z">温哥华</div><div class="tm" aria-live="off">--：--</div><div class="dt">&nbsp;</div><div class="df">&nbsp;</div></div><div class="clk" data-tz="America/Edmonton" data-k="ab"><div class="z">班夫 · 卡尔加里</div><div class="tm" aria-live="off">--：--</div><div class="dt">&nbsp;</div><div class="df">&nbsp;</div></div><div class="clk" data-tz="Asia/Shanghai" data-k="bj"><div class="z">北京</div><div class="tm" aria-live="off">--：--</div><div class="dt">&nbsp;</div><div class="df">&nbsp;</div></div></div>
+    <div class="clk" data-tz="America/Vancouver" data-k="vc" data-base="基准（太平洋时间）"><div class="z">温哥华</div><div class="tm" aria-live="off">--：--</div><div class="dt">&nbsp;</div><div class="df">&nbsp;</div></div><div class="clk" data-tz="America/Edmonton" data-k="ab"><div class="z">班夫 · 卡尔加里</div><div class="tm" aria-live="off">--：--</div><div class="dt">&nbsp;</div><div class="df">&nbsp;</div></div><div class="clk" data-tz="Asia/Shanghai" data-k="bj"><div class="z">北京</div><div class="tm" aria-live="off">--：--</div><div class="dt">&nbsp;</div><div class="df">&nbsp;</div></div></div>
   <p class="note say">阿尔伯塔（山地时间）比温哥华（太平洋时间）快 <b>1 小时</b>。11 月第一个周日，夏令时结束，时钟拨回 1 小时。北京比温哥华快 15 小时（夏令时）或 16 小时。</p></div></div></div>
 </div>
 </section>
@@ -1417,7 +1417,7 @@ svg.art .aur { animation: aur 9s ease-in-out infinite alternate; transform-box: 
     if (!h) return;
     const a = h.closest('.acc');
     setAcc(a, !a.classList.contains('open'));
-    if (a.classList.contains('open') && a.id && /^(s-|d\d)/.test(a.id)) history.replaceState(null, '', '#' + a.id);
+    if (a.classList.contains('open') && a.id && /^(s-|sc-|w-|d\d)/.test(a.id)) history.replaceState(null, '', '#' + a.id);
   });
   $$('[data-expand]').forEach((b) => b.addEventListener('click', () => $$('.acc', $('#' + b.dataset.expand)).forEach((a) => setAcc(a, true))));
   $$('[data-collapse]').forEach((b) => b.addEventListener('click', () => $$('.acc', $('#' + b.dataset.collapse)).forEach((a) => setAcc(a, false))));
@@ -1447,9 +1447,9 @@ svg.art .aur { animation: aur 9s ease-in-out infinite alternate; transform-box: 
 
   /* ================= scroll: progress, nav, parallax ================= */
   const prog = $('#progress'), totop = $('#totop');
-  const navIds = ['top', 'culture', 'route', 'sights', 'plan'];
-  const navEls = navIds.map((id) => document.getElementById(id));
   const navLinks = $$('[data-nav]');
+  const navIds = Array.from(new Set(navLinks.map((a) => a.dataset.nav)));
+  const navEls = navIds.map((id) => document.getElementById(id));
   const px = $$('.px');
   const heroEl = $('.hero');
   let ticking = false;
@@ -1506,14 +1506,15 @@ svg.art .aur { animation: aur 9s ease-in-out infinite alternate; transform-box: 
   const clocks = $$('.clk');
   const offset = (tz) => { const d = new Date(); return (new Date(d.toLocaleString('en-US', { timeZone: tz })) - new Date(d.toLocaleString('en-US', { timeZone: 'UTC' }))) / 60000; };
   function tickClocks() {
+    if (!clocks.length) return;
     const now = new Date();
-    const base = offset('America/Vancouver');
-    clocks.forEach((c) => {
+    const base = offset(clocks[0].dataset.tz), baseName = clocks[0].querySelector('.z').textContent;
+    clocks.forEach((c, i) => {
       const tz = c.dataset.tz;
       c.querySelector('.tm').textContent = new Intl.DateTimeFormat('zh-CN', { timeZone: tz, hour: '2-digit', minute: '2-digit', hour12: false }).format(now);
       c.querySelector('.dt').textContent = new Intl.DateTimeFormat('zh-CN', { timeZone: tz, month: 'long', day: 'numeric', weekday: 'short' }).format(now);
       const diff = (offset(tz) - base) / 60;
-      c.querySelector('.df').textContent = tz === 'America/Vancouver' ? '基准（太平洋时间）' : '比温哥华' + (diff >= 0 ? '快 ' : '慢 ') + Math.abs(diff) + ' 小时';
+      c.querySelector('.df').textContent = i === 0 ? c.dataset.base || '基准' : diff === 0 ? '与' + baseName + '相同' : '比' + baseName + (diff >= 0 ? '快 ' : '慢 ') + Math.abs(diff) + ' 小时';
     });
   }
   tickClocks();
@@ -1521,6 +1522,7 @@ svg.art .aur { animation: aur 9s ease-in-out infinite alternate; transform-box: 
 
   /* ================= tip + currency ================= */
   (() => {
+    if (!$('#tip-bill')) return;
     const bill = $('#tip-bill'), n = $('#tip-n'), v = $('#tip-v'), t = $('#tip-t'), e = $('#tip-e');
     let p = 20;
     const f = (x) => x.toFixed(2);
@@ -1542,6 +1544,7 @@ svg.art .aur { animation: aur 9s ease-in-out infinite alternate; transform-box: 
 
   /* ================= packing ================= */
   (() => {
+    if (!$('#pk-reset')) return;
     const boxes = $$('.ck input'), saved = LS.get('pack', {});
     const nEl = $('#pk-n'), tEl = $('#pk-t'), bar = $('#pk-bar');
     function upd() {
@@ -1568,6 +1571,7 @@ svg.art .aur { animation: aur 9s ease-in-out infinite alternate; transform-box: 
 
   /* ================= wildlife game ================= */
   (() => {
+    if (!$('#wild')) return;
     const hits = $$('#wild .hit'), info = $('#wild-info'), cnt = $('#wild-n'), sc = $('#wild-scroll');
     const D = {
       bear: ['黑熊', '体型不大，一样危险。别靠近、别喂、别跑；熊喷雾放在手边，不是背包底。距离 100 米以上。'],
@@ -1782,6 +1786,11 @@ svg.art .aur { animation: aur 9s ease-in-out infinite alternate; transform-box: 
 
   const MAP = [
     [/C\$\s?([\d.,]+)/g, '$1加元'],
+    [/US\$\s?([\d.,]+)/g, '$1美元'],
+    [/S\$\s?([\d.,]+)/g, '$1新元'],
+    [/RM\s?([\d.,]+)/g, '$1令吉'],
+    [/IDR\s?([\d.,]+)/g, '$1印尼盾'],
+    [/UTC\+8/g, '东八区'],
     [/(\d)\s?[–-]\s?(\d)/g, '$1到$2'],
     [/(\d{1,2})\/(\d{1,2})/g, '$1月$2日'],
     [/(\d)\s?km\b/gi, '$1公里'],
@@ -1902,7 +1911,7 @@ svg.art .aur { animation: aur 9s ease-in-out infinite alternate; transform-box: 
   });
   $('#btn-read').addEventListener('click', () => {
     if (T.state !== 'idle') { stop(); return; }
-    const secs = ['top', 'overview', 'map', 'culture', 'route', 'sights', 'plan'].map((id) => document.getElementById(id)).filter(Boolean);
+    const secs = $$('main > [id]');
     let cur = secs[0];
     secs.forEach((s) => { if (s.getBoundingClientRect().top <= BAR + 60) cur = s; });
     const rootEl = cur.id === 'top' ? $('.cover') : cur;

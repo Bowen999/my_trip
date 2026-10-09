@@ -128,7 +128,7 @@ function chCulture() {
 
   const clocks = `<div class="clocks">
     ${[['vc', '温哥华', 'America/Vancouver', ''], ['ab', '班夫 · 卡尔加里', 'America/Edmonton', ''], ['bj', '北京', 'Asia/Shanghai', '']]
-      .map(([k, n, tz]) => `<div class="clk" data-tz="${tz}" data-k="${k}"><div class="z">${n}</div><div class="tm" aria-live="off">--:--</div><div class="dt">&nbsp;</div><div class="df">&nbsp;</div></div>`)
+      .map(([k, n, tz]) => `<div class="clk" data-tz="${tz}" data-k="${k}"${k === 'vc' ? ' data-base="基准（太平洋时间）"' : ''}><div class="z">${n}</div><div class="tm" aria-live="off">--:--</div><div class="dt">&nbsp;</div><div class="df">&nbsp;</div></div>`)
       .join('')}</div>
   <p class="note say">阿尔伯塔(山地时间)比温哥华(太平洋时间)快 <b>1 小时</b>。11 月第一个周日,夏令时结束,时钟拨回 1 小时。北京比温哥华快 15 小时(夏令时)或 16 小时。</p>`;
 

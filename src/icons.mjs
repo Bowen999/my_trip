@@ -34,6 +34,15 @@ const L = {
   pause: '<rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/>',
   stop: '<rect x="6" y="6" width="12" height="12" rx="1"/>',
   close: '<path d="M6 6l12 12M18 6L6 18"/>',
+  school: '<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11.5V16c0 1.4 2.7 3 6 3s6-1.6 6-3v-4.5M22 9v6"/>',
+  ring: '<circle cx="12" cy="15" r="6"/><path d="M9 4.5L12 7.5l3-3-1.5-2h-3z"/>',
+  heart: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
+  mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 7 9-7"/>',
+  copy: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
+  passport: '<rect x="5" y="3" width="14" height="18" rx="2"/><circle cx="12" cy="10.5" r="3"/><path d="M9 17h6"/>',
+  umbrella: '<path d="M3 12a9 9 0 0 1 18 0z"/><path d="M12 12v6a2 2 0 0 0 4 0"/>',
+  rain: '<path d="M7 15a4 4 0 0 1-.6-7.9A5.5 5.5 0 0 1 17 8a3.5 3.5 0 0 1 0 7z"/><path d="M8 18l-1 3M12 18l-1 3M16 18l-1 3"/>',
+  scale: '<path d="M12 4v16M7 20h10M5 8h14M5 8l-3 7a3.5 3.5 0 0 0 6 0zM19 8l-3 7a3.5 3.5 0 0 0 6 0z"/>',
   shuffle: '<path d="M3 7h4l10 10h4M3 17h4l3-3M14 10l3-3h4M18 4l3 3-3 3M18 14l3 3-3 3"/>',
 };
 
@@ -56,6 +65,18 @@ const F = {
   coffee: '<path d="M12 22h34l-3 28a4 4 0 0 1-4 3H19a4 4 0 0 1-4-3z" fill="#d6342c"/><rect x="10" y="16" width="38" height="8" rx="3" fill="#f3efe6"/><path d="M46 28h4a6 6 0 0 1 0 12h-5" fill="none" stroke="#d6342c" stroke-width="4"/><path d="M22 10q-3-4 0-8M32 10q-3-4 0-8" stroke="#b6b0a4" stroke-width="2" fill="none" stroke-linecap="round"/>',
 };
 
+Object.assign(F, {
+  chickenrice: '<ellipse cx="32" cy="42" rx="26" ry="10" fill="#f1ece0"/><path d="M12 38q20-22 40 0z" fill="#fff8e6"/><g fill="#f4d9a6" stroke="#d9b87a" stroke-width="1.2"><rect x="14" y="26" width="14" height="7" rx="3" transform="rotate(-12 21 29)"/><rect x="28" y="22" width="14" height="7" rx="3"/><rect x="38" y="28" width="12" height="7" rx="3" transform="rotate(10 44 31)"/></g><g fill="#6fbf62"><circle cx="16" cy="44" r="3"/><circle cx="24" cy="46" r="3"/></g><circle cx="48" cy="44" r="3.4" fill="#d6453d"/>',
+  laksa: '<ellipse cx="32" cy="36" rx="26" ry="9" fill="#f1ece0"/><path d="M6 36q26 24 52 0z" fill="#e8742a"/><ellipse cx="32" cy="36" rx="23" ry="7" fill="#f08a2e"/><g fill="#fff4e6"><ellipse cx="22" cy="35" rx="7" ry="3.4"/><ellipse cx="38" cy="38" rx="7" ry="3.4"/></g><g fill="#f28b82"><path d="M40 30q8-2 8 4-6 0-8-4z"/><path d="M16 32q6-4 9 1-5 3-9-1z"/></g><circle cx="32" cy="34" r="3" fill="#6fbf62"/>',
+  chillicrab: '<ellipse cx="32" cy="38" rx="20" ry="13" fill="#d6342c"/><g stroke="#b32219" stroke-width="3" fill="none" stroke-linecap="round"><path d="M14 40l-9 4M16 46l-7 7M50 40l9 4M48 46l7 7"/></g><path d="M16 30q-6-10 2-14q4 4 2 12zM48 30q6-10-2-14q-4 4-2 12z" fill="#e0453a"/><circle cx="26" cy="30" r="2.6" fill="#fff"/><circle cx="38" cy="30" r="2.6" fill="#fff"/><circle cx="26" cy="30" r="1.2" fill="#222"/><circle cx="38" cy="30" r="1.2" fill="#222"/><path d="M24 40q8 6 16 0" stroke="#fff" stroke-opacity=".5" stroke-width="2" fill="none"/>',
+  kayatoast: '<rect x="8" y="22" width="40" height="30" rx="6" fill="#e9c58a"/><rect x="12" y="26" width="32" height="22" rx="3" fill="#8a6a2a"/><rect x="16" y="14" width="40" height="30" rx="6" fill="#f0d29c" transform="rotate(8 36 29)"/><rect x="21" y="19" width="30" height="20" rx="3" fill="#7d9a3a" transform="rotate(8 36 29)"/><rect x="30" y="24" width="14" height="10" rx="2" fill="#f4f0e2" transform="rotate(8 36 29)"/>',
+  nasilemak: '<path d="M6 18Q32 6 58 18L52 54H12Z" fill="#4a9a4a"/><path d="M10 24Q32 14 54 24" stroke="#6bbf62" stroke-width="2" fill="none"/><ellipse cx="30" cy="40" rx="14" ry="9" fill="#fff7e6"/><ellipse cx="46" cy="36" rx="7" ry="5" fill="#fff"/><circle cx="46" cy="36" r="2.6" fill="#f4b73a"/><path d="M12 40q6-6 12 0q4 4 8 0" stroke="#d6453d" stroke-width="5" fill="none" stroke-linecap="round"/><g fill="#8a5a2a"><circle cx="20" cy="46" r="1.6"/><circle cx="26" cy="48" r="1.6"/><circle cx="36" cy="48" r="1.6"/></g>',
+  bakkutteh: '<ellipse cx="32" cy="34" rx="26" ry="9" fill="#e8e4d8"/><path d="M6 34q26 26 52 0z" fill="#6b4a2f"/><ellipse cx="32" cy="34" rx="23" ry="7" fill="#7a5636"/><g fill="#f0e2c4" stroke="#d9c18a" stroke-width="1.2"><rect x="18" y="31" width="14" height="6" rx="3" transform="rotate(-14 25 34)"/><rect x="32" y="30" width="14" height="6" rx="3" transform="rotate(10 39 33)"/></g><g stroke="#9ab870" stroke-width="2.4" stroke-linecap="round"><path d="M14 30l4 3M48 36l-4-2"/></g>',
+  rotiCanai: '<ellipse cx="28" cy="40" rx="24" ry="12" fill="#e0b270"/><ellipse cx="28" cy="38" rx="20" ry="9" fill="#efc78a"/><path d="M12 36q8-6 16 0t16 0" stroke="#c99650" stroke-width="2" fill="none"/><path d="M14 42q8-5 16 0t14 0" stroke="#c99650" stroke-width="2" fill="none"/><rect x="42" y="14" width="18" height="16" rx="4" fill="#fff"/><path d="M44 20h14v8a4 4 0 0 1-4 4h-6a4 4 0 0 1-4-4z" fill="#e8742a"/>',
+  sate: '<g stroke="#9a6a3a" stroke-width="2.4" stroke-linecap="round"><path d="M4 22L58 10M4 34L58 28M4 46L58 46"/></g><g fill="#a8582a"><rect x="14" y="14" width="10" height="10" rx="3" transform="rotate(-12 19 19)"/><rect x="28" y="12" width="10" height="10" rx="3" transform="rotate(-12 33 17)"/><rect x="42" y="9" width="10" height="10" rx="3" transform="rotate(-12 47 14)"/><rect x="14" y="29" width="10" height="10" rx="3" transform="rotate(-4 19 34)"/><rect x="28" y="28" width="10" height="10" rx="3" transform="rotate(-4 33 33)"/><rect x="42" y="27" width="10" height="10" rx="3" transform="rotate(-4 47 32)"/><rect x="14" y="41" width="10" height="10" rx="3"/><rect x="28" y="41" width="10" height="10" rx="3"/><rect x="42" y="41" width="10" height="10" rx="3"/></g>',
+  babiguling: '<path d="M6 40Q8 22 28 20Q50 18 58 34L58 42Q50 50 30 50Q10 50 6 40Z" fill="#c9722a"/><path d="M10 38Q14 26 28 24Q44 22 54 34" stroke="#f2a24a" stroke-width="3" fill="none"/><circle cx="50" cy="34" r="3" fill="#3a2a1c"/><ellipse cx="57" cy="40" rx="5" ry="4" fill="#e89a6a"/><path d="M40 22q4-8 10-4q-2 6-10 4z" fill="#b5601f"/><g fill="#fff6e8" opacity=".7"><circle cx="20" cy="36" r="1.6"/><circle cx="28" cy="40" r="1.6"/><circle cx="36" cy="32" r="1.6"/></g>',
+  seafood: '<ellipse cx="32" cy="42" rx="27" ry="10" fill="#e8e4d8"/><path d="M12 38q4-14 18-12 8 2 10 10-6 4-14 4-8 0-14-2z" fill="#d6342c"/><path d="M12 38l-6-6 8 0z" fill="#d6342c"/><path d="M16 32q12-6 24 4" stroke="#f28b82" stroke-width="3" fill="none" stroke-linecap="round"/><ellipse cx="46" cy="38" rx="10" ry="5" fill="#f0c4a0"/><path d="M38 38h16" stroke="#e29a6a" stroke-width="1.6"/><circle cx="50" cy="28" r="6" fill="#9bcf4a"/><path d="M50 22v12M44 28h12" stroke="#6bae2e" stroke-width="1.2"/>',
+});
 export function food(key) {
   return `<svg class="food-art" viewBox="0 0 64 64" width="64" height="64" aria-hidden="true">${F[key]}</svg>`;
 }
