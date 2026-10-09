@@ -1,0 +1,175 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 780" width="1200" height="780" role="img" aria-labelledby="t d">
+  <title id="t">Mass Spectrometry</title>
+  <desc id="d">Minimal flat illustration of a mass spectrometer: a sample vial feeds an ion source, a quadrupole filters ions by mass, a detector converts them to a signal, and the result is drawn as a mass spectrum.</desc>
+
+  <!--
+    Palette
+    paper  #F4EDE1   cream background        ink    #22304A  navy
+    card   #FFFCF6   instrument body         teal   #2A9D8F  structure
+    mist   #E8F2EE   vacuum chambers         coral  #EE6C4D  target ion
+    sand   #E3D8C5   flat shadow             amber  #F4B63F  light ion
+                                             violet #8F7BD6  heavy ion
+  -->
+  <style>
+    text { font-family: 'Inter', 'Helvetica Neue', 'PingFang SC', 'Noto Sans SC', Arial, sans-serif; }
+    .cap  { font-size: 14px; font-weight: 600; letter-spacing: 3px; fill: #22304A; fill-opacity: .6; }
+    .tick { font-size: 12px; fill: #F4EDE1; fill-opacity: .5; }
+  </style>
+
+  <!-- background -->
+  <rect width="1200" height="780" fill="#F4EDE1"/>
+  <circle cx="123" cy="122" r="64" fill="#D6EBE4"/>
+  <circle cx="1052" cy="96" r="70" fill="#F9DDCB" fill-opacity=".7"/>
+
+  <!-- title -->
+  <text x="1140" y="108" text-anchor="end" font-size="38" font-weight="700" letter-spacing="-.5" fill="#22304A">Mass Spectrometry</text>
+  <text x="1140" y="138" text-anchor="end" font-size="16" letter-spacing="1.5" fill="#22304A" fill-opacity=".6">from molecules to m/z</text>
+
+  <!-- ───────── instrument body ───────── -->
+  <rect x="60" y="180" width="1080" height="306" rx="36" fill="#E3D8C5"/>
+  <rect x="60" y="170" width="1080" height="306" rx="36" fill="#FFFCF6"/>
+  <circle cx="1068" cy="193" r="5" fill="#2A9D8F"/>
+  <circle cx="1088" cy="193" r="5" fill="#F4B63F"/>
+  <circle cx="1108" cy="193" r="5" fill="#EE6C4D"/>
+
+  <!-- vacuum chambers -->
+  <rect x="84"  y="216" width="288" height="208" rx="24" fill="#E8F2EE"/>
+  <rect x="404" y="216" width="368" height="208" rx="24" fill="#E8F2EE"/>
+  <rect x="804" y="216" width="312" height="208" rx="24" fill="#E8F2EE"/>
+
+  <!-- ───────── 01 · ionize ───────── -->
+  <!-- sample line + capillary needle -->
+  <path d="M123 160V302Q123 320 141 320H208" fill="none" stroke="#22304A" stroke-width="6" stroke-linecap="round"/>
+  <path d="M208 315.5L250 319.2V320.8L208 324.5Z" fill="#22304A" stroke="#22304A" stroke-width="1" stroke-linejoin="round"/>
+
+  <!-- spray plume -->
+  <path d="M252 320L322 256V384Z" fill="#F8DCCD"/>
+  <circle cx="268" cy="316" r="5.2" fill="#EE6C4D"/>
+  <circle cx="276" cy="332" r="4.6" fill="#F4B63F"/>
+  <circle cx="286" cy="304" r="4.4" fill="#8F7BD6"/>
+  <circle cx="293" cy="326" r="4"   fill="#EE6C4D"/>
+  <circle cx="299" cy="294" r="3.4" fill="#F4B63F"/>
+  <circle cx="302" cy="342" r="3.6" fill="#8F7BD6"/>
+  <circle cx="307" cy="314" r="3"   fill="#EE6C4D"/>
+  <circle cx="313" cy="326" r="2.6" fill="#F4B63F"/>
+  <circle cx="315" cy="287" r="2.4" fill="#8F7BD6"/>
+  <circle cx="316" cy="354" r="2.4" fill="#EE6C4D"/>
+
+  <!-- skimmer cone -->
+  <g fill="#2A9D8F" stroke="#2A9D8F" stroke-width="6" stroke-linejoin="round">
+    <path d="M326 240L366 313H326Z"/>
+    <path d="M326 400L366 327H326Z"/>
+  </g>
+
+  <!-- ions leaving the source -->
+  <circle cx="388" cy="320" r="5" fill="#F4B63F"/>
+  <circle cx="408" cy="318" r="6" fill="#EE6C4D"/>
+  <circle cx="426" cy="322" r="5" fill="#8F7BD6"/>
+
+  <!-- ───────── 02 · separate (quadrupole) ───────── -->
+  <!-- trajectories: stable (coral) and unstable (amber, violet) -->
+  <path d="M436 320Q453.5 310 471 320Q488.5 337 506 320Q523.5 292 541 320Q558.5 368 576 320Q587 282 593.5 282" fill="none" stroke="#F4B63F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M436 320Q455 327 474 320Q493 309 512 320Q531 336 550 320Q569 296 588 320Q607 355 626 320Q645 269 664 320Q676 358 683 358" fill="none" stroke="#8F7BD6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M436 320q19 -20 38 0t38 0t38 0t38 0t38 0t38 0t38 0t38 0" fill="none" stroke="#EE6C4D" stroke-width="3.5" stroke-linecap="round"/>
+  <!-- ions that hit the rods -->
+  <circle cx="594" cy="282" r="9" fill="#F4B63F" fill-opacity=".45"/>
+  <circle cx="683" cy="358" r="9" fill="#8F7BD6" fill-opacity=".45"/>
+  <!-- ions in flight -->
+  <circle cx="493" cy="330" r="6.5" fill="#EE6C4D"/>
+  <circle cx="683" cy="310" r="6.5" fill="#EE6C4D"/>
+  <circle cx="541" cy="320" r="5"   fill="#F4B63F"/>
+  <circle cx="588" cy="320" r="5"   fill="#8F7BD6"/>
+
+  <!-- rods -->
+  <rect x="436" y="256" width="304" height="26" rx="13" fill="#2A9D8F"/>
+  <rect x="436" y="358" width="304" height="26" rx="13" fill="#2A9D8F"/>
+  <rect x="450" y="261" width="276" height="5" rx="2.5" fill="#fff" fill-opacity=".25"/>
+  <rect x="450" y="363" width="276" height="5" rx="2.5" fill="#fff" fill-opacity=".25"/>
+  <g fill="#FFFCF6">
+    <circle cx="458" cy="269" r="8"/>
+    <circle cx="458" cy="371" r="8"/>
+  </g>
+  <path d="M453.5 269H462.5M458 264.5V273.5M453.5 371H462.5M458 366.5V375.5" stroke="#2A9D8F" stroke-width="2.2" stroke-linecap="round"/>
+
+  <!-- ───────── 03 · detect ───────── -->
+  <!-- only the selected ions arrive -->
+  <circle cx="790" cy="320" r="6.5" fill="#EE6C4D"/>
+  <circle cx="814" cy="320" r="6"   fill="#EE6C4D"/>
+  <circle cx="838" cy="320" r="5.5" fill="#EE6C4D"/>
+  <circle cx="876" cy="320" r="6"   fill="#EE6C4D"/>
+
+  <!-- electron multiplier horn -->
+  <path d="M860 262C930 262 950 308 1010 310V330C950 332 930 378 860 378Z" fill="#FFFCF6" fill-opacity=".85"/>
+  <g fill="none" stroke="#22304A" stroke-width="12" stroke-linecap="round">
+    <path d="M860 262C930 262 950 308 1010 310"/>
+    <path d="M860 378C930 378 950 332 1010 330"/>
+  </g>
+  <!-- electron cascade -->
+  <g fill="#F4B63F">
+    <circle cx="916" cy="306" r="4.4"/>
+    <circle cx="916" cy="334" r="4.4"/>
+    <circle cx="944" cy="304" r="3.8"/>
+    <circle cx="944" cy="320" r="3.8"/>
+    <circle cx="944" cy="336" r="3.8"/>
+    <circle cx="970" cy="311" r="3.2"/>
+    <circle cx="970" cy="320" r="3.2"/>
+    <circle cx="970" cy="329" r="3.2"/>
+    <circle cx="994" cy="315" r="2.6"/>
+    <circle cx="994" cy="320" r="2.6"/>
+    <circle cx="994" cy="325" r="2.6"/>
+  </g>
+  <!-- anode -->
+  <rect x="1030" y="298" width="20" height="44" rx="7" fill="#F4B63F"/>
+
+  <!-- stage captions -->
+  <text x="228" y="455" text-anchor="middle" class="cap">01 · IONIZE</text>
+  <text x="588" y="455" text-anchor="middle" class="cap">02 · SEPARATE</text>
+  <text x="960" y="455" text-anchor="middle" class="cap">03 · DETECT</text>
+
+  <!-- vial (sits on top of the instrument) -->
+  <rect x="102" y="82" width="42" height="20" rx="6" fill="#2A9D8F"/>
+  <path d="M101.5 128H144.5V160A8 8 0 0 1 136.5 168H109.5A8 8 0 0 1 101.5 160Z" fill="#EE6C4D"/>
+  <path d="M104 102H142A6 6 0 0 1 148 108V160A10 10 0 0 1 138 170H108A10 10 0 0 1 98 160V108A6 6 0 0 1 104 102Z" fill="#fff" fill-opacity=".35" stroke="#22304A" stroke-width="3"/>
+  <rect x="108" y="114" width="4" height="36" rx="2" fill="#fff" fill-opacity=".7"/>
+
+  <!-- signal wire to the screen -->
+  <path d="M1050 320H1108Q1128 320 1128 340V518" fill="none" stroke="#22304A" stroke-width="3" stroke-linecap="round" stroke-dasharray="0.1 9"/>
+
+  <!-- ───────── spectrum screen ───────── -->
+  <rect x="60" y="526" width="1080" height="232" rx="28" fill="#D9CDB8"/>
+  <rect x="60" y="516" width="1080" height="232" rx="28" fill="#22304A"/>
+  <circle cx="1128" cy="518" r="6" fill="#F4B63F"/>
+  <text x="92" y="552" font-size="13" font-weight="600" letter-spacing="3" fill="#F4EDE1" fill-opacity=".55">MASS SPECTRUM</text>
+
+  <!-- grid + axis -->
+  <g stroke="#F4EDE1" stroke-opacity=".08" stroke-width="1.5" stroke-dasharray="4 6">
+    <path d="M92 570H1108M92 602.5H1108M92 635H1108M92 667.5H1108"/>
+  </g>
+  <path d="M92 700H1108" stroke="#F4EDE1" stroke-opacity=".45" stroke-width="2" stroke-linecap="round"/>
+  <path d="M140 700v8M240 700v8M340 700v8M440 700v8M540 700v8M640 700v8M740 700v8M840 700v8M940 700v8M1040 700v8" stroke="#F4EDE1" stroke-opacity=".45" stroke-width="2" stroke-linecap="round"/>
+  <g class="tick" text-anchor="middle">
+    <text x="140" y="728">100</text><text x="240" y="728">200</text><text x="340" y="728">300</text>
+    <text x="440" y="728">400</text><text x="540" y="728">500</text><text x="640" y="728">600</text>
+    <text x="740" y="728">700</text><text x="840" y="728">800</text><text x="940" y="728">900</text>
+    <text x="1040" y="728">1000</text>
+  </g>
+  <text x="1108" y="728" text-anchor="end" font-size="12" font-weight="600" fill="#F4EDE1" fill-opacity=".8">m/z</text>
+
+  <!-- peaks: grey = background ions, colour = the ions from the instrument above -->
+  <g stroke-width="7" stroke-linecap="round" stroke="#5D6B88">
+    <path d="M120 696V679M168 696V666M214 696V686M262 696V653M388 696V671M436 696V682M478 696V661M526 696V674"/>
+    <path d="M630 696V664M676 696V677M718 696V648M860 696V669M906 696V684M952 696V661M996 696V680M1044 696V674M1080 696V688"/>
+  </g>
+  <!-- light ion -->
+  <path d="M330 696V635" stroke="#F4B63F" stroke-width="7" stroke-linecap="round"/>
+  <path d="M345 696V680" stroke="#F4B63F" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="330" cy="619" r="5.5" fill="#F4B63F"/>
+  <!-- target ion (base peak) -->
+  <path d="M560 696V570" stroke="#EE6C4D" stroke-width="7" stroke-linecap="round"/>
+  <path d="M575 696V656M587 696V685" stroke="#EE6C4D" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="560" cy="554" r="5.5" fill="#EE6C4D"/>
+  <!-- heavy ion -->
+  <path d="M800 696V619" stroke="#8F7BD6" stroke-width="7" stroke-linecap="round"/>
+  <path d="M813 696V674" stroke="#8F7BD6" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="800" cy="603" r="5.5" fill="#8F7BD6"/>
+</svg>
