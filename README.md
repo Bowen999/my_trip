@@ -31,4 +31,4 @@ node src/sea/build.mjs   # 输出 singapore-malaysia-bali.html
 
 ## 照片
 
-`images/sea/` 里的照片全部来自 [Wikimedia Commons](https://commons.wikimedia.org/),只选公有领域、CC0、CC BY 和 CC BY-SA 授权的图片。每张照片的作者、授权和来源链接写在 `src/sea/photos.mjs`,也显示在页面底部的「图片来源」和各卡片的封面说明里。更换照片时请同步改 `photos.mjs`。
+`images/sea/` 里的照片大部分来自 [Wikimedia Commons](https://commons.wikimedia.org/)(CC BY / CC BY-SA 授权,按要求署名);Epsom、KTJ 的校园图取自学校官网,Tirtha 的两张取自 NOW! Bali 的文章。这些是自用旅行指南用的图片,不要用于商业用途。每张照片的作者、来源链接写在 `src/sea/photos.mjs`,也显示在页面底部的「图片来源」和各卡片的封面说明里。更换照片时请同步改 `photos.mjs`。

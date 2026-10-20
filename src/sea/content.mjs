@@ -31,7 +31,7 @@ export const PENDING = [
 ];
 
 export const STATUS = [
-  { k: 'warn', t: '三所学校还没有预约', d: '这是第一优先级,现在就该发邮件,并写明<b>三所都要排在 1 月 27 日(周三)</b>,请每所给出具体时段。Epsom 官网招生邮箱 admissions@epsomcollege.edu.my(WhatsApp +60 16 2267 831);Adcote Matrix 的联系方式见「探校」一章;KTJ 的联系方式我没能核实,请上官网查。' },
+  { k: 'warn', t: '三所学校还没有预约', d: '这是第一优先级,现在就该发邮件,并写明<b>三所都要排在 1 月 27 日(周三)</b>,请每所给出具体时段。Epsom 官网招生邮箱 admissions@epsomcollege.edu.my(WhatsApp +60 16 2267 831);Adcote Matrix 的联系方式见「探校」一章;KTJ 官网有「Visit KTJ」页可预约个人参观,联系表单选 Registrar(registrar@ktj.edu.my),主办公室电话 +60 6 850 5555。' },
   { k: 'warn', t: '马来西亚免签:2027 年是否延续,未确认', d: 'The Star 引内政部长的话:中国公民免签 <b>90 天</b>,现行说到 2026 年 12 月 31 日止,另说双方同意「再延 5 年」。我没找到移民局关于 2027 年的原文。你们 1 月出发,<b>出发前 4–6 周</b>必须核实;如果没有延长,要提前办签证。' },
   { k: 'warn', t: '周一双子塔闭馆', d: '01-25(周一)到吉隆坡当天不能上塔(含空中桥和观景台),所以上塔放在 01-26(周二)上午,<b>提前网上订时段</b>。另有一个来源写周一仅每月第 2、4 个周一开放,是单一来源,不要指望。' },
   { k: 'warn', t: '周六考察婚礼场地:可能有真实婚礼', d: '01-30 是周六,Alila 和 Tirtha 周六大概率有真实婚礼,可能不接受考察,或日落时段被占。邮件里同时问 01-30 和 01-31(周日),把 01-31 当备选日。' },
@@ -198,7 +198,7 @@ export const DAYS = [
     fun: '双子塔 1998–2004 年是世界最高建筑,41 层的空中桥连着两座塔,也用于紧急疏散。',
   },
   {
-    n: 4, d: '1/27 周三', scene: 'epsom', photo: 'epsom', plane: false, area: '吉隆坡 ⇄ 森美兰', title: '探校日:三所学校', sub: 'Epsom · Adcote Matrix · KTJ', move: '包车一整天,路上约 4 小时', pace: 4, tags: ['探校', '周三', '最满的一天'],
+    n: 4, d: '1/27 周三', scene: 'epsom', photo: 'epsom', gallery: ['adcote', 'ktj', 'seremban'], plane: false, area: '吉隆坡 ⇄ 森美兰', title: '探校日:三所学校', sub: 'Epsom · Adcote Matrix · KTJ', move: '包车一整天,路上约 4 小时', pace: 4, tags: ['探校', '周三', '最满的一天'],
     steps: [
       ['07:30', '早餐。带孩子近两年的成绩单(英文版)、护照复印件、打印的问题清单。'],
       ['07:45', '一辆 10 座小巴出发,往南约 40 分钟到 Enstek(Epsom 官网:离吉隆坡市区约 40 分钟)。'],
@@ -258,7 +258,7 @@ export const DAYS = [
     fun: '云雾林里有一道约 35 米高的室内瀑布,从「云雾山」顶上落下来。',
   },
   {
-    n: 7, d: '1/30 周六', scene: 'tirtha', photo: 'tirtha', gallery: ['alila', 'jimbaran'], plane: false, area: '乌鲁瓦图', title: '婚礼酒店考察日', sub: 'Alila Villas Uluwatu · Tirtha Uluwatu · Jimbaran', move: '包车 15–30 分钟(估)', pace: 3, tags: ['婚礼考察', '周六', '看日落'],
+    n: 7, d: '1/30 周六', scene: 'tirtha', photo: 'tirtha', gallery: ['alila', 'tirtha2', 'jimbaran'], plane: false, area: '乌鲁瓦图', title: '婚礼酒店考察日', sub: 'Alila Villas Uluwatu · Tirtha Uluwatu · Jimbaran', move: '包车 15–30 分钟(估)', pace: 3, tags: ['婚礼考察', '周六', '看日落'],
     steps: [
       ['08:00', 'villa 早餐。昨晚睡得晚,不早起。'],
       ['10:00', '<b>Alila Villas Uluwatu</b>:看仪式场地(悬崖边的 Cliff Edge Cabana、悬崖草坪)、宴会场地、客房,和婚礼团队见面,约 1.5 小时。'],
@@ -399,10 +399,10 @@ export const SCHOOLS = [
     cap: '示意图:低矮红瓦校舍与大操场(并非校园实景)。',
     blurb: '森美兰王室参与创办的国际寄宿学校,英式课程,历史最久。排在最后一站:Mantin 在回吉隆坡的路上,顺路。',
     facts: [
-      ['位置', '71700 Mantin, Negeri Sembilan。校园约 80 英亩(一个来源),离 LEKAS 高速很近'],
+      ['位置', '71700 Mantin, Negeri Sembilan。校园约 80 英亩(学校官网),离 LEKAS 高速很近'],
       ['体系', '英式课程:以英国国家课程为基础,加剑桥 IGCSE 和 A-Level;11 岁起可寄宿(第三方资料)'],
-      ['规模', '约 1000 名学生,来自 24 个以上国家(第三方资料)'],
-      ['预约', '官网 ktj.edu.my 查招生办邮箱,<b>我没能核实</b>。第三方目录页列出校长邮箱 principal@ktj.edu.my,只作联系线索;创办年份各来源写 1989 或 1991,不影响参观'],
+      ['规模', '约 1000 名学生,来自 24 个以上国家(第三方资料);创办年份各来源写 1989 或 1991,不影响参观'],
+      ['预约', '官网 ktj.edu.my 的「Visit KTJ」页写明可单独预约参观:由学生领袖带队走完 80 英亩校园(学术和体育设施、寄宿楼),并与相关老师个别咨询。联系表单选 Registrar(registrar@ktj.edu.my),主办公室电话 +60 6 850 5555(官网)。官网列出的开放日是 2026-11-21、11-27、11-28,都早于你们的行程'],
       ['费用', '各来源数字相差很大(约 RM 2.1 万–12.5 万/年),<b>请直接问学校</b>'],
     ],
     note: '三所里它离市区最远。一天三所排不下时,先舍掉它。',

@@ -41,7 +41,7 @@ const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replac
 const usedPhotos = new Set();
 const ph = (k) => (k && PHOTOS[k] && fs.existsSync(path.join(root, '..', 'images', 'sea', PHOTOS[k].file)) ? PHOTOS[k] : null);
 const phSrc = (p) => `images/sea/${p.file}`;
-const phCredit = (p) => `照片:${esc(p.alt)} · ${esc(p.author)} · <a href="${esc(p.sourceUrl)}" target="_blank" rel="noopener noreferrer">${esc(p.license)}</a>(Wikimedia Commons)`;
+const phCredit = (p) => `照片:${esc(p.alt)} · ${esc(p.author)} · <a href="${esc(p.sourceUrl)}" target="_blank" rel="noopener noreferrer">${esc(p.license)}</a>(${esc(p.from || 'Wikimedia Commons')})`;
 function phBanner(k) {
   const p = ph(k);
   if (!p) return '';
@@ -374,7 +374,7 @@ const foot = () => `<footer>
     <h3>来源与说明</h3>
     <p>入境政策、航班时刻、价格、人数和开放时间变化很快。本页内容按 ${C.META.cn}能查到的公开信息整理,<b>出发前请再看一次官方页面</b>。带「第三方」「来源为博客」字样的信息未经官方核实。</p>
     <div class="src">${C.SOURCES.map(([n, u]) => `<a href="${u}" target="_blank" rel="noopener noreferrer">${n}</a>`).join('')}</div>
-    <p>手绘插画为原创绘制(程序生成);学校和酒店的插画只是示意,不代表实际样貌。真实照片来自 Wikimedia Commons,按各自的授权署名,照片文件在 images/sea 文件夹。地图为示意图,非严格比例。</p>
+    <p>手绘插画为原创绘制(程序生成);学校和酒店的插画只是示意,不代表实际样貌。真实照片大部分来自 Wikimedia Commons(按各自的授权署名);Epsom、KTJ 的校园图取自学校官网,Tirtha 的两张取自 NOW! Bali 的文章,仅供自用。照片文件在 images/sea 文件夹。地图为示意图,非严格比例。</p>
     ${usedPhotos.size ? `<h3 style="margin-top:18px">图片来源</h3><ul class="ph-credits">${[...usedPhotos].map((k) => { const p = PHOTOS[k]; return `<li>${esc(p.alt)}:${esc(p.author)} · <a href="${esc(p.sourceUrl)}" target="_blank" rel="noopener noreferrer">${esc(p.title)}</a> · <a href="${esc(p.licenseUrl)}" target="_blank" rel="noopener noreferrer">${esc(p.license)}</a></li>`; }).join('')}</ul>` : ''}
   </div>
 </footer>`;
