@@ -1,4 +1,4 @@
-// Build the Singapore · KL · Bali guide:  node src/sea/build.mjs  →  singapore-malaysia-bali.html
+// Build the Singapore · KL · Bali guide:  node src/sea/build.mjs  →  index.html
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -550,6 +550,6 @@ ${bodyFoot}
 </body>
 </html>`;
 
-const out = path.join(root, '..', 'singapore-malaysia-bali.html');
+const out = path.join(root, '..', 'index.html');
 fs.writeFileSync(out, linkify(fwHtml(html)));
 console.log('wrote', out, (fs.statSync(out).size / 1024).toFixed(0) + ' KB');

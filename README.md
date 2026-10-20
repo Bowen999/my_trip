@@ -4,8 +4,8 @@
 
 | 文件 | 内容 |
 | --- | --- |
-| `index.html` | 海与山之间 · 温哥华 × 阿尔伯塔 7 日游 |
-| `singapore-malaysia-bali.html` | 南行九日 · 吉隆坡 / 新加坡 / 巴厘岛 9 日行程(1/24–2/1,含森美兰三所学校探校、巴厘岛婚礼酒店考察,按小时排的日程) |
+| `index.html` | 南行九日 · 吉隆坡 / 新加坡 / 巴厘岛 9 日行程(1/24–2/1,含森美兰三所学校探校、巴厘岛婚礼酒店考察,按小时排的日程) |
+| `vancouver-alberta.html` | 海与山之间 · 温哥华 × 阿尔伯塔 7 日游 |
 
 内容截至 2026-10-19(南行九日页面),价格与班期为参考,出发前请以官方信息为准。南行九日页面不含机票和酒店价格。
 
@@ -21,8 +21,8 @@
 页面由脚本生成(Node 18+):
 
 ```sh
-node src/build.mjs       # 输出 index.html
-node src/sea/build.mjs   # 输出 singapore-malaysia-bali.html
+node src/build.mjs       # 输出 vancouver-alberta.html
+node src/sea/build.mjs   # 输出 index.html
 ```
 
 - `src/content.mjs`、`src/sea/content.mjs`:各页面的文字内容;`src/sea/photos.mjs`:南行九日页面的照片清单(作者、授权、来源)

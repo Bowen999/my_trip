@@ -1,4 +1,4 @@
-// Assemble the single-file guide:  node src/build.mjs  →  index.html
+// Assemble the single-file guide:  node src/build.mjs  →  vancouver-alberta.html
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -381,6 +381,6 @@ ${foot}
 </body>
 </html>`;
 
-const out = path.join(here, '..', 'index.html');
+const out = path.join(here, '..', 'vancouver-alberta.html');
 fs.writeFileSync(out, fwHtml(html));
 console.log('wrote', out, (fs.statSync(out).size / 1024).toFixed(0) + ' KB');
