@@ -30,9 +30,10 @@
     const LABEL_RIGHT = { can: 1, sin: 1, dps: 1, kul: 0, ns: 0 };
     function follow(x, y) {
       if (!mb || userPan || mb.scrollWidth <= mb.clientWidth) return;
-      let best = 'can', d = Infinity;
-      Object.entries(pins).forEach(([k, p]) => { const dd = (p.x - x) ** 2 + (p.y - y) ** 2; if (dd < d) { d = dd; best = k; } });
-      const k = mb.scrollWidth / 900, bias = LABEL_RIGHT[best] ? 0.25 : 0.75;
+      // the bias is a distance-weighted blend over all pins, so it changes smoothly while the vehicle moves (no jump between cities)
+      let ws = 0, bs = 0;
+      Object.entries(pins).forEach(([k, p]) => { const w = 1 / ((p.x - x) ** 2 + (p.y - y) ** 2 + 900); ws += w; bs += w * (LABEL_RIGHT[k] ? 0.25 : 0.75); });
+      const k = mb.scrollWidth / 900, bias = bs / ws;
       mb.scrollLeft = Math.max(0, Math.min(mb.scrollWidth - mb.clientWidth, x * k - mb.clientWidth * bias));
     }
     function show(kind) { plane.style.display = kind === 'plane' ? '' : 'none'; car.style.display = kind === 'car' ? '' : 'none'; }
@@ -68,19 +69,19 @@
       if (n === 4) {
         // D4: out to the schools in Negeri Sembilan and back
         const a = pins.kul, b = pins.ns;
+        if (animate) follow(a.x, a.y); // centre the map on Kuala Lumpur first: the van drives a short loop and the map stays still
         tween(animate ? 2600 : 0, (e) => {
           const k = e < 0.5 ? e * 2 : (1 - e) * 2;
           placeCar(a.x + (b.x - a.x) * k, a.y + (b.y - a.y) * k, e < 0.5 ? (b.x >= a.x ? 1 : -1) : (b.x >= a.x ? -1 : 1), false);
         }, () => parkCar('kul'), tk);
       } else if (leg) {
         // flight: the plane flies the leg, then a car waits at the arrival city
-        // (reduced motion: the plane stays still half-way along the leg and no car is parked)
-        tween(animate ? 1800 : 0, (e) => along(leg, e), () => { if (!reduce || !animate) parkCar(city); }, tk, 0.5);
+        tween(animate ? 1800 : 0, (e) => along(leg, e), () => parkCar(city), tk); // (reduced motion: straight to the end state)
       } else if (n === 9) {
         // return day (not planned on this page): the plane waits in Bali, nose towards Guangzhou
         const d = pins.dps, g = pins.can;
         placePlane(d.x, d.y - 4, (Math.atan2(g.y - d.y, g.x - d.x) * 180) / Math.PI);
-      } else if (animate) cruise(city, tk);
+      } else if (animate) { follow(pins[city].x, pins[city].y); cruise(city, tk); }
       else parkCar(city);
     }
     function setDay(n, animate = true) {

@@ -31,8 +31,8 @@ export const PENDING = [
 ];
 
 export const STATUS = [
-  { k: 'warn', t: '三所学校还没有预约', d: '这是第一优先级,现在就该发邮件,并写明<b>三所都要排在 1 月 27 日(周三)</b>,请每所给出具体时段。Epsom 官网招生邮箱 admissions@epsomcollege.edu.my(WhatsApp +60 16 2267 831);Adcote Matrix 的联系方式见「探校」一章;KTJ 官网有「Visit KTJ」页可预约个人参观,联系表单选 Registrar(registrar@ktj.edu.my),主办公室电话 +60 6 850 5555。' },
-  { k: 'warn', t: '马来西亚免签:停留期限和 2027 年是否延续,未确认', d: '各来源对停留期限说法不一:The Star 引内政部长说 <b>90 天</b>;新华社 2025-07 的报道写「每次最多 30 天、180 天内累计 90 天」。有效期方面,现行说到 2026 年 12 月 31 日止,另说双方同意「再延 5 年」,我没找到移民局关于 2027 年的原文。你们这趟在马来西亚只有约 4 晚,按哪个说法停留期限都够,但<b>出发前 4–6 周</b>必须核实有效期;如果没有延长,要提前办签证。' },
+  { k: 'warn', t: '三所学校还没有预约', d: '这是第一优先级,现在就该发邮件,并写明<b>三所都要排在 1 月 27 日(周三)</b>,请每所给出具体时段。Epsom 官网招生邮箱 admissions@epsomcollege.edu.my（WhatsApp +60 16 2267 831）；Adcote Matrix 的联系方式见「探校」一章;KTJ 官网有「Visit KTJ」页可预约个人参观,联系表单选 Registrar(registrar@ktj.edu.my),主办公室电话 +60 6 850 5555。' },
+  { k: 'warn', t: '马来西亚免签:停留期限和 2027 年是否延续,未确认', d: '各来源对停留期限说法不一:The Star 引内政部长说 <b>90 天</b>;新华社 2025-07 的报道写「每次最多 30 天、180 天内累计 90 天」。有效期方面,现行说到 2026 年 12 月 31 日止,另说双方同意「再延 5 年」,我没找到移民局关于 2027 年的原文。你们这趟在马来西亚只有约 4 天、3 晚,按哪个说法停留期限都够,但<b>出发前 4–6 周</b>必须核实有效期;如果没有延长,要提前办签证。' },
   { k: 'warn', t: '周一双子塔闭馆', d: '01-25(周一)到吉隆坡当天不能上塔(含空中桥和观景台),所以上塔放在 01-26(周二)上午,<b>提前网上订时段</b>。另有一个来源写周一仅每月第 2、4 个周一开放,是单一来源,不要指望。' },
   { k: 'warn', t: '周六考察婚礼场地:可能有真实婚礼', d: '01-30 是周六,Alila 和 Tirtha 周六大概率有真实婚礼,可能不接受考察,或日落时段被占。邮件里同时问 01-30 和 01-31(周日),把 01-31 当备选日。' },
   { k: 'warn', t: '01-29 夜里的 spa 要提前确认', d: 'Alila Spa 官网写「最后预约 20:30」,你们约 21:30 才到 villa。请提前让 villa 管家确认能否约 22:00 的上门服务;不行就挪到 01-31。' },
@@ -117,7 +117,7 @@ export const FOODS = [
   { i: 'chickenrice', n: '海南鸡饭', w: 'SG', d: '白切鸡配鸡油饭,三种酱。新加坡的 Maxwell Food Centre 最出名。' },
   { i: 'laksa', n: '叻沙', w: 'SG', d: '椰浆咖喱汤配米粉和虾,偏辣。小碗尝一下就好。' },
   { i: 'chillicrab', n: '辣椒螃蟹', w: 'SG', d: '新加坡国菜。按重量计价,<b>点之前先问价</b>,配馒头蘸汁。' },
-  { i: 'kayatoast', n: '咖椰吐司', w: 'SG', d: '烤吐司夹咖椰酱和黄油,配半熟蛋和咖啡。早餐首选,老人也好入口。' },
+  { i: 'kayatoast', n: '咖椰吐司', w: 'SG', d: '烤吐司夹咖椰酱和黄油,配半熟蛋和咖啡。早餐首选,长辈也好入口。' },
   { i: 'nasilemak', n: '椰浆饭 Nasi Lemak', w: 'MY', d: '椰浆煮的饭,配辣椒酱、江鱼仔、花生和蛋。马来西亚的国民早餐。' },
   { i: 'bakkutteh', n: '肉骨茶', w: 'MY', d: '猪骨熬的药材汤。吉隆坡偏药材与酱油味,新加坡偏胡椒味。' },
   { i: 'rotiCanai', n: '印度煎饼 Roti Canai', w: 'MY', d: '酥软的印度煎饼,蘸咖喱。早餐、宵夜都有。' },
@@ -198,7 +198,7 @@ export const DAYS = [
     fun: '双子塔 1998–2004 年是世界最高建筑,41 层的空中桥连着两座塔,也用于紧急疏散。',
   },
   {
-    n: 4, d: '1/27 周三', scene: 'epsom', photo: 'epsom', gallery: ['adcote', 'ktj', 'seremban'], plane: false, area: '吉隆坡 ⇄ 森美兰', title: '探校日:三所学校', sub: 'Epsom · Adcote Matrix · KTJ', move: '包车一整天,路上约 4 小时', pace: 4, tags: ['周三探校', '最满的一天'],
+    n: 4, d: '1/27 周三', scene: 'epsom', photo: 'epsom', gallery: ['adcote', 'ktj', 'seremban'], plane: false, area: '吉隆坡 ⇄ 森美兰', title: '探校日:三所学校', sub: 'Epsom · Adcote Matrix · KTJ', move: '包车一整天,路上约 3–4 小时', pace: 4, tags: ['周三探校', '最满的一天'],
     steps: [
       ['07:30', '早餐。带孩子近两年的成绩单(英文版)、护照复印件、打印的问题清单。'],
       ['07:45', '一辆 10 座小巴出发,往南约 40 分钟到 Enstek(Epsom 官网:离吉隆坡市区约 40 分钟)。'],
@@ -357,8 +357,8 @@ export const SIGHTS = [
     tip: '台阶和山路不少,长辈可只看表演不逛寺。猴子别逗,眼镜帽子收好。返程时间紧就砍掉。',
     fun: 'Kecak 没有乐器,全靠人声「cak-cak-cak」的合唱来伴奏。' },
   { id: 'jimbaran', n: 9, c: 'ID', r: 'worth', name: 'Jimbaran 海滩晚餐', en: 'Jimbaran Seafood', scene: 'jimbaran', photo: 'jimbaran', cap: '沙滩上的桌子和炭火。',
-    blurb: '日落时在沙滩上吃炭烤海鲜,是巴厘岛的经典一晚。适合 7 人团,点套餐比单点省心。你们 1/30 晚上看完 Tirtha 后去。',
-    pts: ['在沙滩上的桌子吃,看日落', '鱼、虾、花蛤按重量称,炭火烤', '多数店有英文和中文菜单'],
+    blurb: '日落后在沙滩上吃炭烤海鲜,灯光和炭火都在,是巴厘岛的经典一晚。适合 7 人团,点套餐比单点省心。你们 1/30 晚上看完 Tirtha 后去。',
+    pts: ['在沙滩上的桌子吃,夜里有灯光和炭火', '鱼、虾、花蛤按重量称,炭火烤', '多数店有英文和中文菜单'],
     facts: { time: '约 1.5 小时', when: '1/30 日落后 19:45 前后', cost: '按重量计价', how: '从 Tirtha 约 30 分钟(估)' },
     tip: '<b>点之前问清</b>每 100 克的价格和烹饪费,7 人可点套餐。晚饭前先预订。',
     fun: 'Jimbaran 是渔村,最早的海鲜摊就在沙滩上,现在变成了一整排。' },
@@ -376,7 +376,7 @@ export const SCHOOLS = [
       ['位置', 'Persiaran Kolej, Bandar Enstek, Negeri Sembilan。离 KLIA 约 15 分钟,离吉隆坡市区约 40 分钟(学校官网)'],
       ['体系', '英国国家课程:IGCSE 和 A-Level;从 3 岁到高中,走读与寄宿并存'],
       ['入学', '据报道需要入学测评和面试;你们这次只做「参观 + 咨询」,仍要问清测评的时间、形式和能否线上'],
-      ['预约', '官网 Admissions 页:邮箱 admissions@epsomcollege.edu.my,WhatsApp +60 16 2267 831;往年的政策写工作日 9:00–17:00(2023/24 政策,需确认)。第三方页面列出的 admissions@epsomschool.com 是旧地址,请以官网为准'],
+      ['预约', '官网 Admissions 页:邮箱 admissions@epsomcollege.edu.my，WhatsApp +60 16 2267 831；往年的政策写工作日 9:00–17:00(2023/24 政策,需确认)。第三方页面列出的 admissions@epsomschool.com 是旧地址,请以官网为准'],
       ['费用', '各来源数字不一致(从约 RM 5 万到 17 万/年不等),<b>请直接问学校</b>'],
     ],
     note: '官网列出 2026 年 10 月 31 日(周六)的 A-Level 开放日,你们的行程赶不上;1 月 27 日的私人参观要联系招生办另约。2026–27 学年第二学期 2027-01-05 开学,1/27 是正常上课日。',
@@ -530,7 +530,7 @@ export const PACK = [
 export const SOURCES = [
   ['新加坡外交部 · 中新互免 30 天签证', 'https://mfa.gov.sg/Overseas-Mission/Hong-Kong/Announcements/Mutual-30-Day-Visa-Exemption-Arrangement'],
   ['SG Arrival Card(官方入口)', 'https://eservices.ica.gov.sg/sgarrivalcard'],
-  ['The Star · 马中免签再延 5 年、停留 90 天', 'https://www.thestar.com.my/news/nation/2025/04/22/visa-exemptions-drew-nearly-a-million-chinese-tourists-so-far-this-year-says-saifuddin'],
+  ['The Star · 内政部长称免签再延 5 年、停留 90 天', 'https://www.thestar.com.my/news/nation/2025/04/22/visa-exemptions-drew-nearly-a-million-chinese-tourists-so-far-this-year-says-saifuddin'],
   ['EY · 马来西亚对中印免签延至 2026-12-31', 'https://www.ey.com/en_gl/technical/tax-alerts/malaysia-extends-visa-exemption-period-for-india-and-china-nationals'],
   ['SAYS · 马中互免签证再延五年的报道', 'https://says.com/my/news/malaysia-china-visa-free-travel-deal-will-be-extended-another-5-years'],
   ['MDAC(官方入口)', 'https://imigresen-online.imi.gov.my/mdac/main'],
@@ -544,6 +544,7 @@ export const SOURCES = [
   ['Epsom College Malaysia · 参观与开放日', 'https://www.epsomcollege.edu.my/admissions/visits-open-days/'],
   ['Epsom College Malaysia · 到校交通', 'https://www.epsomcollege.edu.my/admissions/how-to-find-us/'],
   ['Epsom College Malaysia · 2026–27 学期表', 'https://epsomcollege.edu.my/wp-content/uploads/2026/03/ECM-Term-Dates-2026-27.pdf'],
+  ['KTJ · 参观与联系(官网 Visit KTJ 页)', 'https://www.ktj.edu.my/admissions/visit-ktj'],
   ['Adcote Matrix · 招生 FAQ', 'https://matrixschools.edu.my/applying/faqs/'],
   ['The Vibes · Adcote Matrix 十周年', 'https://www.thevibes.com/articles/education/105367/adcote-matrix-marks-10th-anniversary-vows-to-continue-providing-exceptional-education'],
   ['Boarding Schools Association · KTJ', 'https://www.boarding.org.uk/schools/kolej-tuanku-jaafar-malaysia/'],

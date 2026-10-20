@@ -665,7 +665,7 @@ export function seaMap() {
   ];
   const land = '#e3dfd0';
   const lab = (k, dx, dy, anchor) => `<g class="mp-lab"><text x="${P[k][0] + dx}" y="${P[k][1] + dy}" text-anchor="${anchor}" class="mp-l">${names[k][0]}</text><text x="${P[k][0] + dx}" y="${P[k][1] + dy + 14}" text-anchor="${anchor}" class="mp-s">${names[k][1]}</text>${names[k].slice(2).map((t, n) => `<text x="${P[k][0] + dx}" y="${P[k][1] + dy + 28 + n * 14}" text-anchor="${anchor}" class="mp-d">${t}</text>`).join('')}</g>`;
-  const svg = `<svg class="art sea-map" viewBox="0 0 ${W} ${H}" role="img" aria-label="广州、吉隆坡与森美兰、新加坡、巴厘岛的 9 日路线示意图(非严格比例)">
+  const svg = `<svg class="art sea-map" viewBox="0 0 ${W} ${H}" role="group" aria-label="广州、吉隆坡与森美兰、新加坡、巴厘岛的 9 日路线示意图(非严格比例)">
   <defs><pattern id="sm-dots" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r="1" fill="currentColor" opacity=".1"/></pattern></defs>
   <rect class="mp-sea" width="${W}" height="${H}" rx="6"/><rect width="${W}" height="${H}" fill="url(#sm-dots)"/>
   <g class="mp-land">
@@ -680,7 +680,7 @@ export function seaMap() {
   <text x="220" y="190" class="mp-reg" text-anchor="middle" transform="rotate(62 220 190)">MALAYSIA</text>
   <text x="598" y="300" class="mp-reg" text-anchor="middle">BORNEO</text>
   <text x="496" y="520" class="mp-reg" text-anchor="middle">JAVA SEA</text>
-  <text x="70" y="410" class="mp-reg sea" text-anchor="middle" transform="rotate(-30 70 410)">INDIAN OCEAN</text>
+  <text x="120" y="492" class="mp-reg sea" text-anchor="middle" transform="rotate(-30 120 492)">INDIAN OCEAN</text>
   <text x="520" y="196" class="mp-reg sea" text-anchor="middle">SOUTH CHINA SEA</text>
   ${legs.map(([id, d]) => `<path id="${id}" class="mp-route fly" d="${d}"/>`).join('')}
   <path id="leg0" d="M730 -18Q700 52 ${P.can[0]} ${P.can[1]}" fill="none" stroke="none"/>

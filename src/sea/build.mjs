@@ -26,6 +26,7 @@ function fwText(t) {
   t = t.replace(/[,;:?!]/g, (c, i, str) => {
     if ((c === ',' || c === ':') && /\d/.test(str[i - 1] || '') && /\d/.test(str[i + 1] || '')) return c;
     if (c === '!' && /NOW$/.test(str.slice(Math.max(0, i - 3), i))) return c;
+    if (c === ',' && /[A-Za-z)]\s*$/.test(str.slice(Math.max(0, i - 3), i)) && /^\s*[A-Za-z(]/.test(str.slice(i + 1, i + 4))) return c; // "Kuala Lumpur, Sultan ..." (English)
     return near(str, i, 12, 13) ? FW[c] : c;
   });
   // stray single parentheses: same rule as before
@@ -42,8 +43,9 @@ const fwHtml = (h) => {
 };
 // phone numbers and e-mail addresses become tel: / mailto: links (iOS auto-detection is switched off on purpose)
 const linkify = (h) => h.split(/(<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<pre[\s\S]*?<\/pre>|<a [\s\S]*?<\/a>|<[^>]*>)/).map((p, i) => (i % 2 ? p : p
-  .replace(/[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g, (m) => `<a href="mailto:${m}">${m}</a>`)
-  .replace(/\+60 ?\d{1,2} ?\d{3,4} ?\d{3,4}/g, (m) => `<a href="tel:${m.replace(/\s/g, '')}">${m}</a>`))).join('');
+  .replace(/[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g, (m) => (m === 'admissions@epsomschool.com' ? m : `<a href="mailto:${m}">${m}</a>`)) // that address is the outdated one: no link
+  .replace(/\+60 ?\d{1,2} ?\d{3,4} ?\d{3,4}/g, (m) => { const n = m.replace(/\s/g, ''); return n === '+60162267831' ? `<a href="https://wa.me/60162267831" target="_blank" rel="noopener noreferrer">${m}</a>` : `<a href="tel:${n}">${m}</a>`; })
+  .replace(/(?<![\w@./-])(matrixschools\.edu\.my\/[\w/-]*|ktj\.edu\.my)(?![\w@-])/g, (m) => `<a href="https://${m}" target="_blank" rel="noopener noreferrer">${m}</a>`))).join('');
 const fwJs = (j) => j.replace(/'([^'\\\n]*[一-鿿][^'\\\n]*)'/g, (m, a) => `'${fwText(a)}'`);
 const js = fwJs(fs.readFileSync(path.join(root, 'app.js'), 'utf8')) + '\n' + fwJs(fs.readFileSync(path.join(here, 'app-sea.js'), 'utf8'));
 
@@ -76,7 +78,7 @@ function phBanner(k) {
   const p = ph(k);
   if (!p) return '';
   usedPhotos.add(k);
-  return `<span class="photo ${coverClass(k)}" role="img" aria-label="${esc(p.alt)}"></span>`;
+  return `<span class="photo ${coverClass(k)}" aria-hidden="true"></span>`;
 }
 function phGallery(keys = []) {
   const figs = keys.map((k) => {
@@ -112,7 +114,16 @@ button, summary, .dchip, .pill, .stab, .botnav a { touch-action: manipulation; -
 }
 footer .stamp { font-size: .72rem; opacity: .6; }
 details.ph-box[open] > summary small { display: none; }
-.ds .nb { display: inline-block; white-space: nowrap; }
+.ds .nb { display: inline-block; max-width: 100%; }   /* a chunk stays on one line when it fits, wraps inside itself only when wider than the column */
+.ov-t { min-width: 0; }
+.ov-t .en, .hero .sub { text-wrap: balance; }
+a[href^="tel:"] { white-space: nowrap; }
+.totop { box-shadow: 0 0 0 2px rgba(255, 255, 255, .55), 0 4px 12px rgba(0, 0, 0, .25); }   /* visible on the dark footer too */
+.tbtn { min-height: 44px; }
+.dm-name { width: 7.5em; min-width: 0; }
+.dmt { min-width: 600px; }
+@media (pointer: coarse) { .dmt select { height: 44px; } }
+.pl-r { min-width: 0; } .pl-r select { min-width: 0; max-width: 34vw; text-overflow: ellipsis; }
 .ov-t .tt { text-wrap: balance; }
 .mp-pin:hover circle:first-child, .mp-pin.on circle:first-child { r: 13px; }   /* the shared rule wrote "r: 13" (no unit), which browsers drop */
 .fs-row button, .fs-presets button { text-align: center; }
@@ -125,16 +136,25 @@ details.ph-box[open] > summary small { display: none; }
 .botnav { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
 .totop { right: max(14px, env(safe-area-inset-right)); }
 @media (min-width: 900px) { .totop { right: 10px; bottom: 24px; } }
-@media (orientation: landscape) and (max-height: 500px) { .botnav { display: none; } body { padding-bottom: 0; } .totop { bottom: 16px; } .player { bottom: 12px; } }
+/* landscape phones: a compact icon-only chapter bar (the top bar has no chapter links below 900px) */
+@media (orientation: landscape) and (max-height: 500px) {
+  .botnav a { padding: 4px 0 3px; } .botnav .ic { width: 18px; height: 18px; }
+  .botnav a span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  body { padding-bottom: calc(34px + env(safe-area-inset-bottom)); }
+  .totop { bottom: calc(46px + env(safe-area-inset-bottom)); } .player { bottom: calc(44px + env(safe-area-inset-bottom)); }
+}
 /* touch screens: hover effects would stay "stuck" after a tap */
 @media (hover: none) { .card .acc-h:hover .banner .photo { transform: none; } .dchip:hover { transform: none; } }
 /* phones */
 @media (max-width: 640px) {
   /* the cover grows with its text (large text sizes used to cut the title off and run it into the DAY pill) */
-  .card .acc-h { display: grid; }
-  .card .acc-h > .banner, .card .acc-h > .ov { grid-area: 1 / 1; }
+  .card .acc-h { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto 1fr; }
+  .card .acc-h > .banner { grid-area: 1 / 1 / 3 / 2; }   /* the photo spans both rows */
+  .card .acc-h > .tag { position: relative; top: auto; left: auto; grid-area: 1 / 1; justify-self: start; align-self: start; margin: 14px 64px 0 14px; max-width: calc(100% - 78px); }   /* row 1: tag pills (clear of the speaker button) */
+  .card .acc-h > .ov { grid-area: 2 / 1; }               /* row 2: title; tag and title can never overlap, whatever the text size */
+  .pl-btns button { width: 44px; height: 44px; }
   .card .acc-h > .banner { aspect-ratio: auto; min-height: 56.25vw; }
-  .card .acc-h > .ov { position: relative; inset: auto; align-self: end; padding-top: 64px; }
+  .card .acc-h > .ov { position: relative; inset: auto; align-self: end; padding-top: 10px; }
   /* reading player: the sentence gets its own row (it used to be squeezed to 0-90px) */
   .player { row-gap: 6px; }
   .pl-btns { grid-column: 1; grid-row: 1; } .pl-r { grid-column: 3; grid-row: 1; } .pl-txt { grid-column: 1 / -1; grid-row: 2; }
@@ -149,11 +169,12 @@ details.ph-box[open] > summary small { display: none; }
 @media (max-width: 480px) {
   .days-row { grid-template-columns: repeat(5, 1fr) !important; }   /* 5 + 4: chips wide enough to tap */
   .tl::before { left: calc(3.2em + 10px); }
-  .tl-i { grid-template-columns: 3.2em minmax(0, 1fr); gap: 0 16px; }
-  .tl-x::before { left: -11px; }
+  .tl-i { grid-template-columns: 3.2em minmax(0, 1fr); gap: 0 22px; }
+  .tl-x::before { left: -17px; }
   .status-h.acc-h { flex-wrap: wrap; } .status-h .ic { order: 2; } .status-h small { order: 3; flex-basis: 100%; padding-left: 20px; }
 }
 @media (max-width: 480px) { .kick { letter-spacing: .12em; } }
+@media (max-width: 340px) { .brand .mk { display: none; } }
 /* comfortable tap targets on phones (>= 44px, or a larger invisible hit area) */
 @media (max-width: 760px) {
   .ck { min-height: 44px; align-items: center; }
@@ -322,12 +343,12 @@ function sightBody(s) {
     ${box('tip', '小贴士', 'check', s.tip)}
     ${box('fun', '有意思', 'info', s.fun)}
   </div>
-  <aside class="infobox"><h4>实用信息</h4>
+  <aside class="infobox"><h4>实用信息</h4><dl style="margin:0">
     <div class="kv say"><dt class="lbl">耗时</dt><dd>${f.time}</dd></div>
     <div class="kv say"><dt class="lbl">最佳时间</dt><dd>${f.when}</dd></div>
     <div class="kv say"><dt class="lbl">费用</dt><dd>${f.cost}</dd></div>
     <div class="kv say"><dt class="lbl">怎么去</dt><dd>${f.how}</dd></div>
-  </aside></div>`;
+  </dl></aside></div>`;
 }
 function chRoute() {
   const days = C.DAYS.map((d) => card({ id: `d${d.n}`, art: scene(d.scene), photo: d.photo, badge: d.n, tags: `<span>DAY ${d.n} · ${d.d}</span>`, title: d.title, desc: d.sub, body: dayBody(d) })).join('');
@@ -355,7 +376,7 @@ function chSchools() {
   const steps = `<ol class="steps say">
     <li><b class="lbl">先发邮件</b>下面有英文模板。每所学校发一封,写明日期、人数、孩子年级和想问的事。</li>
     <li><b class="lbl">等回复</b>学校通常工作日回复。1–2 周没回,再发一封,或用官网的在线表单。</li>
-    <li><b class="lbl">定顺序</b>三所都放在 D4(1/27 周三)一天:Epsom 09:00 → Adcote Matrix 11:00 → Seremban 午饭 13:00 → KTJ 15:00,每所约 90 分钟。要请三所都给出这一天的具体时段;约不到就先舍掉最远的 KTJ,再订包车。</li>
+    <li><b class="lbl">定顺序</b>三所都放在 D4(1/27 周三)一天:Epsom 09:00 → Adcote Matrix 11:00 → Seremban 午饭 13:00 → KTJ 15:00,每所约 90 分钟。要请三所都给出这一天的具体时段;约不到就先舍掉排在最后的 KTJ,其余两所照常去,再按最终顺序订包车。</li>
     <li><b class="lbl">出发前一周</b>再确认一次时间和地点,让孩子把想问的问题写在小本子上。</li></ol>`;
   return `<section class="block wrap ch-school" id="schools" aria-labelledby="schools-h">
   ${chead('schools', '03', 'PART THREE · SCHOOL VISITS', '森美兰探校', '三所学校都在森美兰州,排在 1 月 27 日(周三)一天走完:每所约 90 分钟,校园参观 + 招生咨询。真正要花功夫的是预约,所以这一章先教你怎么约、怎么问。')}
@@ -372,8 +393,8 @@ function chSchools() {
 function dm() {
   const cols = ['alila', 'tirtha', 'other'];
   const head = `<tr><th>评分项</th><th>权重</th><th>Alila Villas Uluwatu</th><th>Tirtha Uluwatu</th><th><input class="dm-name" type="text" value="候选 3" aria-label="候选 3 的名称" maxlength="24"></th></tr>`;
-  const sel = (cls, extra, max, def) => `<select class="${cls}" ${extra} aria-label="评分">${Array.from({ length: max + 1 }, (_, i) => `<option value="${i}"${i === def ? ' selected' : ''}>${i === 0 && max === 5 ? '–' : i}</option>`).join('')}</select>`;
-  const rows = C.DM_CRITERIA.map(([n, w], r) => `<tr data-r="${r}"><th scope="row">${n}</th><td>${sel('dm-w', `data-r="${r}"`, 3, w)}</td>${cols.map((c) => `<td>${sel('dm-s', `data-r="${r}" data-c="${c}"`, 5, 0)}</td>`).join('')}</tr>`).join('');
+  const sel = (cls, extra, max, def, label = '评分') => `<select class="${cls}" ${extra} aria-label="${label}">${Array.from({ length: max + 1 }, (_, i) => `<option value="${i}"${i === def ? ' selected' : ''}>${i === 0 && max === 5 ? '–' : i}</option>`).join('')}</select>`;
+  const rows = C.DM_CRITERIA.map(([n, w], r) => `<tr data-r="${r}"><th scope="row">${n}</th><td>${sel('dm-w', `data-r="${r}"`, 3, w, `权重:${n}`)}</td>${cols.map((c) => `<td>${sel('dm-s', `data-r="${r}" data-c="${c}"`, 5, 0, `${{ alila: 'Alila', tirtha: 'Tirtha', other: '候选 3' }[c]} 评分:${n}`)}</td>`).join('')}</tr>`).join('');
   const tot = `<tr class="tot"><th scope="row">加权总分</th><td></td>${cols.map((c) => `<td><b class="dm-t" data-c="${c}">0</b><span class="dm-bar"><i data-c="${c}"></i></span></td>`).join('')}</tr>`;
   return `<div class="dm" id="dm"><p class="note" style="margin-bottom:8px">考察完当场打分:每项 1–5 分,「–」表示还没打分,按 0 分计。权重可调,总分满分 100。会记住你的打分。</p><div class="dm-wrap"><table class="dmt"><thead>${head}</thead><tbody>${rows}${tot}</tbody></table></div><p class="map-hint">表格可左右滑动;左边的评分项会固定在屏幕左侧。</p><div class="ch-tools" style="margin-top:10px"><button class="pill" type="button" id="dm-reset">${ico('collapse')}清空打分</button></div></div>`;
 }
@@ -447,7 +468,7 @@ const head = () => `<!doctype html>
 
 const topbar = `<a class="skip" href="#main">跳到正文</a>
 <header class="topbar" id="topbar">
-  <a class="brand" href="#top" aria-label="回到顶部"><svg class="mk" aria-hidden="true"><use href="#i-maple"/></svg><span>南行九日</span><small>7 人团</small></a>
+  <a class="brand" href="#top" aria-label="回到顶部"><svg class="mk" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path fill="#fff" d="M12 5l2 5 5 .5-3.8 3.4 1.2 5L12 16.3 7.6 18.9l1.2-5L5 10.5 10 10z"/></svg><span>南行九日</span><small>7 人团</small></a>
   <nav class="tnav" aria-label="章节">${nav.map(([id, n]) => `<a href="#${id}" data-nav="${id}">${n}</a>`).join('')}</nav>
   <div class="tools">
     <button class="tbtn" id="btn-aa" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="pop-aa" title="文字大小与朗读速度"><span>A<span class="sm">a</span></span><span class="sr">文字大小</span></button>

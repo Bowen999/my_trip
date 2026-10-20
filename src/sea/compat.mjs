@@ -126,7 +126,7 @@ function declCompat(decl, fb) {
   if (colon < 0) return [decl];
   const prop = decl.slice(0, colon).trim();
   let value = decl.slice(colon + 1).trim();
-  if (prop.startsWith('--')) return [decl];
+  if (prop.startsWith('--')) { if (value.includes('color-mix(')) fb.push(`${prop}:${flattenColorMix(value, 'background')}`); return [decl]; }
   const important = /\s*!important\s*$/i.test(value) ? ' !important' : '';
   const base = important ? value.replace(/\s*!important\s*$/i, '') : value;
   const parts = () => splitTop(base, ' ');
@@ -177,6 +177,6 @@ export function cssCompat(css) {
   .s-stage { height: 0; padding-bottom: 62.5%; }
   .rain-stage { height: 0; padding-bottom: 50%; }
 }
-@supports not (aspect-ratio: 1 / 1) { @media (max-width: 640px) { .banner { padding-bottom: 56.25%; } } }
+@supports not (aspect-ratio: 1 / 1) { @media (max-width: 640px) { .banner { padding-bottom: 56.25%; } .card .acc-h > .banner { height: auto; padding-bottom: 0; } } }
 `;
 }
