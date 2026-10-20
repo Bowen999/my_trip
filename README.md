@@ -1,6 +1,6 @@
 # 旅行指南
 
-两份可交互的单文件旅行指南,**直接用浏览器打开 HTML 即可**(电脑、平板、手机均可;无需联网,Google 字体只是可选增强)。第二份页面的真实照片已全部内嵌在 HTML 里,所以单独转发这一个文件、或放进任何 App 的内置浏览器(WebView)都能完整显示,不需要 `images/` 文件夹。
+两份可交互的单文件旅行指南,**直接用浏览器打开 HTML 即可**(电脑、平板、手机均可;无需联网,Google 字体只是可选增强)。第二份页面里:卡片的封面是手绘插画,点开卡片后里面是真实照片;照片已全部内嵌在 HTML 里,所以单独转发这一个文件、或放进任何 App 的内置浏览器(WebView)都能完整显示,不需要 `images/` 文件夹。
 
 | 文件 | 内容 |
 | --- | --- |
@@ -32,4 +32,4 @@ node src/sea/build.mjs   # 输出 singapore-malaysia-bali.html
 
 ## 照片
 
-`images/sea/` 里的照片是构建页面时读取的素材:`images/sea/cover/*.jpg` 是缩小后的版本,构建时以 base64 写进 HTML(封面和相册共用,每张只写一次);`images/sea/*.jpg` 是对应的原图,留作素材(缺少缩小版时才会直接使用)。照片大部分来自 [Wikimedia Commons](https://commons.wikimedia.org/)(CC BY / CC BY-SA 授权,按要求署名);Epsom、KTJ 的校园图取自学校官网,Tirtha 的两张取自 NOW! Bali 的文章。这些是自用旅行指南用的图片,不要用于商业用途。每张照片的作者、来源链接写在 `src/sea/photos.mjs`;页面里图片下面不再显示版权信息,统一放在页面最末尾、默认折叠的「图片来源与版权说明」里。更换照片时请同步改 `photos.mjs` 并重新生成缩小版。
+`images/sea/` 里的照片是构建页面时读取的素材:`images/sea/cover/*.jpg` 是缩小后的版本,构建时以 base64 写进 HTML(封面和相册共用,每张只写一次);`images/sea/*.jpg` 是对应的原图,留作素材(缺少缩小版时才会直接使用)。照片大部分来自 [Wikimedia Commons](https://commons.wikimedia.org/)(CC BY / CC BY-SA 授权,按要求署名);Epsom、KTJ 的校园图取自学校官网,Tirtha 的两张取自 NOW! Bali 的文章。这些是自用旅行指南用的图片,不要用于商业用途。每张照片的作者、来源链接写在 `src/sea/photos.mjs`;页面里图片下面不再显示版权信息,统一放在页面最末尾、默认折叠的「图片来源与版权说明」里。更换照片时请同步改 `photos.mjs` 并重新生成缩小版。想把照片放回卡片封面,把 `src/sea/build.mjs` 里的 `PHOTO_COVERS` 改成 `true` 再重新生成。

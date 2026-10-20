@@ -61,6 +61,9 @@ const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replac
 // Card covers are embedded in the page itself (one CSS class per photo, base64, written once and reused by every card that
 // shows it), so a cover never depends on stacking order, lazy loading, image URLs or JS timing.
 // The gallery photos inside the expanded cards use the same classes: the built page is fully self-contained (no image files needed).
+// Card covers are the hand-drawn illustrations; the real photos are shown inside the card once it is opened (the cover's photo is the
+// first picture of the card's gallery). Set to true to put the photo on the cover again.
+const PHOTO_COVERS = false;
 const usedPhotos = new Set();
 const ph = (k) => (k && PHOTOS[k] && fs.existsSync(path.join(root, '..', 'images', 'sea', PHOTOS[k].file)) ? PHOTOS[k] : null);
 const phSrc = (p) => `images/sea/${p.file}`;
@@ -81,7 +84,7 @@ function phBanner(k) {
   return `<span class="photo ${coverClass(k)}" aria-hidden="true"></span>`;
 }
 function phGallery(keys = []) {
-  const figs = keys.map((k) => {
+  const figs = [...new Set(keys.filter(Boolean))].map((k) => {
     const p = ph(k);
     if (!p) return '';
     usedPhotos.add(k);
@@ -91,7 +94,7 @@ function phGallery(keys = []) {
 }
 const capLine = (k, drawn) => {
   const p = ph(k);
-  if (p) return ''; // photo credits are not shown under the pictures: see the collapsed 「图片来源与版权说明」 at the end of the page
+  if (p && PHOTO_COVERS) return ''; // photo credits are not shown under the pictures: see the collapsed 「图片来源与版权说明」 at the end of the page
   return drawn ? `<p class="cap nosay">插图:${drawn}</p>` : '';
 };
 const pad2 = (n) => String(n).padStart(2, '0');
@@ -196,7 +199,7 @@ a[href^="tel:"] { white-space: nowrap; }
 /* the fixed side tabs (>= 900px wide) used to sit on top of the right edge of the content on 900–1300px screens */
 @media (min-width: 900px) and (max-width: 1300px) { main .wrap, footer .wrap { padding-right: 62px; } }
 .banner::after { z-index: 1; }
-.ph-row { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.ph-row { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
 .ph { margin: 0; background: var(--paper-2); border: 1px solid var(--rule); }
 .ph .ph-img { display: block; width: 100%; height: 0; padding-bottom: 66.67%; background-size: cover; background-position: center; background-repeat: no-repeat; background-color: var(--paper-2); }
 .ph figcaption { padding: 8px 10px; font-size: .72rem; line-height: 1.55; color: var(--ink-3); }
@@ -222,7 +225,7 @@ const nbParts = (t) => String(t).split(' · ').map((x, i, a) => `<span class="nb
 function card({ id, art, photo = '', badge, tags = '', title, en = '', desc = '', body }) {
   return `<article class="acc card" id="${id}">
   <h3><button class="acc-h" type="button" aria-expanded="false" aria-controls="${id}-b">
-    <span class="banner">${phBanner(photo) || art}</span>
+    <span class="banner">${PHOTO_COVERS ? phBanner(photo) || art : art}</span>
     <span class="tag">${tags}</span>
     <span class="ov"><span class="badge" aria-hidden="true">${badge}</span><span class="ov-t"><span class="tt lbl">${title}</span>${en ? `<span class="en nosay">${en}</span>` : ''}${desc ? `<span class="ds">${nbParts(desc)}</span>` : ''}</span>${ico('chevron', { cls: 'chev' })}</span>
   </button></h3>
@@ -324,7 +327,7 @@ function dayBody(d) {
   return `<div class="dday">
   ${capLine(d.photo, '')}
   <div class="day-meta"><span>${ico('cal')}${d.d}</span><span>${ico('pin')}${d.area}</span><span>${d.plane ? ico('plane') : ''}${!d.plane || /包车|打车/.test(d.move) ? ico('car') : ''}${d.move}</span><span class="nosay">${intensity(d.pace)}</span>${d.tags.map((t) => `<span>${t}</span>`).join('')}</div>
-  ${phGallery(d.gallery)}
+  ${phGallery([d.photo, ...(d.gallery || [])])}
   <ol class="tl">${d.steps.map(([t, x]) => `<li class="tl-i say"><span class="tl-t lbl">${t}</span><div class="tl-x">${x}</div></li>`).join('')}</ol>
   <div class="dgrid"><div class="dbox"><b class="l lbl">${ico('eat')}吃</b>${d.eat}</div><div class="dbox"><b class="l lbl">${ico('bed')}住</b>${d.stay}</div></div>
   ${box('warn', '小心', 'warn', d.warn)}
@@ -337,7 +340,7 @@ function sightBody(s) {
   return `<div class="sx"><div class="sx-main">
     ${capLine(s.photo, s.cap)}
     <p class="lead say">${s.blurb}</p>
-    ${phGallery(s.gallery)}
+    ${phGallery([s.photo, ...(s.gallery || [])])}
     <ul class="pts">${s.pts.map((p) => `<li>${p}</li>`).join('')}</ul>
     ${s.news ? box('news', '最新', 'info', s.news) : ''}
     ${box('tip', '小贴士', 'check', s.tip)}
@@ -357,7 +360,7 @@ function chRoute() {
     return card({ id: `s-${s.id}`, art: scene(s.scene), photo: s.photo, badge: s.n, tags: `<span>${CTRY[s.c]}</span><span class="${rc}">${rc ? ico('star', { fill: true }) : ''}${rl}</span>`, title: s.name, en: s.en, body: sightBody(s) });
   }).join('');
   return `<section class="block wrap ch-route" id="route" aria-labelledby="route-h">
-  ${chead('route', '02', 'PART TWO · 9-DAY ITINERARY', '9 日行程', '每天一张卡:按小时排的时间线、吃住、容易踩的坑和备选方案。「强度」分轻松、中等、高强度三档,是体力消耗的参考。卡片头图均为真实照片(来源见页面最末尾)。下面还有沿途 9 个景点的小卡片。')}
+  ${chead('route', '02', 'PART TWO · 9-DAY ITINERARY', '9 日行程', '每天一张卡:按小时排的时间线、吃住、容易踩的坑和备选方案。「强度」分轻松、中等、高强度三档,是体力消耗的参考。卡片头图是手绘插画,点开每张卡片,里面有真实照片(来源见页面最末尾)。下面还有沿途 9 个景点的小卡片。')}
   <div class="legend rv nosay"><span>强度:</span>${meter(1)} 轻松 ${meter(2)} 中等 ${meter(3)} 高强度</div>
   ${days}
   <h3 class="sub-h">沿途景点 <small>Sights</small></h3>
@@ -370,7 +373,7 @@ function chSchools() {
   const cards = C.SCHOOLS.map((s) =>
     card({
       id: `sc-${s.id}`, art: scene(s.scene), photo: s.photo, badge: s.n, tags: `<span>${s.when}</span>`, title: s.name, en: s.en,
-      body: `<div class="dday">${capLine(s.photo, s.cap)}<p class="lead say">${s.blurb}</p>${kvl(s.facts)}${box('news', '备注', 'info', s.note)}</div>`,
+      body: `<div class="dday">${capLine(s.photo, s.cap)}<p class="lead say">${s.blurb}</p>${phGallery([s.photo])}${kvl(s.facts)}${box('news', '备注', 'info', s.note)}</div>`,
     })
   ).join('');
   const steps = `<ol class="steps say">
@@ -408,7 +411,7 @@ function chWedding() {
   const hotels = C.HOTELS.map((h, i) =>
     card({
       id: `w-${h.id}`, art: scene(h.scene), photo: h.photo, badge: i + 1, tags: `<span>${h.when}</span>`, title: h.name, en: h.en,
-      body: `<div class="dday">${capLine(h.photo, h.cap)}<p class="lead say">${h.blurb}</p>${kvl(h.facts)}${box('news', '要问清', 'info', h.note)}</div>`,
+      body: `<div class="dday">${capLine(h.photo, h.cap)}<p class="lead say">${h.blurb}</p>${phGallery([h.photo])}${kvl(h.facts)}${box('news', '要问清', 'info', h.note)}</div>`,
     })
   ).join('');
   const more = `<ul class="pts say">${C.HOTEL_MORE.map(([a, b]) => `<li><b>${a}</b>:${b}</li>`).join('')}</ul>`;
