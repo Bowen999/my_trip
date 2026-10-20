@@ -23,21 +23,29 @@
     const ON = { 1: ['can'], 2: ['can', 'kul'], 3: ['kul'], 4: ['kul', 'ns'], 5: ['kul', 'sin'], 6: ['sin', 'dps'], 7: ['dps'], 8: ['dps'], 9: ['dps'] };
     const PIN_DAY = { can: 1, kul: 3, ns: 4, sin: 5, dps: 7 };
     let cur = 0, raf = 0, token = 0;
-    function follow(x) {
-      if (!mb || mb.scrollWidth <= mb.clientWidth) return;
-      const k = mb.scrollWidth / 900;
-      mb.scrollLeft = Math.max(0, Math.min(mb.scrollWidth - mb.clientWidth, x * k - mb.clientWidth / 2));
+    // on phones the map scrolls sideways and follows the vehicle; labels to the right of a pin (can, sin, dps) need the pin left of
+    // centre, labels to its left (kul, ns) need it right of centre. Once the reader pans the map by hand, it stops following.
+    let userPan = false;
+    ['touchstart', 'wheel', 'pointerdown'].forEach((ev) => mb && mb.addEventListener(ev, () => { userPan = true; }, { passive: true }));
+    const LABEL_RIGHT = { can: 1, sin: 1, dps: 1, kul: 0, ns: 0 };
+    function follow(x, y) {
+      if (!mb || userPan || mb.scrollWidth <= mb.clientWidth) return;
+      let best = 'can', d = Infinity;
+      Object.entries(pins).forEach(([k, p]) => { const dd = (p.x - x) ** 2 + (p.y - y) ** 2; if (dd < d) { d = dd; best = k; } });
+      const k = mb.scrollWidth / 900, bias = LABEL_RIGHT[best] ? 0.25 : 0.75;
+      mb.scrollLeft = Math.max(0, Math.min(mb.scrollWidth - mb.clientWidth, x * k - mb.clientWidth * bias));
     }
     function show(kind) { plane.style.display = kind === 'plane' ? '' : 'none'; car.style.display = kind === 'car' ? '' : 'none'; }
-    function placePlane(x, y, rot) { show('plane'); plane.setAttribute('transform', `translate(${x} ${y}) rotate(${rot})`); follow(x); }
-    function placeCar(x, y, dir = 1) { show('car'); car.setAttribute('transform', `translate(${x} ${y - 13}) scale(${dir < 0 ? -1 : 1} 1)`); follow(x); }
+    function placePlane(x, y, rot) { show('plane'); plane.setAttribute('transform', `translate(${x} ${y}) rotate(${rot})`); follow(x, y); }
+    function placeCar(x, y, dir = 1, f = true) { show('car'); car.setAttribute('transform', `translate(${x} ${y - 17}) scale(${dir < 0 ? -1 : 1} 1)`); if (f) follow(x, y); }
     function along(path, t) {
       const L = path.getTotalLength(), p = path.getPointAtLength(t * L), q = path.getPointAtLength(Math.min(L, t * L + 2)), q0 = path.getPointAtLength(Math.max(0, t * L - 2));
       placePlane(p.x, p.y, (Math.atan2(q.y - q0.y, q.x - q0.x) * 180) / Math.PI);
     }
-    function tween(ms, fn, done, tk) {
+    // still: the frame to show instead of animating (prefers-reduced-motion); ms <= 0 always jumps to the end state
+    function tween(ms, fn, done, tk, still = 1) {
       cancelAnimationFrame(raf);
-      if (reduce || ms <= 0) { fn(1); done && done(); return; }
+      if (reduce || ms <= 0) { fn(ms <= 0 ? 1 : still); done && done(); return; }
       const t0 = performance.now();
       (function f(t) {
         if (tk !== token) return;
@@ -52,7 +60,7 @@
       const c = pins[key], r = 17;
       tween(ms, (e) => {
         const a = e * Math.PI * 2, x = c.x + Math.sin(a) * r, y = c.y + (1 - Math.cos(a)) * r * 0.5 - r * 0.5;
-        placeCar(x, y, Math.cos(a) >= 0 ? 1 : -1);
+        placeCar(x, y, Math.cos(a) >= 0 ? 1 : -1, false); // a small loop: the map must not sway with it
       }, () => parkCar(key), tk);
     }
     function playDay(n, animate, tk) {
@@ -62,11 +70,12 @@
         const a = pins.kul, b = pins.ns;
         tween(animate ? 2600 : 0, (e) => {
           const k = e < 0.5 ? e * 2 : (1 - e) * 2;
-          placeCar(a.x + (b.x - a.x) * k, a.y + (b.y - a.y) * k, e < 0.5 ? (b.x >= a.x ? 1 : -1) : (b.x >= a.x ? -1 : 1));
+          placeCar(a.x + (b.x - a.x) * k, a.y + (b.y - a.y) * k, e < 0.5 ? (b.x >= a.x ? 1 : -1) : (b.x >= a.x ? -1 : 1), false);
         }, () => parkCar('kul'), tk);
       } else if (leg) {
         // flight: the plane flies the leg, then a car waits at the arrival city
-        tween(animate ? 1800 : 0, (e) => along(leg, e), () => parkCar(city), tk);
+        // (reduced motion: the plane stays still half-way along the leg and no car is parked)
+        tween(animate ? 1800 : 0, (e) => along(leg, e), () => { if (!reduce || !animate) parkCar(city); }, tk, 0.5);
       } else if (n === 9) {
         // return day (not planned on this page): the plane waits in Bali, nose towards Guangzhou
         const d = pins.dps, g = pins.can;
@@ -76,6 +85,8 @@
     }
     function setDay(n, animate = true) {
       if (n === cur) return;
+      animate = animate && !document.hidden; // a background tab pauses requestAnimationFrame: jump to the end state instead
+      userPan = false;
       cancelAnimationFrame(raf);
       const tk = ++token;
       cur = n;
@@ -87,7 +98,14 @@
       playDay(n, animate, tk);
     }
     $$('.dchip').forEach((c) => c.addEventListener('click', () => setDay(+c.dataset.day)));
-    Object.entries(pins).forEach(([k, p]) => p.el.addEventListener('click', () => setDay(PIN_DAY[k])));
+    const PIN_NAME = { can: '广州', kul: '吉隆坡', ns: '森美兰', sin: '新加坡', dps: '巴厘岛' };
+    Object.entries(pins).forEach(([k, p]) => {
+      p.el.addEventListener('click', () => setDay(PIN_DAY[k]));
+      p.el.setAttribute('tabindex', '0');
+      p.el.setAttribute('role', 'button');
+      p.el.setAttribute('aria-label', `${PIN_NAME[k]}:看第 ${PIN_DAY[k]} 天`);
+      p.el.addEventListener('keydown', (ev) => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); setDay(PIN_DAY[k]); } });
+    });
     parkCar('can');
     $$('.mp-route', svg).forEach((p) => { p.style.opacity = 0; p.style.transition = reduce ? 'none' : 'opacity 1.2s'; });
     const io = new IntersectionObserver((es) => es.forEach((e) => {
@@ -99,14 +117,6 @@
     io.observe(svg);
   })();
 
-  /* ================= card covers: once a real photo has loaded, hide the drawn art under it ================= */
-  $$('.banner img.photo').forEach((im) => {
-    const ok = () => im.parentNode.classList.add('ph-ok');
-    // switch only when the photo can actually be painted (decode() resolved), otherwise the cover would flash blank
-    const ready = () => (im.decode ? im.decode().then(ok, () => {}) : ok());
-    if (im.complete && im.naturalWidth) ready(); else im.addEventListener('load', ready, { once: true });
-  });
-
   /* ================= copy-to-clipboard ================= */
   document.addEventListener('click', (e) => {
     const b = e.target.closest('[data-copy]');
@@ -114,12 +124,18 @@
     const src = document.getElementById(b.dataset.copy);
     if (!src) return;
     const text = src.textContent;
-    const done = () => { const o = b.innerHTML; b.classList.add('ok'); b.textContent = '已复制 ✓'; setTimeout(() => { b.classList.remove('ok'); b.innerHTML = o; }, 1800); };
+    if (!b.dataset.label) b.dataset.label = b.innerHTML;
+    const flash = (msg, ok) => { clearTimeout(b._t); b.classList.toggle('ok', ok); b.textContent = msg; b._t = setTimeout(() => { b.classList.remove('ok'); b.innerHTML = b.dataset.label; }, 1800); };
+    const done = () => flash('已复制 ✓', true);
+    const fail = () => flash('请手动复制', false);
     const fallback = () => {
       const t = document.createElement('textarea');
-      t.value = text; t.style.cssText = 'position:fixed;opacity:0'; document.body.appendChild(t); t.select();
-      try { document.execCommand('copy'); done(); } catch (err) { b.textContent = '请手动复制'; }
+      t.value = text; t.setAttribute('readonly', ''); t.style.cssText = 'position:fixed;top:0;left:0;opacity:0;font-size:16px';
+      document.body.appendChild(t); t.focus(); t.select(); try { t.setSelectionRange(0, text.length); } catch (err) { /* old WebKit */ }
+      let ok = false;
+      try { ok = document.execCommand('copy'); } catch (err) { ok = false; }
       t.remove();
+      ok ? done() : fail();
     };
     if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(done, fallback); else fallback();
   });
@@ -199,9 +215,9 @@
     const saved = LS.get('rates', {});
     Object.keys(r).forEach((k) => { if (saved[k]) r[k].value = saved[k]; r[k].addEventListener('input', () => { const o = {}; Object.keys(r).forEach((x) => (o[x] = parseFloat(r[x].value) || 0)); LS.set('rates', o); fromLoc(); }); });
     const rate = () => { const v = parseFloat(r[c].value); return v > 0 ? (c === 'idr' ? v / 10000 : v) : 0; };
-    function fromLoc() { const x = rate(); if (x && loc.value !== '') cny.value = (loc.value * x).toFixed(2); }
+    function fromLoc() { const x = rate(); if (x && loc.value !== '') cny.value = (loc.value * x).toFixed(2); else cny.value = ''; }
     loc.addEventListener('input', fromLoc);
-    cny.addEventListener('input', () => { const x = rate(); if (x && cny.value !== '') loc.value = (cny.value / x).toFixed(c === 'idr' ? 0 : 2); });
+    cny.addEventListener('input', () => { const x = rate(); if (x && cny.value !== '') loc.value = (cny.value / x).toFixed(c === 'idr' ? 0 : 2); else loc.value = ''; });
     $$('#c3-cur button').forEach((b) => b.addEventListener('click', () => {
       c = b.dataset.c;
       $$('#c3-cur button').forEach((x) => x.classList.toggle('on', x === b));

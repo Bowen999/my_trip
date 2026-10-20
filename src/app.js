@@ -72,7 +72,7 @@
   const btnAll = $('#btn-all');
   let allOpen = false;
   btnAll.addEventListener('click', () => {
-    allOpen = !allOpen;
+    allOpen = $$('.acc:not(.status)').some((a) => !a.classList.contains('open')); // expand if anything is closed, else collapse (the chapter buttons may have changed things)
     $$('.acc:not(.status)').forEach((a) => setAcc(a, allOpen));
     btnAll.innerHTML = btnAll.dataset[allOpen ? 'c' : 'e'];
     btnAll.setAttribute('aria-pressed', allOpen);
@@ -141,10 +141,24 @@
   /* ================= generic tabs ================= */
   $$('[data-tabs]').forEach((box) => {
     const btns = $$('[data-tab]', box), panels = $$('[data-panel]', box);
-    btns.forEach((b) => b.addEventListener('click', () => {
-      btns.forEach((x) => x.setAttribute('aria-selected', x === b));
+    const tabsId = 'tabs' + $$('[data-tabs]').indexOf(box);
+    btns.forEach((b) => {
+      const p = panels.find((x) => x.dataset.panel === b.dataset.tab);
+      if (p) { p.id = p.id || `${tabsId}-${b.dataset.tab}`; p.setAttribute('role', 'tabpanel'); b.setAttribute('aria-controls', p.id); b.id = b.id || `${p.id}-tab`; p.setAttribute('aria-labelledby', b.id); }
+      b.tabIndex = b.getAttribute('aria-selected') === 'true' ? 0 : -1;
+    });
+    const select = (b) => {
+      btns.forEach((x) => { x.setAttribute('aria-selected', x === b); x.tabIndex = x === b ? 0 : -1; });
       panels.forEach((p) => (p.hidden = p.dataset.panel !== b.dataset.tab));
-    }));
+    };
+    btns.forEach((b, i) => {
+      b.addEventListener('click', () => select(b));
+      b.addEventListener('keydown', (ev) => {
+        const j = ev.key === 'ArrowRight' ? (i + 1) % btns.length : ev.key === 'ArrowLeft' ? (i + btns.length - 1) % btns.length : ev.key === 'Home' ? 0 : ev.key === 'End' ? btns.length - 1 : -1;
+        if (j < 0) return;
+        ev.preventDefault(); btns[j].focus(); select(btns[j]);
+      });
+    });
   });
 
   /* ================= flip cards ================= */
@@ -410,7 +424,7 @@
   const player = $('#player'), plText = $('#pl-text'), plPlay = $('#pl-play'), plVoice = $('#pl-voice');
   const rateRange = $('#rate-range'), rateOut = $('#rate-out');
   const SUP = 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
-  const T = { items: [], i: 0, c: 0, state: 'idle', token: 0, rate: LS.get('rate', 1), voices: [], cur: null, errs: 0 };
+  const T = { items: [], i: 0, c: 0, state: 'idle', token: 0, rate: Math.min(1.6, Math.max(0.6, +LS.get('speed', 1) || 1)), voices: [], cur: null, errs: 0 };
   rateRange.value = T.rate; rateOut.textContent = T.rate.toFixed(1) + '×';
   const icon = {
     play: '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4l13 8-13 8z"/></svg>',
@@ -429,7 +443,7 @@
   }
   if (SUP) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
   plVoice.addEventListener('change', () => { LS.set('voice', plVoice.value); if (T.state === 'playing') restartChunk(); });
-  rateRange.addEventListener('input', () => { T.rate = +rateRange.value; rateOut.textContent = T.rate.toFixed(1) + '×'; LS.set('rate', T.rate); });
+  rateRange.addEventListener('input', () => { T.rate = +rateRange.value; rateOut.textContent = T.rate.toFixed(1) + '×'; LS.set('speed', T.rate); });
   rateRange.addEventListener('change', () => { if (T.state === 'playing') restartChunk(); });
 
   const MAP = [

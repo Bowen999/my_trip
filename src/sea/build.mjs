@@ -6,25 +6,44 @@ import { scenes, seaMap, nsInset } from './scenes.mjs';
 import { SHARED_DEFS } from '../art.mjs';
 import * as C from './content.mjs';
 import { PHOTOS } from './photos.mjs';
+import { cssCompat } from './compat.mjs';
 import { ico, food } from '../icons.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(here, '..');
 const css = fs.readFileSync(path.join(root, 'style.css'), 'utf8');
 
-/* Chinese typography: ASCII punctuation in running text → full-width (keep 1,000 and 16:00; skip <pre>). */
+/* Chinese typography: ASCII punctuation in running text → full-width (keep 1,000 and 16:00; skip <pre>).
+   Marks are converted when Chinese text is near (12 characters, looking across inline tags); ( ) are converted as a PAIR so
+   "(Bandar Enstek)" never ends up as "(Bandar Enstek）"; brand names such as "NOW!" are left alone. */
 const FW = { ',': '，', ';': '；', ':': '：', '?': '？', '!': '！', '(': '（', ')': '）' };
 const CJK = /[\u4e00-\u9fff\u3000-\u303f\uff00-\uffef]/;
+const near = (str, i, from, to) => CJK.test(str.slice(Math.max(0, i - from), i + to));
 function fwText(t) {
   t = t.replace(/&(#?\w+);/g, '\u0001$1\u0002');
-  // convert only when Chinese text is within 12 characters; keep English addresses / numbers as they are
-  t = t.replace(/[,;:?!()]/g, (c, i, str) => {
+  // parentheses first, as pairs: convert both when Chinese text is inside or within 12 characters of either end
+  t = t.replace(/\(([^()]*)\)/g, (m, inner, i, str) => (CJK.test(inner) || near(str, i, 12, 0) || near(str, i + m.length, 0, 13) ? `（${inner}）` : m));
+  t = t.replace(/[,;:?!]/g, (c, i, str) => {
     if ((c === ',' || c === ':') && /\d/.test(str[i - 1] || '') && /\d/.test(str[i + 1] || '')) return c;
-    return CJK.test(str.slice(Math.max(0, i - 12), i + 13)) ? FW[c] : c;
+    if (c === '!' && /NOW$/.test(str.slice(Math.max(0, i - 3), i))) return c;
+    return near(str, i, 12, 13) ? FW[c] : c;
   });
+  // stray single parentheses: same rule as before
+  t = t.replace(/[()]/g, (c, i, str) => (near(str, i, 12, 13) ? FW[c] : c));
   return t.replace(/\u0001(#?\w+)\u0002/g, '&$1;');
 }
-const fwHtml = (h) => h.split(/(<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<pre[\s\S]*?<\/pre>|<[^>]*>)/).map((t, i) => (i % 2 ? t : fwText(t))).join('');
+// text nodes are normalised together with the tags replaced by a neutral placeholder, so "<b>同一天</b>:Epsom" counts as Chinese next to the colon
+const fwHtml = (h) => {
+  const parts = h.split(/(<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<pre[\s\S]*?<\/pre>|<[^>]*>)/);
+  const tags = [];
+  const joined = parts.map((p, i) => (i % 2 ? (tags.push(p), '\uE000') : p)).join('');
+  let k = 0;
+  return fwText(joined).replace(/\uE000/g, () => tags[k++]);
+};
+// phone numbers and e-mail addresses become tel: / mailto: links (iOS auto-detection is switched off on purpose)
+const linkify = (h) => h.split(/(<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>|<pre[\s\S]*?<\/pre>|<a [\s\S]*?<\/a>|<[^>]*>)/).map((p, i) => (i % 2 ? p : p
+  .replace(/[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g, (m) => `<a href="mailto:${m}">${m}</a>`)
+  .replace(/\+60 ?\d{1,2} ?\d{3,4} ?\d{3,4}/g, (m) => `<a href="tel:${m.replace(/\s/g, '')}">${m}</a>`))).join('');
 const fwJs = (j) => j.replace(/'([^'\\\n]*[一-鿿][^'\\\n]*)'/g, (m, a) => `'${fwText(a)}'`);
 const js = fwJs(fs.readFileSync(path.join(root, 'app.js'), 'utf8')) + '\n' + fwJs(fs.readFileSync(path.join(here, 'app-sea.js'), 'utf8'));
 
@@ -36,52 +55,136 @@ const scene = (key, ...a) => {
 };
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-/* ---------- real photos (Wikimedia Commons, credited) ---------- */
-// Files live in images/sea/ next to the HTML. If one fails to load, the drawn illustration underneath stays visible.
+/* ---------- real photos (credits live in the collapsed box at the end of the page) ---------- */
+// Card covers are embedded in the page itself (one CSS class per photo, base64, written once and reused by every card that
+// shows it), so a cover never depends on stacking order, lazy loading, image URLs or JS timing.
+// The gallery photos inside the expanded cards use the same classes: the built page is fully self-contained (no image files needed).
 const usedPhotos = new Set();
 const ph = (k) => (k && PHOTOS[k] && fs.existsSync(path.join(root, '..', 'images', 'sea', PHOTOS[k].file)) ? PHOTOS[k] : null);
 const phSrc = (p) => `images/sea/${p.file}`;
 const phCredit = (p) => `照片:${esc(p.alt)} · ${esc(p.author)} · <a href="${esc(p.sourceUrl)}" target="_blank" rel="noopener noreferrer">${esc(p.license)}</a>(${esc(p.from || 'Wikimedia Commons')})`;
+const coverCss = new Map();
+function coverClass(k) {
+  if (!coverCss.has(k)) {
+    const small = path.join(root, '..', 'images', 'sea', 'cover', PHOTOS[k].file);
+    const file = fs.existsSync(small) ? small : path.join(root, '..', 'images', 'sea', PHOTOS[k].file);
+    coverCss.set(k, `.pg-${k}{background-image:url(data:image/jpeg;base64,${fs.readFileSync(file).toString('base64')})}`);
+  }
+  return `pg-${k}`;
+}
 function phBanner(k) {
   const p = ph(k);
   if (!p) return '';
   usedPhotos.add(k);
-  // covers load eagerly; app-sea.js hides the drawn art (.ph-ok) only after the photo has decoded; if it fails, the art stays
-  return `<img class="photo" src="${phSrc(p)}" alt="${esc(p.alt)}" onerror="this.remove()">`;
+  return `<span class="photo ${coverClass(k)}" role="img" aria-label="${esc(p.alt)}"></span>`;
 }
 function phGallery(keys = []) {
   const figs = keys.map((k) => {
     const p = ph(k);
     if (!p) return '';
     usedPhotos.add(k);
-    return `<figure class="ph"><img src="${phSrc(p)}" alt="${esc(p.alt)}" loading="lazy" decoding="async" onerror="this.closest('figure').remove()"><figcaption>${phCredit(p)}</figcaption></figure>`;
+    return `<figure class="ph"><span class="ph-img ${coverClass(k)}" role="img" aria-label="${esc(p.alt)}"></span><figcaption>${esc(p.alt)}</figcaption></figure>`;
   }).join('');
   return figs ? `<div class="ph-row nosay">${figs}</div>` : '';
 }
 const capLine = (k, drawn) => {
   const p = ph(k);
-  if (p) return `<p class="cap nosay">封面${phCredit(p)}</p>`;
+  if (p) return ''; // photo credits are not shown under the pictures: see the collapsed 「图片来源与版权说明」 at the end of the page
   return drawn ? `<p class="cap nosay">插图:${drawn}</p>` : '';
 };
+const pad2 = (n) => String(n).padStart(2, '0');
+const NOW = new Date();
+const STAMP = `${NOW.getFullYear()}-${pad2(NOW.getMonth() + 1)}-${pad2(NOW.getDate())} ${pad2(NOW.getHours())}:${pad2(NOW.getMinutes())}`;
 const PHOTO_CSS = `
+/* ---- text never pushes its box wider than the screen (a long e-mail address used to widen the whole status list; the overflow was cut off) ---- */
+.st > div, .kv dt, .kv dd, .tl-x, .dday > *, .sx-main, .infobox, .card-body, .card-body > *, .sec-body, .sec-body > *, .assume > div, .need li, .wl, .ck span, .dbox { min-width: 0; }   /* incl. the scoring table box: it scrolls sideways inside .dm-wrap instead of being cut off */
+.st p, .st b, .boxout, .tl-x, .kv dd, .pts li, .lead, .note, .ck span, .dbox, .need li, .wl p, .cap, .infobox, .glance p, .ch-intro, figcaption { overflow-wrap: anywhere; }
+/* ---- phones / WebKit ---- */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+button, summary, .dchip, .pill, .stab, .botnav a { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+@media (max-width: 760px) { input, select, textarea { font-size: max(16px, 1rem) !important; } } /* iOS zooms into smaller form fields */
+.sea-map { display: block; width: 100%; height: auto; }
+.mp-vehicle, .mp-key { pointer-events: none; }
+.mp-pin { cursor: pointer; } .mp-pin:focus { outline: none; } .mp-pin:focus-visible circle { stroke: var(--gold); stroke-width: 3; }
+@media (max-width: 760px) {
+  .mapbox .sea-map { min-width: 760px; }                 /* keep the labels readable: the map scrolls sideways (and follows the vehicle) */
+  .sea-map .mp-l { font-size: 19px; } .sea-map .mp-s, .sea-map .mp-d, .sea-map .mp-key text, .sea-map .mp-note { font-size: 13px; }
+}
+footer .stamp { font-size: .72rem; opacity: .6; }
+details.ph-box[open] > summary small { display: none; }
+.ds .nb { display: inline-block; white-space: nowrap; }
+.ov-t .tt { text-wrap: balance; }
+.mp-pin:hover circle:first-child, .mp-pin.on circle:first-child { r: 13px; }   /* the shared rule wrote "r: 13" (no unit), which browsers drop */
+.fs-row button, .fs-presets button { text-align: center; }
+.tbtn { min-width: 44px; }
+.daysum a { display: inline-block; padding: 10px 0; }
+.dmt th:first-child, .dmt td:first-child { position: sticky; left: 0; z-index: 1; background: var(--card); box-shadow: 1px 0 0 var(--rule-2); }
+.dmt thead th:first-child { background: var(--paper-2); }
+/* safe areas (notched phones in landscape) */
+.wrap { padding-left: max(var(--gut), env(safe-area-inset-left)); padding-right: max(var(--gut), env(safe-area-inset-right)); }
+.botnav { padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
+.totop { right: max(14px, env(safe-area-inset-right)); }
+@media (min-width: 900px) { .totop { right: 10px; bottom: 24px; } }
+@media (orientation: landscape) and (max-height: 500px) { .botnav { display: none; } body { padding-bottom: 0; } .totop { bottom: 16px; } .player { bottom: 12px; } }
+/* touch screens: hover effects would stay "stuck" after a tap */
+@media (hover: none) { .card .acc-h:hover .banner .photo { transform: none; } .dchip:hover { transform: none; } }
+/* phones */
+@media (max-width: 640px) {
+  /* the cover grows with its text (large text sizes used to cut the title off and run it into the DAY pill) */
+  .card .acc-h { display: grid; }
+  .card .acc-h > .banner, .card .acc-h > .ov { grid-area: 1 / 1; }
+  .card .acc-h > .banner { aspect-ratio: auto; min-height: 56.25vw; }
+  .card .acc-h > .ov { position: relative; inset: auto; align-self: end; padding-top: 64px; }
+  /* reading player: the sentence gets its own row (it used to be squeezed to 0-90px) */
+  .player { row-gap: 6px; }
+  .pl-btns { grid-column: 1; grid-row: 1; } .pl-r { grid-column: 3; grid-row: 1; } .pl-txt { grid-column: 1 / -1; grid-row: 2; }
+}
+@media (max-width: 760px) {
+  .mapbox svg.sea-map { min-width: 820px; }
+  .sea-map .mp-l { font-size: 20px; } .sea-map .mp-s, .sea-map .mp-d, .sea-map .mp-key text, .sea-map .mp-note { font-size: 14px; }
+  .ns-art .ns-l { font-size: 17px; } .ns-art .ns-s, .ns-art .ns-t { font-size: 15px; } .ns-art .mp-note { font-size: 13px; }
+  .dmt select { height: 44px; }                      /* WebKit ignores min-height on a native select */
+  .ph-credits a { display: inline-block; padding: 4px 0; }
+}
+@media (max-width: 480px) {
+  .days-row { grid-template-columns: repeat(5, 1fr) !important; }   /* 5 + 4: chips wide enough to tap */
+  .tl::before { left: calc(3.2em + 10px); }
+  .tl-i { grid-template-columns: 3.2em minmax(0, 1fr); gap: 0 16px; }
+  .tl-x::before { left: -11px; }
+  .status-h.acc-h { flex-wrap: wrap; } .status-h .ic { order: 2; } .status-h small { order: 3; flex-basis: 100%; padding-left: 20px; }
+}
+@media (max-width: 480px) { .kick { letter-spacing: .12em; } }
+/* comfortable tap targets on phones (>= 44px, or a larger invisible hit area) */
+@media (max-width: 760px) {
+  .ck { min-height: 44px; align-items: center; }
+  .spk::after { content: ""; position: absolute; inset: -6px; }
+  footer .src a { display: block; padding: 7px 0; }
+  .pill { min-height: 44px; }
+  .dchip { min-height: 48px; }
+  .dmt select { min-height: 44px; }
+}
 .pace.lv1 i.on { background: var(--forest); }
 .pace.lv2 i.on { background: var(--gold); }
 .pace.lv3 i.on { background: var(--red); }
 .lvl { display: inline-flex; align-items: center; gap: 4px; }
 .lvl b { font-weight: 800; }
 .lvl.lv1 b { color: var(--forest); } .lvl.lv2 b { color: var(--gold); } .lvl.lv3 b { color: var(--red); }
-.banner .photo { z-index: 0; }
-.banner.ph-ok svg.art { visibility: hidden; }
+.banner .photo { z-index: 0; background-size: cover; background-position: center; background-repeat: no-repeat; background-color: var(--paper-2); transition: transform .8s cubic-bezier(.2, .7, .2, 1); }
+.card .acc-h:hover .banner .photo { transform: scale(1.04); }
 .day-meta span > span, .day-meta span > b { padding: 0; border: 0; background: none; border-radius: 0; }
 /* the fixed side tabs (>= 900px wide) used to sit on top of the right edge of the content on 900–1300px screens */
 @media (min-width: 900px) and (max-width: 1300px) { main .wrap, footer .wrap { padding-right: 62px; } }
 .banner::after { z-index: 1; }
 .ph-row { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
 .ph { margin: 0; background: var(--paper-2); border: 1px solid var(--rule); }
-.ph img { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; background: var(--paper-2); }
+.ph .ph-img { display: block; width: 100%; height: 0; padding-bottom: 66.67%; background-size: cover; background-position: center; background-repeat: no-repeat; background-color: var(--paper-2); }
 .ph figcaption { padding: 8px 10px; font-size: .72rem; line-height: 1.55; color: var(--ink-3); }
 .ph figcaption a, .cap a { color: inherit; }
-footer .ph-credits { margin: 6px 0 22px; padding-left: 1.2em; font-size: .78rem; line-height: 1.7; opacity: .9; }
+footer details.ph-box { margin: 18px 0 8px; border: 1px solid color-mix(in srgb, currentColor 28%, transparent); border-radius: 10px; padding: 0 16px; max-width: 52em; }
+footer details.ph-box > summary { cursor: pointer; padding: 12px 0; font-weight: 700; font-size: .92rem; list-style-position: inside; }
+footer details.ph-box > summary small { font-weight: 500; opacity: .7; margin-left: 4px; }
+footer details.ph-box[open] > summary { border-bottom: 1px solid color-mix(in srgb, currentColor 20%, transparent); margin-bottom: 10px; }
+footer .ph-credits { margin: 6px 0 16px; padding-left: 1.2em; font-size: .78rem; line-height: 1.7; opacity: .9; }
 footer .ph-credits li { margin: 2px 0; }
 `;
 
@@ -93,12 +196,14 @@ function sec({ id, no, title, sub = '', body, open = false }) {
   <div class="acc-b" id="${id}-b" role="region"><div class="acc-in"><div class="sec-body">${body}</div></div></div>
 </div>`;
 }
+// "A · B · C" → each part as a non-breaking chunk, the bullet stays at the end of the previous chunk
+const nbParts = (t) => String(t).split(' · ').map((x, i, a) => `<span class="nb">${x}${i < a.length - 1 ? ' ·' : ''}</span>`).join(' ');
 function card({ id, art, photo = '', badge, tags = '', title, en = '', desc = '', body }) {
   return `<article class="acc card" id="${id}">
   <h3><button class="acc-h" type="button" aria-expanded="false" aria-controls="${id}-b">
-    <span class="banner">${art}${phBanner(photo)}</span>
+    <span class="banner">${phBanner(photo) || art}</span>
     <span class="tag">${tags}</span>
-    <span class="ov"><span class="badge" aria-hidden="true">${badge}</span><span class="ov-t"><span class="tt lbl">${title}</span>${en ? `<span class="en nosay">${en}</span>` : ''}${desc ? `<span class="ds">${desc}</span>` : ''}</span>${ico('chevron', { cls: 'chev' })}</span>
+    <span class="ov"><span class="badge" aria-hidden="true">${badge}</span><span class="ov-t"><span class="tt lbl">${title}</span>${en ? `<span class="en nosay">${en}</span>` : ''}${desc ? `<span class="ds">${nbParts(desc)}</span>` : ''}</span>${ico('chevron', { cls: 'chev' })}</span>
   </button></h3>
   ${spk(id + '-b')}
   <div class="acc-b" id="${id}-b" role="region"><div class="acc-in"><div class="card-body">${body}</div></div></div>
@@ -151,12 +256,12 @@ function status() {
 function mapSection() {
   const m = seaMap();
   const CHIP = ['广州', '抵吉隆坡', '老城', '探校', '飞新加坡', '飞巴厘岛', '考察', '自选', '返程'];
-  const chips = C.DAYS.map((d) => `<button class="dchip" type="button" data-day="${d.n}" data-title="${d.title}" data-sub="${d.sub}" data-move="${d.move}" data-d="${d.d}" aria-label="第 ${d.n} 天:${d.title}"><b>${d.n}</b><span>${CHIP[d.n - 1]}</span></button>`).join('');
+  const chips = C.DAYS.map((d) => `<button class="dchip" type="button" data-day="${d.n}" data-title="${fwText(d.title)}" data-sub="${fwText(d.sub)}" data-move="${fwText(d.move)}" data-d="${fwText(d.d)}" aria-label="第 ${d.n} 天:${d.title}"><b>${d.n}</b><span>${CHIP[d.n - 1]}</span></button>`).join('');
   return `<section class="block wrap" id="map" aria-labelledby="map-h" style="padding-top:clamp(28px,5vw,56px)">
   <div class="rv"><p class="eyebrow" style="--c:var(--gold)">ROUTE AT A GLANCE</p><h2 class="h2" id="map-h" style="margin:6px 0 18px">一张图看完 9 天</h2></div>
   <div class="mapbox rv" id="mapbox">${m.svg}</div><p class="map-hint">地图可左右滑动。</p>
   <div class="days-row rv" role="group" aria-label="选择第几天" style="grid-template-columns:repeat(${C.DAYS.length},1fr)">${chips}</div>
-  <div class="daysum" id="daysum" aria-live="polite"><h4>点上面的数字,地图上的飞机会飞过去</h4><p>也可以点地图上的圆点。</p></div>
+  <div class="daysum" id="daysum" aria-live="polite"><h4>点上面的数字,看这一天怎么走</h4><p>飞行日先是<b>飞机</b>(D1、D2、D5、D6),落地后换成<b>小车</b>;在地面的日子一直是小车(D3 吉隆坡市区、D4 探校往返、D7–D8 巴厘岛)。也可以点地图上的圆点。</p></div>
 </section>`;
 }
 
@@ -197,7 +302,7 @@ function cur3() {
 function dayBody(d) {
   return `<div class="dday">
   ${capLine(d.photo, '')}
-  <div class="day-meta"><span>${ico('cal')}${d.d}</span><span>${ico('pin')}${d.area}</span><span>${ico(d.plane ? 'plane' : 'car')}${d.move}</span><span class="nosay">${intensity(d.pace)}</span>${d.tags.map((t) => `<span>${t}</span>`).join('')}</div>
+  <div class="day-meta"><span>${ico('cal')}${d.d}</span><span>${ico('pin')}${d.area}</span><span>${d.plane ? ico('plane') : ''}${!d.plane || /包车|打车/.test(d.move) ? ico('car') : ''}${d.move}</span><span class="nosay">${intensity(d.pace)}</span>${d.tags.map((t) => `<span>${t}</span>`).join('')}</div>
   ${phGallery(d.gallery)}
   <ol class="tl">${d.steps.map(([t, x]) => `<li class="tl-i say"><span class="tl-t lbl">${t}</span><div class="tl-x">${x}</div></li>`).join('')}</ol>
   <div class="dgrid"><div class="dbox"><b class="l lbl">${ico('eat')}吃</b>${d.eat}</div><div class="dbox"><b class="l lbl">${ico('bed')}住</b>${d.stay}</div></div>
@@ -231,7 +336,7 @@ function chRoute() {
     return card({ id: `s-${s.id}`, art: scene(s.scene), photo: s.photo, badge: s.n, tags: `<span>${CTRY[s.c]}</span><span class="${rc}">${rc ? ico('star', { fill: true }) : ''}${rl}</span>`, title: s.name, en: s.en, body: sightBody(s) });
   }).join('');
   return `<section class="block wrap ch-route" id="route" aria-labelledby="route-h">
-  ${chead('route', '02', 'PART TWO · 9-DAY ITINERARY', '9 日行程', '每天一张卡:按小时排的时间线、吃住、容易踩的坑和备选方案。「强度」分轻松、中等、高强度三档,是体力消耗的参考。卡片头图优先用真实照片,没有照片的用手绘插画。下面还有沿途 9 个景点的小卡片。')}
+  ${chead('route', '02', 'PART TWO · 9-DAY ITINERARY', '9 日行程', '每天一张卡:按小时排的时间线、吃住、容易踩的坑和备选方案。「强度」分轻松、中等、高强度三档,是体力消耗的参考。卡片头图均为真实照片(来源见页面最末尾)。下面还有沿途 9 个景点的小卡片。')}
   <div class="legend rv nosay"><span>强度:</span>${meter(1)} 轻松 ${meter(2)} 中等 ${meter(3)} 高强度</div>
   ${days}
   <h3 class="sub-h">沿途景点 <small>Sights</small></h3>
@@ -254,7 +359,7 @@ function chSchools() {
     <li><b class="lbl">出发前一周</b>再确认一次时间和地点,让孩子把想问的问题写在小本子上。</li></ol>`;
   return `<section class="block wrap ch-school" id="schools" aria-labelledby="schools-h">
   ${chead('schools', '03', 'PART THREE · SCHOOL VISITS', '森美兰探校', '三所学校都在森美兰州,排在 1 月 27 日(周三)一天走完:每所约 90 分钟,校园参观 + 招生咨询。真正要花功夫的是预约,所以这一章先教你怎么约、怎么问。')}
-  <div class="rv"><h3 class="sub-h" style="margin-top:0">位置与车程 <small>Map</small></h3><div class="mapbox ns" id="nsbox">${nsInset()}</div></div>
+  <div class="rv"><h3 class="sub-h" style="margin-top:0">位置与车程 <small>Map</small></h3><div class="mapbox ns" id="nsbox">${nsInset()}</div><p class="map-hint">示意图可左右滑动。</p></div>
   <h3 class="sub-h">三所学校 <small>Schools</small></h3>
   ${cards}
   ${sec({ id: 'sc-how', no: '3.1', title: '怎么预约', sub: '四步走', body: steps + mail('mail-school', '邮件模板(英文)', C.MAIL_SCHOOL), open: true })}
@@ -270,7 +375,7 @@ function dm() {
   const sel = (cls, extra, max, def) => `<select class="${cls}" ${extra} aria-label="评分">${Array.from({ length: max + 1 }, (_, i) => `<option value="${i}"${i === def ? ' selected' : ''}>${i === 0 && max === 5 ? '–' : i}</option>`).join('')}</select>`;
   const rows = C.DM_CRITERIA.map(([n, w], r) => `<tr data-r="${r}"><th scope="row">${n}</th><td>${sel('dm-w', `data-r="${r}"`, 3, w)}</td>${cols.map((c) => `<td>${sel('dm-s', `data-r="${r}" data-c="${c}"`, 5, 0)}</td>`).join('')}</tr>`).join('');
   const tot = `<tr class="tot"><th scope="row">加权总分</th><td></td>${cols.map((c) => `<td><b class="dm-t" data-c="${c}">0</b><span class="dm-bar"><i data-c="${c}"></i></span></td>`).join('')}</tr>`;
-  return `<div class="dm" id="dm"><p class="note" style="margin-bottom:8px">考察完当场打分:每项 1–5 分,「–」表示还没打分,按 0 分计。权重可调,总分满分 100。会记住你的打分。</p><div class="dm-wrap"><table class="dmt"><thead>${head}</thead><tbody>${rows}${tot}</tbody></table></div><div class="ch-tools" style="margin-top:10px"><button class="pill" type="button" id="dm-reset">${ico('collapse')}清空打分</button></div></div>`;
+  return `<div class="dm" id="dm"><p class="note" style="margin-bottom:8px">考察完当场打分:每项 1–5 分,「–」表示还没打分,按 0 分计。权重可调,总分满分 100。会记住你的打分。</p><div class="dm-wrap"><table class="dmt"><thead>${head}</thead><tbody>${rows}${tot}</tbody></table></div><p class="map-hint">表格可左右滑动;左边的评分项会固定在屏幕左侧。</p><div class="ch-tools" style="margin-top:10px"><button class="pill" type="button" id="dm-reset">${ico('collapse')}清空打分</button></div></div>`;
 }
 function rainWidget() {
   const q = '<ul class="pts"><li>仪式在哪里改?有顶的位置能不能容下全部宾客?</li><li>谁在什么时候决定「改室内」?有没有书面的时间点?</li><li>改期和退款规则是什么?</li></ul>';
@@ -321,11 +426,12 @@ const nav = [
   ['plan', '准备', 'list', 'var(--forest)'],
 ];
 const TITLE = '南行九日 · 吉隆坡 新加坡 巴厘岛 9 日行程';
-const head = `<!doctype html>
+const head = () => `<!doctype html>
 <html lang="zh-CN" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="format-detection" content="telephone=no">
 <meta name="theme-color" content="#faf7f1">
 <title>${TITLE}</title>
 <meta name="description" content="吉隆坡、新加坡、巴厘岛 9 日行程:含森美兰学校探校与巴厘岛婚礼酒店考察。${C.META.cn}整理。">
@@ -333,7 +439,7 @@ const head = `<!doctype html>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='%23c8202f'/%3E%3Cpath fill='%23fff' d='M12 5l2 5 5 .5-3.8 3.4 1.2 5L12 16.3 7.6 18.9l1.2-5L5 10.5 10 10z'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@600;900&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" media="print" onload="this.media='all'">
-<style>${css}${PHOTO_CSS}</style>
+<style>${cssCompat(css + PHOTO_CSS)}</style>
 <script>
 (function(){try{var t=localStorage.getItem('yvr7:theme');t=t?JSON.parse(t):(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('yvr7:fs');if(f)document.documentElement.style.setProperty('--fs',JSON.parse(f));}catch(e){}})();
 </script>
@@ -378,7 +484,7 @@ const hero = `<section class="hero" id="top">
     <p class="kick">Travel Guide · ${C.META.cn} 更新</p>
     <h1><span>南行</span><span class="b">九日</span></h1>
     <p class="sub">吉隆坡 · 新加坡 · 巴厘岛 · 7 人团</p>
-    <p class="lead say">${C.META.dates}。为 7 个人设计:4 位长辈、2 位 30 岁、1 位初中生。两件必做的事:森美兰三所学校探校(周三一天走完),巴厘岛婚礼酒店考察(周六)。</p>
+    <p class="lead say">${C.META.dates}。为 7 个人设计:4 位长辈、2 位 30 岁左右的年轻人、1 位初中生。两件必做的事:森美兰三所学校探校(周三一天走完),巴厘岛婚礼酒店考察(周六)。</p>
     <ul class="chips"><li>9 天</li><li>3 个国家</li><li>3 所学校</li><li>2 家婚礼候选</li></ul>
     <div class="cta"><a class="btn pri" href="#route">直接看行程</a><a class="btn" href="#p-assume" data-open="p-assume">先看待确认事项</a></div>
   </div></div>
@@ -387,18 +493,18 @@ const hero = `<section class="hero" id="top">
 const foot = () => `<footer>
   <div class="wrap">
     <h3>来源与说明</h3>
-    <p>入境政策、航班时刻、价格、人数和开放时间变化很快。本页内容按 ${C.META.cn}能查到的公开信息整理,<b>出发前请再看一次官方页面</b>。带「第三方」「来源为博客」字样的信息未经官方核实。</p>
+    <p>入境政策、航班时刻、价格、人数和开放时间变化很快。本页内容按 ${C.META.cn}能查到的公开信息整理,<b>出发前请再看一次官方页面</b>。带「第三方」「来源为博客」「来源写」「据报道」「(估)」字样的信息未经官方核实。</p>
     <div class="src">${C.SOURCES.map(([n, u]) => `<a href="${u}" target="_blank" rel="noopener noreferrer">${n}</a>`).join('')}</div>
-    <p>手绘插画为原创绘制(程序生成);学校和酒店的插画只是示意,不代表实际样貌。真实照片大部分来自 Wikimedia Commons(按各自的授权署名);Epsom、KTJ 的校园图取自学校官网,Tirtha 的两张取自 NOW! Bali 的文章,仅供自用。照片文件在 images/sea 文件夹。地图为示意图,非严格比例。</p>
-    ${usedPhotos.size ? `<h3 style="margin-top:18px">图片来源</h3><ul class="ph-credits">${[...usedPhotos].map((k) => { const p = PHOTOS[k]; return `<li>${esc(p.alt)}:${esc(p.author)} · <a href="${esc(p.sourceUrl)}" target="_blank" rel="noopener noreferrer">${esc(p.title)}</a> · <a href="${esc(p.licenseUrl)}" target="_blank" rel="noopener noreferrer">${esc(p.license)}</a></li>`; }).join('')}</ul>` : ''}
+    <p>地图为示意图,非严格比例;手绘插画为原创绘制(程序生成),只是示意,不代表实际样貌。</p>
+    <p class="stamp">页面构建于 ${STAMP}</p>
+    ${usedPhotos.size ? `<details class="ph-box"><summary>图片来源与版权说明<small>(点击展开)</small></summary>
+      <p>页面里的真实照片大部分来自 Wikimedia Commons,按各自的授权署名;Epsom、KTJ 的校园图取自学校官网,Tirtha 的两张取自 NOW! Bali 的文章。这是自用的旅行指南,请不要用于商业用途。</p>
+      <ul class="ph-credits">${[...usedPhotos].map((k) => { const p = PHOTOS[k]; return `<li>${esc(p.alt)} · ${esc(p.author)} · <a href="${esc(p.sourceUrl)}" target="_blank" rel="noopener noreferrer">${esc(p.title)}</a> · <a href="${esc(p.licenseUrl)}" target="_blank" rel="noopener noreferrer">${esc(p.license)}</a></li>`; }).join('')}</ul></details>` : ''}
   </div>
 </footer>`;
 
-const html = `${head}
-<body data-page="sea">
-${SHARED_DEFS}
-${topbar}
-<main id="main">
+// build the body first: it registers which photos are used (covers, credits) before <head> and the footer are written
+const bodyMain = `<main id="main">
 ${hero}
 <div class="wrap" id="overview">${glance()}${assumptions()}${status()}</div>
 ${mapSection()}
@@ -407,12 +513,19 @@ ${chRoute()}
 ${chSchools()}
 ${chWedding()}
 ${chPlan()}
-</main>
-${foot()}
+</main>`;
+const bodyFoot = foot();
+const html = `${head()}
+<body data-page="sea">
+${SHARED_DEFS}
+${topbar}
+${bodyMain}
+${bodyFoot}
+<style id="photos">${[...coverCss.values()].join('')}</style>
 <script>${js}</script>
 </body>
 </html>`;
 
 const out = path.join(root, '..', 'singapore-malaysia-bali.html');
-fs.writeFileSync(out, fwHtml(html));
+fs.writeFileSync(out, linkify(fwHtml(html)));
 console.log('wrote', out, (fs.statSync(out).size / 1024).toFixed(0) + ' KB');

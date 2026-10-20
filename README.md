@@ -1,6 +1,6 @@
 # 旅行指南
 
-两份可交互的旅行指南,**直接用浏览器打开 HTML 即可**(电脑、平板、手机均可;无需联网,Google 字体只是可选增强)。第二份页面带真实照片:HTML 和 `images/` 文件夹放在一起即可;照片文件缺失时,页面会自动退回手绘插画。
+两份可交互的单文件旅行指南,**直接用浏览器打开 HTML 即可**(电脑、平板、手机均可;无需联网,Google 字体只是可选增强)。第二份页面的真实照片已全部内嵌在 HTML 里,所以单独转发这一个文件、或放进任何 App 的内置浏览器(WebView)都能完整显示,不需要 `images/` 文件夹。
 
 | 文件 | 内容 |
 | --- | --- |
@@ -26,9 +26,10 @@ node src/sea/build.mjs   # 输出 singapore-malaysia-bali.html
 ```
 
 - `src/content.mjs`、`src/sea/content.mjs`:各页面的文字内容;`src/sea/photos.mjs`:南行九日页面的照片清单(作者、授权、来源)
+- `src/sea/compat.mjs`:构建时给样式加旧版 Safari 的回退写法(`color-mix`、`inset`、`aspect-ratio` 等)
 - `src/scenes.mjs`、`src/sea/scenes.mjs`、`src/art.mjs`:程序生成的原创插画
 - `src/style.css`、`src/app.js`:共用的样式与交互;`src/sea/app-sea.js`:第二个页面独有的交互
 
 ## 照片
 
-`images/sea/` 里的照片大部分来自 [Wikimedia Commons](https://commons.wikimedia.org/)(CC BY / CC BY-SA 授权,按要求署名);Epsom、KTJ 的校园图取自学校官网,Tirtha 的两张取自 NOW! Bali 的文章。这些是自用旅行指南用的图片,不要用于商业用途。每张照片的作者、来源链接写在 `src/sea/photos.mjs`,也显示在页面底部的「图片来源」和各卡片的封面说明里。更换照片时请同步改 `photos.mjs`。
+`images/sea/` 里的照片是构建页面时读取的素材:`images/sea/cover/*.jpg` 是缩小后的版本,构建时以 base64 写进 HTML(封面和相册共用,每张只写一次);`images/sea/*.jpg` 是对应的原图,留作素材(缺少缩小版时才会直接使用)。照片大部分来自 [Wikimedia Commons](https://commons.wikimedia.org/)(CC BY / CC BY-SA 授权,按要求署名);Epsom、KTJ 的校园图取自学校官网,Tirtha 的两张取自 NOW! Bali 的文章。这些是自用旅行指南用的图片,不要用于商业用途。每张照片的作者、来源链接写在 `src/sea/photos.mjs`;页面里图片下面不再显示版权信息,统一放在页面最末尾、默认折叠的「图片来源与版权说明」里。更换照片时请同步改 `photos.mjs` 并重新生成缩小版。
