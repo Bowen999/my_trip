@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { scenes, seaMap, nsInset } from './scenes.mjs';
 import { SHARED_DEFS } from '../art.mjs';
 import * as C from './content.mjs';
+import { PHOTOS } from './photos.mjs';
 import { ico, food } from '../icons.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -35,6 +36,44 @@ const scene = (key, ...a) => {
 };
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
+/* ---------- real photos (Wikimedia Commons, credited) ---------- */
+// Files live in images/sea/ next to the HTML. If one fails to load, the drawn illustration underneath stays visible.
+const usedPhotos = new Set();
+const ph = (k) => (k && PHOTOS[k] && fs.existsSync(path.join(root, '..', 'images', 'sea', PHOTOS[k].file)) ? PHOTOS[k] : null);
+const phSrc = (p) => `images/sea/${p.file}`;
+const phCredit = (p) => `照片:${esc(p.alt)} · ${esc(p.author)} · <a href="${esc(p.sourceUrl)}" target="_blank" rel="noopener noreferrer">${esc(p.license)}</a>(Wikimedia Commons)`;
+function phBanner(k) {
+  const p = ph(k);
+  if (!p) return '';
+  usedPhotos.add(k);
+  return `<img class="photo" src="${phSrc(p)}" alt="${esc(p.alt)}" loading="lazy" decoding="async" onerror="this.remove()">`;
+}
+function phGallery(keys = []) {
+  const figs = keys.map((k) => {
+    const p = ph(k);
+    if (!p) return '';
+    usedPhotos.add(k);
+    return `<figure class="ph"><img src="${phSrc(p)}" alt="${esc(p.alt)}" loading="lazy" decoding="async" onerror="this.closest('figure').remove()"><figcaption>${phCredit(p)}</figcaption></figure>`;
+  }).join('');
+  return figs ? `<div class="ph-row nosay">${figs}</div>` : '';
+}
+const capLine = (k, drawn) => {
+  const p = ph(k);
+  if (p) return `<p class="cap nosay">封面${phCredit(p)}</p>`;
+  return drawn ? `<p class="cap nosay">插图:${drawn}</p>` : '';
+};
+const PHOTO_CSS = `
+.banner .photo { z-index: 0; }
+.banner::after { z-index: 1; }
+.ph-row { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.ph { margin: 0; background: var(--paper-2); border: 1px solid var(--rule); }
+.ph img { display: block; width: 100%; aspect-ratio: 3 / 2; object-fit: cover; background: var(--paper-2); }
+.ph figcaption { padding: 8px 10px; font-size: .72rem; line-height: 1.55; color: var(--ink-3); }
+.ph figcaption a, .cap a { color: inherit; }
+footer .ph-credits { margin: 6px 0 22px; padding-left: 1.2em; font-size: .78rem; line-height: 1.7; opacity: .9; }
+footer .ph-credits li { margin: 2px 0; }
+`;
+
 const spk = (target) => `<button class="spk" type="button" data-speak="${target}" aria-label="朗读这一部分" title="朗读这一部分">${ico('speaker')}</button>`;
 function sec({ id, no, title, sub = '', body, open = false }) {
   return `<div class="acc sec${open ? ' open' : ''}" id="${id}">
@@ -43,10 +82,10 @@ function sec({ id, no, title, sub = '', body, open = false }) {
   <div class="acc-b" id="${id}-b" role="region"><div class="acc-in"><div class="sec-body">${body}</div></div></div>
 </div>`;
 }
-function card({ id, art, badge, tags = '', title, en = '', desc = '', body }) {
+function card({ id, art, photo = '', badge, tags = '', title, en = '', desc = '', body }) {
   return `<article class="acc card" id="${id}">
   <h3><button class="acc-h" type="button" aria-expanded="false" aria-controls="${id}-b">
-    <span class="banner">${art}</span>
+    <span class="banner">${art}${phBanner(photo)}</span>
     <span class="tag">${tags}</span>
     <span class="ov"><span class="badge" aria-hidden="true">${badge}</span><span class="ov-t"><span class="tt lbl">${title}</span>${en ? `<span class="en nosay">${en}</span>` : ''}${desc ? `<span class="ds">${desc}</span>` : ''}</span>${ico('chevron', { cls: 'chev' })}</span>
   </button></h3>
@@ -77,7 +116,7 @@ function glance() {
     ['route', 'var(--red)', '路线', C.ROUTE_NOTE.shape],
     ['clock', 'var(--gold)', '节奏', C.ROUTE_NOTE.pace],
     ['school', 'var(--blue)', '学校', C.ROUTE_NOTE.schools],
-    ['plane', 'var(--forest)', '时区', '广州、新加坡、吉隆坡、巴厘岛都是 <b>UTC+8</b>,四次飞行都没有时差。'],
+    ['plane', 'var(--forest)', '时区', '广州、吉隆坡、新加坡、巴厘岛都是 <b>UTC+8</b>,三段飞行都没有时差。'],
   ];
   return `<div class="glance">${g.map(([i, c, t, p]) => `<div class="gl rv" style="--g:${c}">${ico(i)}<h3>${t}</h3><p>${p}</p></div>`).join('')}</div>`;
 }
@@ -96,11 +135,12 @@ function status() {
 }
 function mapSection() {
   const m = seaMap();
-  const chips = C.DAYS.map((d) => `<button class="dchip" type="button" data-day="${d.n}" data-title="${d.title}" data-sub="${d.sub}" data-move="${d.move}" data-d="${d.d}" aria-label="第 ${d.n} 天:${d.title}"><b>${d.n}</b><span>${d.area.split(' ')[0]}</span></button>`).join('');
+  const CHIP = ['广州', '抵吉隆坡', '老城', '探校', '飞新加坡', '飞巴厘岛', '考察', '自选', '返程'];
+  const chips = C.DAYS.map((d) => `<button class="dchip" type="button" data-day="${d.n}" data-title="${d.title}" data-sub="${d.sub}" data-move="${d.move}" data-d="${d.d}" aria-label="第 ${d.n} 天:${d.title}"><b>${d.n}</b><span>${CHIP[d.n - 1]}</span></button>`).join('');
   return `<section class="block wrap" id="map" aria-labelledby="map-h" style="padding-top:clamp(28px,5vw,56px)">
-  <div class="rv"><p class="eyebrow" style="--c:var(--gold)">ROUTE AT A GLANCE</p><h2 class="h2" id="map-h" style="margin:6px 0 18px">一张图看完 7 天</h2></div>
+  <div class="rv"><p class="eyebrow" style="--c:var(--gold)">ROUTE AT A GLANCE</p><h2 class="h2" id="map-h" style="margin:6px 0 18px">一张图看完 9 天</h2></div>
   <div class="mapbox rv" id="mapbox">${m.svg}</div><p class="map-hint">地图可左右滑动。</p>
-  <div class="days-row rv" role="group" aria-label="选择第几天">${chips}</div>
+  <div class="days-row rv" role="group" aria-label="选择第几天" style="grid-template-columns:repeat(${C.DAYS.length},1fr)">${chips}</div>
   <div class="daysum" id="daysum" aria-live="polite"><h4>点上面的数字,地图上的飞机会飞过去</h4><p>也可以点地图上的圆点。</p></div>
 </section>`;
 }
@@ -108,14 +148,14 @@ function mapSection() {
 /* ---------- 01 overview of the three places ---------- */
 function chCulture() {
   const stats = C.STATS.map((s) => `<div class="stat rv say"><div class="n lbl">${s.t}</div><div class="l lbl">${s.l}</div><div class="s">${s.s}</div></div>`).join('');
-  const tabs = Object.entries(C.COUNTRIES);
+  const tabs = ['my', 'sg', 'id'].map((k) => [k, C.COUNTRIES[k]]); // route order: KL → Singapore → Bali
   const ctr = `<div data-tabs><div class="seg" role="tablist" aria-label="选择国家">${tabs.map(([k, v], i) => `<button role="tab" aria-selected="${i === 0}" data-tab="${k}">${v.n}</button>`).join('')}</div>
     ${tabs.map(([k, v], i) => `<div class="panel prov" data-panel="${k}"${i ? ' hidden' : ''} style="margin-top:16px"><div class="pic">${scene(v.scene)}</div><table class="cmp"><caption class="sr">${v.n}</caption>${v.rows.map(([a, b]) => `<tr><th scope="row" class="lbl">${a}</th><td>${b}</td></tr>`).join('')}</table></div>`).join('')}</div>`;
   const flips = `<div class="flips">${C.CULTURE.map((c) => `<button class="flip rv say" type="button" aria-pressed="false"><span class="flip-in"><span class="fc f">${ico(c.ico)}<span class="k lbl">${c.k}</span><span class="s">${c.s}</span><span class="hint nosay">点击翻面 ↻</span></span><span class="fc b">${c.back.map((t) => `<span class="bp">${t}</span>`).join('')}</span></span></button>`).join('')}</div>`;
   const foods = `<div class="foods">${C.FOODS.map((f) => `<div class="food rv">${food(f.i)}<div><h4>${f.n}<span class="${f.w.toLowerCase()}">${{ SG: '新加坡', MY: '马来西亚', ID: '巴厘岛' }[f.w]}</span></h4><p>${f.d}</p></div></div>`).join('')}</div>`;
   const manners = `<dl class="manners">${C.MANNERS.map(([k, v]) => `<div class="kv say"><dt class="lbl">${k}</dt><dd>${v}</dd></div>`).join('')}</dl>
   <div class="calcs" style="margin-top:6px">${cur3()}</div>`;
-  const clocks = `<div class="clocks">${[['gz', '广州', 'Asia/Shanghai'], ['sg', '新加坡', 'Asia/Singapore'], ['kl', '吉隆坡', 'Asia/Kuala_Lumpur'], ['bali', '巴厘岛', 'Asia/Makassar']].map(([k, n, tz]) => `<div class="clk" data-tz="${tz}" data-k="${k}"${k === 'gz' ? ' data-base="基准"' : ''}><div class="z">${n}</div><div class="tm">--:--</div><div class="dt">&nbsp;</div><div class="df">&nbsp;</div></div>`).join('')}</div>
+  const clocks = `<div class="clocks">${[['gz', '广州', 'Asia/Shanghai'], ['kl', '吉隆坡', 'Asia/Kuala_Lumpur'], ['sg', '新加坡', 'Asia/Singapore'], ['bali', '巴厘岛', 'Asia/Makassar']].map(([k, n, tz]) => `<div class="clk" data-tz="${tz}" data-k="${k}"${k === 'gz' ? ' data-base="基准"' : ''}><div class="z">${n}</div><div class="tm">--:--</div><div class="dt">&nbsp;</div><div class="df">&nbsp;</div></div>`).join('')}</div>
   <p class="note say">四个城市的时钟一模一样:全程<b>没有时差</b>。巴厘岛属于印尼中部时间(WITA),与新加坡、吉隆坡同为 UTC+8。</p>`;
   return `<section class="block wrap ch-culture" id="culture" aria-labelledby="culture-h">
   ${chead('culture', '01', 'PART ONE · THREE PLACES', '三地速览', '先花十分钟,把三个地方的钱、电、规矩和入境要求弄清楚。后面的行程会好懂很多。')}
@@ -141,7 +181,9 @@ function cur3() {
 /* ---------- 02 route + sights ---------- */
 function dayBody(d) {
   return `<div class="dday">
-  <div class="day-meta"><span>${ico('cal')}${d.d}</span><span>${ico('pin')}${d.area}</span><span>${ico(d.n === 3 || d.n === 5 || d.n === 1 || d.n === 7 ? 'plane' : 'car')}${d.move}</span><span class="nosay">长辈强度 ${pace(d.pace)}</span>${d.tags.map((t) => `<span>${t}</span>`).join('')}</div>
+  ${capLine(d.photo, '')}
+  <div class="day-meta"><span>${ico('cal')}${d.d}</span><span>${ico('pin')}${d.area}</span><span>${ico(d.plane ? 'plane' : 'car')}${d.move}</span><span class="nosay">长辈强度 ${pace(d.pace)}</span>${d.tags.map((t) => `<span>${t}</span>`).join('')}</div>
+  ${phGallery(d.gallery)}
   <ol class="tl">${d.steps.map(([t, x]) => `<li class="tl-i say"><span class="tl-t lbl">${t}</span><div class="tl-x">${x}</div></li>`).join('')}</ol>
   <div class="dgrid"><div class="dbox"><b class="l lbl">${ico('eat')}吃</b>${d.eat}</div><div class="dbox"><b class="l lbl">${ico('bed')}住</b>${d.stay}</div></div>
   ${box('warn', '小心', 'warn', d.warn)}
@@ -152,8 +194,9 @@ function dayBody(d) {
 function sightBody(s) {
   const f = s.facts;
   return `<div class="sx"><div class="sx-main">
-    <p class="cap nosay">插图:${s.cap}</p>
+    ${capLine(s.photo, s.cap)}
     <p class="lead say">${s.blurb}</p>
+    ${phGallery(s.gallery)}
     <ul class="pts">${s.pts.map((p) => `<li>${p}</li>`).join('')}</ul>
     ${s.news ? box('news', '最新', 'info', s.news) : ''}
     ${box('tip', '小贴士', 'check', s.tip)}
@@ -167,13 +210,13 @@ function sightBody(s) {
   </aside></div>`;
 }
 function chRoute() {
-  const days = C.DAYS.map((d) => card({ id: `d${d.n}`, art: scene(d.scene), badge: d.n, tags: `<span>DAY ${d.n} · ${d.d}</span>`, title: d.title, desc: d.sub, body: dayBody(d) })).join('');
+  const days = C.DAYS.map((d) => card({ id: `d${d.n}`, art: scene(d.scene), photo: d.photo, badge: d.n, tags: `<span>DAY ${d.n} · ${d.d}</span>`, title: d.title, desc: d.sub, body: dayBody(d) })).join('');
   const sights = C.SIGHTS.map((s) => {
     const [rc, rl] = RATE[s.r];
-    return card({ id: `s-${s.id}`, art: scene(s.scene), badge: s.n, tags: `<span>${CTRY[s.c]}</span><span class="${rc}">${rc ? ico('star', { fill: true }) : ''}${rl}</span>`, title: s.name, en: s.en, body: sightBody(s) });
+    return card({ id: `s-${s.id}`, art: scene(s.scene), photo: s.photo, badge: s.n, tags: `<span>${CTRY[s.c]}</span><span class="${rc}">${rc ? ico('star', { fill: true }) : ''}${rl}</span>`, title: s.name, en: s.en, body: sightBody(s) });
   }).join('');
   return `<section class="block wrap ch-route" id="route" aria-labelledby="route-h">
-  ${chead('route', '02', 'PART TWO · 7-DAY ITINERARY', '7 日行程', '每天一张卡:时间线、吃住、容易踩的坑和备选方案。右上角的「长辈强度」是 1–5 的体力消耗参考。下面还有沿途 8 个景点的小卡片。')}
+  ${chead('route', '02', 'PART TWO · 9-DAY ITINERARY', '9 日行程', '每天一张卡:按小时排的时间线、吃住、容易踩的坑和备选方案。「长辈强度」是 1–5 的体力消耗参考。卡片头图优先用真实照片,没有照片的用手绘插画。下面还有沿途 9 个景点的小卡片。')}
   <div class="legend rv nosay"><span>长辈强度:</span>${pace(1)} 轻松 ${pace(3)} 中等 ${pace(5)} 吃力</div>
   ${days}
   <h3 class="sub-h">沿途景点 <small>Sights</small></h3>
@@ -185,17 +228,17 @@ function chRoute() {
 function chSchools() {
   const cards = C.SCHOOLS.map((s) =>
     card({
-      id: `sc-${s.id}`, art: scene(s.scene), badge: s.n, tags: `<span>${s.when}</span>`, title: s.name, en: s.en,
-      body: `<div class="dday"><p class="cap nosay">${s.cap}</p><p class="lead say">${s.blurb}</p>${kvl(s.facts)}${box('news', '备注', 'info', s.note)}</div>`,
+      id: `sc-${s.id}`, art: scene(s.scene), photo: s.photo, badge: s.n, tags: `<span>${s.when}</span>`, title: s.name, en: s.en,
+      body: `<div class="dday">${capLine(s.photo, s.cap)}<p class="lead say">${s.blurb}</p>${kvl(s.facts)}${box('news', '备注', 'info', s.note)}</div>`,
     })
   ).join('');
   const steps = `<ol class="steps say">
     <li><b class="lbl">先发邮件</b>下面有英文模板。每所学校发一封,写明日期、人数、孩子年级和想问的事。</li>
     <li><b class="lbl">等回复</b>学校通常工作日回复。1–2 周没回,再发一封,或用官网的在线表单。</li>
-    <li><b class="lbl">定顺序</b>三所的时间确定后,再订酒店和包车。D3 下午 Epsom,D4 上午 KTJ、下午 Adcote Matrix。</li>
+    <li><b class="lbl">定顺序</b>三所都放在 D4(1/27 周三)一天:Epsom 09:00 → Adcote Matrix 11:00 → Seremban 午饭 13:00 → KTJ 15:00,每所约 90 分钟。要请三所都给出这一天的具体时段;约不到就先舍掉最远的 KTJ,再订包车。</li>
     <li><b class="lbl">出发前一周</b>再确认一次时间和地点,让孩子把想问的问题写在小本子上。</li></ol>`;
   return `<section class="block wrap ch-school" id="schools" aria-labelledby="schools-h">
-  ${chead('schools', '03', 'PART THREE · SCHOOL VISITS', '森美兰探校', '三所学校都在森美兰州,彼此车程不远。每所给半天:校园参观 + 招生咨询。真正要花功夫的是预约,所以这一章先教你怎么约、怎么问。')}
+  ${chead('schools', '03', 'PART THREE · SCHOOL VISITS', '森美兰探校', '三所学校都在森美兰州,排在 1 月 27 日(周三)一天走完:每所约 90 分钟,校园参观 + 招生咨询。真正要花功夫的是预约,所以这一章先教你怎么约、怎么问。')}
   <div class="rv"><h3 class="sub-h" style="margin-top:0">位置与车程 <small>Map</small></h3><div class="mapbox ns" id="nsbox">${nsInset()}</div></div>
   <h3 class="sub-h">三所学校 <small>Schools</small></h3>
   ${cards}
@@ -223,13 +266,13 @@ function rainWidget() {
 function chWedding() {
   const hotels = C.HOTELS.map((h, i) =>
     card({
-      id: `w-${h.id}`, art: scene(h.scene), badge: i + 1, tags: `<span>${h.when}</span>`, title: h.name, en: h.en,
-      body: `<div class="dday"><p class="cap nosay">${h.cap}</p><p class="lead say">${h.blurb}</p>${kvl(h.facts)}${box('news', '要问清', 'info', h.note)}</div>`,
+      id: `w-${h.id}`, art: scene(h.scene), photo: h.photo, badge: i + 1, tags: `<span>${h.when}</span>`, title: h.name, en: h.en,
+      body: `<div class="dday">${capLine(h.photo, h.cap)}<p class="lead say">${h.blurb}</p>${kvl(h.facts)}${box('news', '要问清', 'info', h.note)}</div>`,
     })
   ).join('');
   const more = `<ul class="pts say">${C.HOTEL_MORE.map(([a, b]) => `<li><b>${a}</b>:${b}</li>`).join('')}</ul>`;
   return `<section class="block wrap ch-wedding" id="wedding" aria-labelledby="wedding-h">
-  ${chead('wedding', '04', 'PART FOUR · WEDDING VENUES', '巴厘岛婚礼酒店考察', '你们已有两家候选,都在 Pecatu / 乌鲁瓦图,第 6 天一天就能看完。这一章给你对比、考察清单和打分表,当场用。')}
+  ${chead('wedding', '04', 'PART FOUR · WEDDING VENUES', '巴厘岛婚礼酒店考察', '你们已有两家候选,都在 Pecatu / 乌鲁瓦图,第 7 天(1/30 周六)一天就能看完;周六可能有真实婚礼,1/31 当备选日。这一章给你对比、考察清单和打分表,当场用。')}
   <h3 class="sub-h" style="margin-top:0">两家候选 <small>Candidates</small></h3>
   ${hotels}
   ${sec({ id: 'w-rain', no: '4.1', title: '雨季怎么办', sub: '点按钮,看看下雨天的样子', body: rainWidget(), open: true })}
@@ -243,12 +286,12 @@ function chWedding() {
 /* ---------- 05 plan ---------- */
 function chPlan() {
   const timeline = `<div class="when-line">${C.TIMELINE.map(([a, b]) => `<div class="wl say"><b class="lbl">${a}</b><p>${b}</p></div>`).join('')}</div>`;
-  const flights = `<table class="price"><caption class="sr">四次飞行</caption>${C.FLIGHTS.map(([a, b, c]) => `<tr class="say"><td class="lbl">${a}</td><td>${b}</td><td>${c}</td></tr>`).join('')}</table>
-  <p class="note" style="margin-top:10px">航班时刻和航司会变。订票前核对;7 人尽量订在同一订单,方便改签。</p>`;
+  const flights = `<table class="price"><caption class="sr">飞行安排</caption>${C.FLIGHTS.map(([a, b, c]) => `<tr class="say"><td class="lbl">${a}</td><td>${b}</td><td>${c}</td></tr>`).join('')}</table>
+  <p class="note" style="margin-top:10px">返程不在本页规划。航班时刻和航司会变,以出票信息为准;7 人尽量订在同一订单,方便改签。</p>`;
   return `<section class="block wrap ch-plan" id="plan" aria-labelledby="plan-h">
-  ${chead('plan', '05', 'PART FIVE · PLAN & PREPARE', '出发前要做的事', '什么时候做什么、四次飞行怎么订、行李里放什么。入境要求在页面顶部的「最新状态」。')}
+  ${chead('plan', '05', 'PART FIVE · PLAN & PREPARE', '出发前要做的事', '什么时候做什么、航班怎么订、行李里放什么。入境要求在页面顶部的「最新状态」。')}
   ${sec({ id: 'p-time', no: '5.1', title: '倒计时', sub: '从现在开始', body: timeline, open: true })}
-  ${sec({ id: 'p-fly', no: '5.2', title: '四次飞行', sub: '参考时长与建议', body: flights })}
+  ${sec({ id: 'p-fly', no: '5.2', title: '飞行安排', sub: '参考时长与建议', body: flights })}
   ${sec({ id: 'p-pack', no: '5.3', title: '打包清单', sub: '可勾选,会记住', body: checklist('pack', C.PACK, '已准备') })}
 </section>`;
 }
@@ -262,7 +305,7 @@ const nav = [
   ['wedding', '婚礼', 'ring', 'var(--rose)'],
   ['plan', '准备', 'list', 'var(--forest)'],
 ];
-const TITLE = '南行七日 · 新加坡 吉隆坡 巴厘岛 7 日行程';
+const TITLE = '南行九日 · 吉隆坡 新加坡 巴厘岛 9 日行程';
 const head = `<!doctype html>
 <html lang="zh-CN" data-theme="light">
 <head>
@@ -270,12 +313,12 @@ const head = `<!doctype html>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#faf7f1">
 <title>${TITLE}</title>
-<meta name="description" content="新加坡、吉隆坡、巴厘岛 7 日行程:含森美兰学校探校与巴厘岛婚礼酒店考察。${C.META.cn}整理。">
+<meta name="description" content="吉隆坡、新加坡、巴厘岛 9 日行程:含森美兰学校探校与巴厘岛婚礼酒店考察。${C.META.cn}整理。">
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='%23c8202f'/%3E%3Cpath fill='%23fff' d='M12 5l2 5 5 .5-3.8 3.4 1.2 5L12 16.3 7.6 18.9l1.2-5L5 10.5 10 10z'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@600;900&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" media="print" onload="this.media='all'">
-<style>${css}</style>
+<style>${css}${PHOTO_CSS}</style>
 <script>
 (function(){try{var t=localStorage.getItem('yvr7:theme');t=t?JSON.parse(t):(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('yvr7:fs');if(f)document.documentElement.style.setProperty('--fs',JSON.parse(f));}catch(e){}})();
 </script>
@@ -283,7 +326,7 @@ const head = `<!doctype html>
 
 const topbar = `<a class="skip" href="#main">跳到正文</a>
 <header class="topbar" id="topbar">
-  <a class="brand" href="#top" aria-label="回到顶部"><svg class="mk" aria-hidden="true"><use href="#i-maple"/></svg><span>南行七日</span><small>7 人团</small></a>
+  <a class="brand" href="#top" aria-label="回到顶部"><svg class="mk" aria-hidden="true"><use href="#i-maple"/></svg><span>南行九日</span><small>7 人团</small></a>
   <nav class="tnav" aria-label="章节">${nav.map(([id, n]) => `<a href="#${id}" data-nav="${id}">${n}</a>`).join('')}</nav>
   <div class="tools">
     <button class="tbtn" id="btn-aa" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="pop-aa" title="文字大小与朗读速度"><span>A<span class="sm">a</span></span><span class="sr">文字大小</span></button>
@@ -318,20 +361,21 @@ const hero = `<section class="hero" id="top">
   <div class="hero-art">${scenes.hero('hero-')}<div class="fx" aria-hidden="true">${fxPetals(14)}</div></div>
   <div class="wrap hero-card"><div class="cover rv in">
     <p class="kick">Travel Guide · ${C.META.cn} 更新</p>
-    <h1><span>南行</span><span class="b">七日</span></h1>
-    <p class="sub">新加坡 · 吉隆坡 · 巴厘岛 · 7 人团</p>
-    <p class="lead say">${C.META.dates}。为 7 个人设计:4 位长辈、2 位 30 岁、1 位初中生。两件必做的事:森美兰三所学校探校,巴厘岛婚礼酒店考察。</p>
-    <ul class="chips"><li>7 天</li><li>3 个国家</li><li>3 所学校</li><li>2 家婚礼候选</li></ul>
+    <h1><span>南行</span><span class="b">九日</span></h1>
+    <p class="sub">吉隆坡 · 新加坡 · 巴厘岛 · 7 人团</p>
+    <p class="lead say">${C.META.dates}。为 7 个人设计:4 位长辈、2 位 30 岁、1 位初中生。两件必做的事:森美兰三所学校探校(周三一天走完),巴厘岛婚礼酒店考察(周六)。</p>
+    <ul class="chips"><li>9 天</li><li>3 个国家</li><li>3 所学校</li><li>2 家婚礼候选</li></ul>
     <div class="cta"><a class="btn pri" href="#route">直接看行程</a><a class="btn" href="#p-assume" data-open="p-assume">先看待确认事项</a></div>
   </div></div>
 </section>`;
 
-const foot = `<footer>
+const foot = () => `<footer>
   <div class="wrap">
     <h3>来源与说明</h3>
     <p>入境政策、航班时刻、价格、人数和开放时间变化很快。本页内容按 ${C.META.cn}能查到的公开信息整理,<b>出发前请再看一次官方页面</b>。带「第三方」「来源为博客」字样的信息未经官方核实。</p>
     <div class="src">${C.SOURCES.map(([n, u]) => `<a href="${u}" target="_blank" rel="noopener noreferrer">${n}</a>`).join('')}</div>
-    <p>插画为原创绘制(程序生成),不是实景照片;学校和酒店的插图只是示意,不代表实际样貌。地图为示意图,非严格比例。</p>
+    <p>手绘插画为原创绘制(程序生成);学校和酒店的插画只是示意,不代表实际样貌。真实照片来自 Wikimedia Commons,按各自的授权署名,照片文件在 images/sea 文件夹。地图为示意图,非严格比例。</p>
+    ${usedPhotos.size ? `<h3 style="margin-top:18px">图片来源</h3><ul class="ph-credits">${[...usedPhotos].map((k) => { const p = PHOTOS[k]; return `<li>${esc(p.alt)}:${esc(p.author)} · <a href="${esc(p.sourceUrl)}" target="_blank" rel="noopener noreferrer">${esc(p.title)}</a> · <a href="${esc(p.licenseUrl)}" target="_blank" rel="noopener noreferrer">${esc(p.license)}</a></li>`; }).join('')}</ul>` : ''}
   </div>
 </footer>`;
 
@@ -349,7 +393,7 @@ ${chSchools()}
 ${chWedding()}
 ${chPlan()}
 </main>
-${foot}
+${foot()}
 <script>${js}</script>
 </body>
 </html>`;

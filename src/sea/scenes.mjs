@@ -553,16 +553,101 @@ scenes.jimbaran = (uid = '') => {
   return s.svg({ label: '金巴兰海滩日落海鲜晚餐' });
 };
 
+/* ---------- new scenes for the 9-day version ---------- */
+scenes.gz = (uid = '') => {
+  const s = new Scene(uid + 'gz', { seed: 341 });
+  s.sky(SKY.dusk, { stars: 22 });
+  s.skyline({ x0: 0, x1: 800, base: 330, hmin: 40, hmax: 150, colors: ['#3a3568', '#332f60', '#443e74'], win: '#ffd98a', lit: 0.35, wmin: 14, wmax: 30 });
+  // Canton Tower: a lattice hyperboloid with a thin mast
+  const x = 520, yB = 334, H = 300;
+  const wAt = (t) => (t <= 0.55 ? 7 + 15 * Math.pow((0.55 - t) / 0.55, 2) : 7 + 6 * Math.pow((t - 0.55) / 0.27, 2));
+  const rings = 11, ts = [...Array(rings)].map((_, i) => (i / (rings - 1)) * 0.82);
+  const yAt = (t) => yB - H * t;
+  const left = ts.map((t) => `${n1(x - wAt(t))} ${n1(yAt(t))}`), right = ts.map((t) => `${n1(x + wAt(t))} ${n1(yAt(t))}`).reverse();
+  s.add(`<path d="M${left.join('L')}L${right.join('L')}Z" fill="rgba(255,150,220,.28)" stroke="#ff9ae0" stroke-width="1.4"/>`);
+  let lat = '';
+  for (let i = 0; i < rings - 1; i++) {
+    const a = ts[i], b = ts[i + 1];
+    lat += `<path d="M${n1(x - wAt(a))} ${n1(yAt(a))}L${n1(x + wAt(b))} ${n1(yAt(b))}M${n1(x + wAt(a))} ${n1(yAt(a))}L${n1(x - wAt(b))} ${n1(yAt(b))}"/>`;
+    lat += `<path d="M${n1(x - wAt(a))} ${n1(yAt(a))}h${n1(wAt(a) * 2)}"/>`;
+  }
+  s.add(`<g stroke="#ffd0f0" stroke-width="1.1" fill="none" opacity=".85">${lat}</g>`);
+  s.add(`<path d="M${x} ${n1(yAt(0.82))}V${n1(yB - H)}" stroke="#ffd0f0" stroke-width="2.2"/><circle cx="${x}" cy="${n1(yB - H)}" r="3" fill="#fff"/>`);
+  s.add(`<ellipse cx="${x}" cy="${n1(yAt(0.62))}" rx="30" ry="${n1(80)}" fill="${s.rad('#ff8ae0', 0.18)}"/>`);
+  // river
+  s.add(`<rect x="0" y="330" width="800" height="120" fill="${s.lin(['#4a3e82', '#1c1a4a'])}"/>`);
+  reflect(s, 505, 336, 30, 100, '#ff8ae0', 0.3);
+  reflect(s, 0, 336, 420, 50, '#7a63a8', 0.2);
+  s.add(`<g transform="translate(250 392)"><path d="M0 0H70L60 10H10Z" fill="#2a2450"/><rect x="26" y="-12" width="22" height="12" fill="#e8c46a"/><path d="M30 -12V-22" stroke="#e8c46a" stroke-width="2"/></g>`);
+  s.add(`<rect x="0" y="420" width="800" height="30" fill="#14133a"/>`);
+  people(s, [60, 90, 150, 650, 690], 432, 1.5);
+  return s.svg({ label: '广州珠江新城与广州塔夜景' });
+};
+
+scenes.merdeka = (uid = '') => {
+  const s = new Scene(uid + 'merdeka', { seed: 342 });
+  s.sky(SKY.day, { sun: { x: 700, y: 80, r: 24, c: '#fff6d0' } });
+  s.cloud(190, 80, 1.3, { cls: 'cl cl1' }).cloud(520, 54, 1, { cls: 'cl cl2', o: 0.8 });
+  s.skyline({ x0: 0, x1: 800, base: 300, hmin: 50, hmax: 140, colors: ['#9db5cf', '#8aa4c2', '#aabdd4'], win: '#fff', lit: 0.1, wmin: 14, wmax: 26 });
+  // Sultan Abdul Samad building: long arcaded facade, central clock tower, copper domes
+  const yB = 340;
+  s.add(`<rect x="110" y="${yB - 74}" width="580" height="74" fill="#ecd9b6"/>`);
+  s.add(`<g fill="#b6523a">${[0, 1, 2].map((i) => `<rect x="110" y="${yB - 74 + i * 24}" width="580" height="5"/>`).join('')}</g>`);
+  let arches = '';
+  for (let i = 0; i < 17; i++) {
+    const ax = 124 + i * 33;
+    arches += `<path d="M${ax} ${yB}V${yB - 20}A8 8 0 0 1 ${ax + 16} ${yB - 20}V${yB}Z"/>`;
+    arches += `<path d="M${ax} ${yB - 46}V${yB - 56}A8 8 0 0 1 ${ax + 16} ${yB - 56}V${yB - 46}Z"/>`;
+  }
+  s.add(`<g fill="#6b3a2a">${arches}</g>`);
+  const tower = (cx, w, top, dome, k) => {
+    s.add(`<rect x="${cx - w / 2}" y="${top}" width="${w}" height="${yB - top}" fill="#ecd9b6"/><rect x="${cx - w / 2}" y="${top + 12}" width="${w}" height="5" fill="#b6523a"/>`);
+    s.add(`<path d="M${cx - w / 2 - 2} ${top}Q${cx} ${top - dome} ${cx + w / 2 + 2} ${top}Z" fill="#4f8f7a"/><path d="M${cx} ${top - dome * 0.72}V${top - dome * 1.18}" stroke="#d9b45a" stroke-width="${n1(2 * k)}"/>`);
+  };
+  tower(400, 46, 176, 40, 1.2);
+  s.add(`<circle cx="400" cy="206" r="12" fill="#fffaf0" stroke="#6b3a2a" stroke-width="2"/><path d="M400 206V198M400 206L406 209" stroke="#6b3a2a" stroke-width="2" stroke-linecap="round"/>`);
+  tower(160, 30, 252, 26, 0.9); tower(640, 30, 252, 26, 0.9);
+  tower(262, 20, 292, 14, 0.7); tower(538, 20, 292, 14, 0.7);
+  // Merdeka Square lawn and flagpole
+  s.add(`<rect x="0" y="${yB}" width="800" height="110" fill="${s.lin(['#7fcf72', '#3f8f4f'])}"/>`);
+  s.add(`<path d="M0 400Q260 380 540 396T800 388V450H0Z" fill="#cfe9d1" opacity=".22"/>`);
+  s.add(`<path d="M722 ${yB + 40}V70" stroke="#d8dde2" stroke-width="4"/><path d="M724 74h46v26h-46Z" fill="#d62d2d"/><path d="M724 80h46M724 86h46M724 92h46" stroke="#fff" stroke-width="2"/>`);
+  palms(s, [[60, 420, 130, 8, 1.3], [760, 430, 120, -8, 1.2]], { leaf: '#2f8a47' });
+  people(s, [300, 330, 450, 480, 600], 420, 1.5);
+  return s.svg({ label: '独立广场的 Sultan Abdul Samad 大楼' });
+};
+
+scenes.birdpark = (uid = '') => {
+  const s = new Scene(uid + 'birdpark', { seed: 343 });
+  s.sky(SKY.day, { sun: { x: 90, y: 80, r: 22, c: '#fff6d0' } });
+  s.cloud(380, 70, 1.2, { cls: 'cl cl1' }).cloud(640, 110, 0.9, { cls: 'cl cl2', o: 0.8 });
+  const hl = s.hills({ base: 280, n: 5, hmin: 60, hmax: 120, wmin: 120, wmax: 200 });
+  s.mountain(hl, { fill: '#79b184', facets: false });
+  s.add(`<rect x="0" y="300" width="800" height="150" fill="${s.lin(['#6fbf73', '#3f8f4f'])}"/>`);
+  s.forest({ y: 330, x0: 40, x1: 760, n: 18, hmin: 70, hmax: 130, colors: ['#1f6b3d', '#2f8a47', '#17592f'], kind: 'leafy', jitter: 20 });
+  // the big net over the valley
+  dome(s, 400, 350, 760, 230, 'rgba(230,240,246,.28)', 'rgba(255,255,255,.65)');
+  // pond with flamingos
+  s.add(`<ellipse cx="400" cy="400" rx="190" ry="26" fill="#7ec8dc" opacity=".9"/>`);
+  const flamingo = (x, y, k, flip = 1) => s.add(`<g transform="translate(${x} ${y}) scale(${k * flip} ${k})"><path d="M-4 0V22M4 0V20" stroke="#e86b8c" stroke-width="1.6"/><ellipse cx="0" cy="-2" rx="15" ry="8" fill="#f58aa5"/><path d="M10 -4Q22 -14 16 -28Q14 -34 20 -36" stroke="#f58aa5" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="21" cy="-36" r="3.4" fill="#f58aa5"/><path d="M23 -36l6 3-6 1z" fill="#2a2a2a"/></g>`);
+  [[300, 396, 1.1, 1], [338, 404, 1.3, 1], [372, 398, 1, -1], [452, 402, 1.2, 1], [494, 396, 1.1, -1], [528, 406, 1.4, 1]].forEach(([x, y, k, f]) => flamingo(x, y, k, f));
+  [[150, 120, 1.4], [220, 90, 1], [580, 130, 1.2], [650, 100, 1.5], [700, 150, 1]].forEach(([x, y, k]) => bird(s, x, y, k));
+  s.add(`<path d="M0 440Q260 420 800 436V450H0Z" fill="#b8956a"/>`);
+  palms(s, [[60, 436, 130, 8, 1.3], [750, 440, 120, -8, 1.2]], { leaf: '#2f8a47' });
+  people(s, [180, 220, 600, 640], 440, 1.5);
+  return s.svg({ label: '网罩下的 KL 飞禽公园与火烈鸟' });
+};
+
 /* ---------- route map (schematic) ---------- */
 export function seaMap() {
   const W = 900, H = 560;
   const P = { can: [640, 92], sin: [338, 392], kul: [262, 296], ns: [286, 338], dps: [700, 470] };
   const names = {
-    can: ['广州', 'Guangzhou', '第 1 天出发 · 第 7 天返回'],
-    sin: ['新加坡', 'Singapore', '第 1–2 天'],
-    kul: ['吉隆坡', 'Kuala Lumpur', '第 3 天夜宿'],
-    ns: ['森美兰', 'Negeri Sembilan', '第 3–4 天探校'],
-    dps: ['巴厘岛 · 乌鲁瓦图', 'Bali · Uluwatu', '第 5–7 天'],
+    can: ['广州', 'Guangzhou', '第 1 天集合 · 第 2 天出发', '天津 1 · 徐州 4 · 太原 2 人汇合'],
+    kul: ['吉隆坡', 'Kuala Lumpur', '第 2–5 天'],
+    ns: ['森美兰', 'Negeri Sembilan', '第 4 天探校(三所)'],
+    sin: ['新加坡', 'Singapore', '第 5–6 天'],
+    dps: ['巴厘岛 · 乌鲁瓦图', 'Bali · Uluwatu', '第 6–8 天'],
   };
   const arc = (a, b, bend) => {
     const [x1, y1] = a, [x2, y2] = b;
@@ -571,14 +656,13 @@ export function seaMap() {
     return `M${x1} ${y1}Q${Math.round(mx - (dy / L) * bend)} ${Math.round(my + (dx / L) * bend)} ${x2} ${y2}`;
   };
   const legs = [
-    ['leg1', arc(P.can, P.sin, 70)],
-    ['leg2', arc(P.sin, P.kul, 26)],
-    ['leg3', arc(P.kul, P.dps, -110)],
-    ['leg4', arc(P.dps, P.can, 90)],
+    ['leg1', arc(P.can, P.kul, 60)],
+    ['leg2', arc(P.kul, P.sin, 26)],
+    ['leg3', arc(P.sin, P.dps, -50)],
   ];
   const land = '#e3dfd0';
-  const lab = (k, dx, dy, anchor) => `<g class="mp-lab"><text x="${P[k][0] + dx}" y="${P[k][1] + dy}" text-anchor="${anchor}" class="mp-l">${names[k][0]}</text><text x="${P[k][0] + dx}" y="${P[k][1] + dy + 14}" text-anchor="${anchor}" class="mp-s">${names[k][1]}</text><text x="${P[k][0] + dx}" y="${P[k][1] + dy + 28}" text-anchor="${anchor}" class="mp-d">${names[k][2]}</text></g>`;
-  const svg = `<svg class="art sea-map" viewBox="0 0 ${W} ${H}" role="img" aria-label="广州、新加坡、吉隆坡与森美兰、巴厘岛的 7 日路线示意图(非严格比例)">
+  const lab = (k, dx, dy, anchor) => `<g class="mp-lab"><text x="${P[k][0] + dx}" y="${P[k][1] + dy}" text-anchor="${anchor}" class="mp-l">${names[k][0]}</text><text x="${P[k][0] + dx}" y="${P[k][1] + dy + 14}" text-anchor="${anchor}" class="mp-s">${names[k][1]}</text><text x="${P[k][0] + dx}" y="${P[k][1] + dy + 28}" text-anchor="${anchor}" class="mp-d">${names[k][2]}</text>${names[k][3] ? `<text x="${P[k][0] + dx}" y="${P[k][1] + dy + 42}" text-anchor="${anchor}" class="mp-d">${names[k][3]}</text>` : ''}</g>`;
+  const svg = `<svg class="art sea-map" viewBox="0 0 ${W} ${H}" role="img" aria-label="广州、吉隆坡与森美兰、新加坡、巴厘岛的 9 日路线示意图(非严格比例)">
   <defs><pattern id="sm-dots" width="14" height="14" patternUnits="userSpaceOnUse"><circle cx="1.5" cy="1.5" r="1" fill="currentColor" opacity=".1"/></pattern></defs>
   <rect class="mp-sea" width="${W}" height="${H}" rx="6"/><rect width="${W}" height="${H}" fill="url(#sm-dots)"/>
   <g class="mp-land">
@@ -599,22 +683,20 @@ export function seaMap() {
   ${lab('can', 24, 8, 'start')}${lab('sin', 22, 20, 'start')}${lab('kul', -22, -8, 'end')}${lab('ns', -22, 30, 'end')}${lab('dps', -20, -22, 'end')}
   ${Object.keys(P).map((k) => `<g class="mp-pin" data-k="${k}" transform="translate(${P[k][0]} ${P[k][1]})"><circle r="9"/><circle r="3.2" class="in"/></g>`).join('')}
   <g id="sm-plane" class="mp-vehicle" aria-hidden="true"><path d="M0 -11L3.4 -2.4L12 2.4L12 4.4L3.4 3.2L2.4 9.6L5.6 11.8L5.6 13L-5.6 13L-5.6 11.8L-2.4 9.6L-3.4 3.2L-12 4.4L-12 2.4L-3.4 -2.4Z" transform="rotate(90) scale(1.5)" stroke="#fff" stroke-width="1.4"/></g>
-  <g transform="translate(${W - 262} ${H - 40})" class="mp-key"><path d="M0 0h34" class="fly mp-route" style="animation:none"/><text x="44" y="4">飞行(共 4 段)</text></g>
-  <text x="26" y="${H - 18}" class="mp-note">示意图,非严格比例;三地同一时区(UTC+8)</text>
+  <g transform="translate(${W - 262} ${H - 40})" class="mp-key"><path d="M0 0h34" class="fly mp-route" style="animation:none"/><text x="44" y="4">飞行(共 3 段,返程另行安排)</text></g>
+  <text x="26" y="${H - 18}" class="mp-note">示意图,非严格比例;四地同一时区(UTC+8)</text>
   </svg>`;
   return { svg, P };
 }
 
 export function nsInset() {
-  // schematic of the three schools, KLIA and KL (not to scale)
-  const W = 900, H = 300;
-  const N = { kl: [90, 214], klia: [290, 104], epsom: [470, 214], adcote: [690, 104], ktj: [820, 214] };
+  // schematic of the three-school loop: KL → Epsom → Adcote Matrix → (Seremban lunch) → KTJ → KL (not to scale)
+  const W = 900, H = 350;
+  const N = { kl: [90, 150], epsom: [310, 80], adcote: [560, 170], ktj: [810, 80] };
   const E = [
-    ['kl', 'klia', '约 1 小时(估)'],
-    ['klia', 'epsom', '15 分钟(学校官网)'],
-    ['klia', 'adcote', '35 分钟(学校官网)'],
-    ['epsom', 'kl', '40 分钟(学校官网)'],
-    ['adcote', 'ktj', '约 40 分钟(估)'],
+    ['kl', 'epsom', '约 40 分钟(学校官网)'],
+    ['epsom', 'adcote', '约 25–30 分钟(估)'],
+    ['adcote', 'ktj', '午饭 Seremban · 约 40 分钟(估)'],
   ];
   const lines = E.map(([a, b, t]) => {
     const [x1, y1] = N[a], [x2, y2] = N[b];
@@ -622,14 +704,16 @@ export function nsInset() {
     const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy);
     let nx = -dy / L, ny = dx / L;
     if (ny > 0) { nx = -nx; ny = -ny; }
-    const off = Math.abs(dy) < 4 ? 14 : 16;
-    return `<path d="M${x1} ${y1}L${x2} ${y2}" class="ns-e${known ? '' : ' est'}"/><text x="${n1((x1 + x2) / 2 + nx * off)}" y="${n1((y1 + y2) / 2 + ny * off + 4)}" class="ns-t${known ? '' : ' est'}">${t}</text>`;
+    const off = 16;
+    return `<path d="M${x1} ${y1}L${x2} ${y2}" class="ns-e${known ? '' : ' est'}"/><text x="${n1((x1 + x2) / 2 + nx * off)}" y="${n1((y1 + y2) / 2 + ny * off + 4)}" text-anchor="middle" class="ns-t${known ? '' : ' est'}">${t}</text>`;
   });
-  const lab = { kl: ['吉隆坡市区', '第 3 天夜宿'], klia: ['KLIA 机场区', '第 3 天落地 · 第 4 晚住'], epsom: ['Epsom College', '第 3 天下午 · Enstek'], adcote: ['Adcote Matrix', '第 4 天下午 · Sri Sendayan'], ktj: ['KTJ', '第 4 天上午 · Mantin'] };
-  const top = new Set(['klia', 'adcote']);
+  // return leg KTJ → KL, drawn as a curve along the bottom
+  lines.push(`<path d="M${N.ktj[0]} ${N.ktj[1]}Q450 450 ${N.kl[0]} ${N.kl[1]}" class="ns-e est" fill="none"/><text x="450" y="304" text-anchor="middle" class="ns-t est">回吉隆坡 · 约 1–1.5 小时(估,晚高峰)</text>`);
+  const lab = { kl: ['吉隆坡市区', '07:45 出发 · 约 19:00 回'], epsom: ['① Epsom College', '09:00–10:30 · Enstek'], adcote: ['② Adcote Matrix', '11:00–12:30 · Sri Sendayan'], ktj: ['③ KTJ', '15:00–16:45 · Mantin'] };
+  const top = new Set(['epsom', 'ktj']);
   const nodes = Object.keys(N).map((k) => {
-    const isSch = ['epsom', 'adcote', 'ktj'].includes(k);
+    const isSch = k !== 'kl';
     return `<g transform="translate(${N[k][0]} ${N[k][1]})"><circle r="${isSch ? 13 : 9}" class="ns-n${isSch ? ' sch' : ''}"/><text y="${top.has(k) ? -36 : 38}" text-anchor="middle" class="ns-l">${lab[k][0]}</text><text y="${top.has(k) ? -19 : 56}" text-anchor="middle" class="ns-s">${lab[k][1]}</text></g>`;
   });
-  return `<svg class="art ns-art" viewBox="0 0 ${W} ${H}" role="img" aria-label="森美兰三所学校与 KLIA、吉隆坡的相对位置和车程示意图"><rect class="ns-bg" width="${W}" height="${H}" rx="6"/>${lines.join('')}${nodes.join('')}<text x="26" y="${H - 14}" class="mp-note">示意图:标「学校官网」的车程来自学校官网,其余为估算,以导航为准;KTJ 与其他两校之间的车程未查到官方数据</text></svg>`;
+  return `<svg class="art ns-art" viewBox="0 0 ${W} ${H}" role="img" aria-label="森美兰三所学校的一天路线:吉隆坡、Epsom、Adcote Matrix、KTJ,再回吉隆坡"><rect class="ns-bg" width="${W}" height="${H}" rx="6"/>${lines.join('')}${nodes.join('')}<text x="26" y="${H - 14}" class="mp-note">示意图:标「学校官网」的车程来自学校官网,其余为估算,以导航为准;KTJ 与其他两校之间的车程未查到官方数据</text></svg>`;
 }

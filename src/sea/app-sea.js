@@ -16,10 +16,11 @@
     const plane = $('#sm-plane'), mb = $('#mapbox');
     const pins = {};
     $$('.mp-pin', svg).forEach((p) => { const m = /translate\(([\d.]+) ([\d.]+)\)/.exec(p.getAttribute('transform')); pins[p.dataset.k] = { el: p, x: +m[1], y: +m[2] }; });
-    const LEG = { 1: $('#leg1'), 3: $('#leg2'), 5: $('#leg3'), 7: $('#leg4') };
-    const LOC = { 1: 'sin', 2: 'sin', 3: 'kul', 4: 'ns', 5: 'dps', 6: 'dps', 7: 'can' };
-    const ON = { 1: ['can', 'sin'], 2: ['sin'], 3: ['sin', 'kul', 'ns'], 4: ['ns', 'kul'], 5: ['kul', 'dps'], 6: ['dps'], 7: ['dps', 'can'] };
-    const PIN_DAY = { can: 1, sin: 2, kul: 3, ns: 4, dps: 6 };
+    // 9 days: D2 Guangzhou → KL, D5 KL → Singapore, D6 Singapore → Bali (the return is not planned on this page)
+    const LEG = { 2: $('#leg1'), 5: $('#leg2'), 6: $('#leg3') };
+    const LOC = { 1: 'can', 2: 'kul', 3: 'kul', 4: 'ns', 5: 'sin', 6: 'dps', 7: 'dps', 8: 'dps', 9: 'dps' };
+    const ON = { 1: ['can'], 2: ['can', 'kul'], 3: ['kul'], 4: ['kul', 'ns'], 5: ['kul', 'sin'], 6: ['sin', 'dps'], 7: ['dps'], 8: ['dps'], 9: ['dps'] };
+    const PIN_DAY = { can: 1, kul: 3, ns: 4, sin: 5, dps: 7 };
     let cur = 0, raf = 0;
     function follow(x) {
       if (!mb || mb.scrollWidth <= mb.clientWidth) return;
