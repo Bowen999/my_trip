@@ -121,7 +121,7 @@ input[type="range"] { width: 100%; accent-color: var(--red); height: 28px; }
 .sidetabs { display: none; position: fixed; right: 0; top: 50%; transform: translateY(-50%); z-index: 40; flex-direction: column; gap: 6px; }
 .stab { writing-mode: vertical-rl; text-orientation: upright; letter-spacing: .25em; padding: 14px 8px 14px 10px; font-size: .78rem; font-weight: 700; text-decoration: none; background: var(--card); color: var(--ink-2); border: 1px solid var(--rule); border-right: 0; border-radius: 10px 0 0 10px; box-shadow: var(--shadow); transition: padding .2s, background .2s, color .2s; border-left: 4px solid var(--tc); }
 .stab:hover, .stab.on { padding-right: 16px; background: var(--tc); color: #fff; }
-.botnav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 45; display: grid; grid-template-columns: repeat(5, 1fr); background: color-mix(in srgb, var(--paper) 92%, transparent); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-top: 1px solid var(--rule); padding-bottom: env(safe-area-inset-bottom); }
+.botnav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 45; display: grid; grid-template-columns: repeat(var(--navn, 5), 1fr); background: color-mix(in srgb, var(--paper) 92%, transparent); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-top: 1px solid var(--rule); padding-bottom: env(safe-area-inset-bottom); }
 .botnav a { display: grid; justify-items: center; gap: 1px; padding: 8px 0 6px; text-decoration: none; font-size: .68rem; font-weight: 600; color: var(--ink-3); border-top: 3px solid transparent; margin-top: -1px; line-height: 1.3; }
 .botnav a.on { color: var(--tc); border-top-color: var(--tc); }
 .botnav .ic { width: 20px; height: 20px; }
@@ -212,7 +212,7 @@ section.block { padding-block: clamp(36px, 7vw, 76px); }
 .st { display: grid; grid-template-columns: 28px 1fr; gap: 10px; padding: 12px 18px; border-top: 1px solid var(--rule-2); }
 .st .ic { width: 22px; height: 22px; margin-top: 3px; }
 .st.warn .ic { color: var(--red); } .st.ok .ic { color: var(--forest); } .st.info .ic { color: var(--blue); }
-.st b { display: block; line-height: 1.5; }
+.st > div > b { display: block; line-height: 1.5; }
 .st p { font-size: .9rem; color: var(--ink-2); line-height: 1.7; }
 
 /* ============ accordion ============ */
@@ -616,6 +616,79 @@ svg.art .aur { animation: aur 9s ease-in-out infinite alternate; transform-box: 
 .i-sun { display: none; }
 :root[data-theme="dark"] .i-sun { display: inline; }
 :root[data-theme="dark"] .i-moon { display: none; }
+
+/* ============ Singapore · KL · Bali page additions ============ */
+:root { --rose: #b13d6f; }
+:root[data-theme="dark"] { --rose: #e8709f; }
+.ch-school { --c: var(--blue); }
+.ch-wedding { --c: var(--rose); }
+.mapbox svg.sea-map, .mapbox svg.ns-art { display: block; width: 100%; min-width: 720px; height: auto; color: var(--ink); }
+.mapbox.ns { box-shadow: none; }
+.sea-map .mp-sea { fill: color-mix(in srgb, var(--blue) 14%, var(--paper)); }
+.mp-land path, .mp-land ellipse { fill: color-mix(in srgb, var(--forest) 9%, var(--paper-2)); stroke: var(--rule); stroke-width: 1.2; }
+.ns-bg { fill: color-mix(in srgb, var(--forest) 6%, var(--paper-2)); }
+.ns-e { stroke: var(--ink); stroke-width: 3; fill: none; }
+.ns-e.est { stroke: var(--ink-3); stroke-dasharray: 7 6; }
+.ns-t { font-size: 14px; fill: var(--ink-2); paint-order: stroke; stroke: var(--paper-2); stroke-width: 5px; text-anchor: middle; }
+.ns-t.est { fill: var(--ink-3); }
+.ns-n { fill: var(--card); stroke: var(--ink); stroke-width: 3; }
+.ns-n.sch { fill: var(--red); stroke: var(--card); stroke-width: 3; }
+.ns-l { font-family: var(--serif); font-weight: 900; font-size: 17px; fill: var(--ink); paint-order: stroke; stroke: var(--paper-2); stroke-width: 5px; }
+.ns-s { font-size: 13px; fill: var(--ink-3); paint-order: stroke; stroke: var(--paper-2); stroke-width: 4px; }
+.assume { display: grid; gap: 26px; }
+@media (min-width: 860px) { .assume { grid-template-columns: 1.5fr 1fr; gap: 40px; } }
+h4.mini { font-size: .76rem; letter-spacing: .14em; text-transform: uppercase; font-weight: 800; color: var(--red); margin-bottom: 6px; }
+.need { counter-reset: n; display: grid; gap: 12px; }
+.need li { counter-increment: n; position: relative; padding-left: 2.3em; color: var(--ink-2); }
+.need li::before { content: counter(n); position: absolute; left: 0; top: .1em; width: 1.6em; height: 1.6em; border-radius: 50%; background: var(--red); color: #fff; font-weight: 800; font-size: .8rem; display: grid; place-items: center; }
+.kvl { display: grid; }
+.kvl .kv { grid-template-columns: 6.2em 1fr; }
+.kvl .kv:first-child { border-top: 1px solid var(--rule); }
+.kvl dt { color: var(--c); }
+.pace { display: inline-flex; gap: 3px; vertical-align: middle; margin-left: 4px; }
+.pace i { width: 14px; height: 6px; border-radius: 3px; background: var(--rule); }
+.pace i.on { background: var(--c, var(--gold)); }
+.legend { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: .82rem; color: var(--ink-3); margin-bottom: 14px; }
+.steps { counter-reset: st; display: grid; gap: 14px; margin-bottom: 20px; }
+.steps li { counter-increment: st; position: relative; padding-left: 2.6em; color: var(--ink-2); }
+.steps li::before { content: counter(st); position: absolute; left: 0; top: 0; width: 1.9em; height: 1.9em; border-radius: 50%; background: var(--c); color: #fff; font-family: var(--disp); font-weight: 900; display: grid; place-items: center; }
+.steps b { display: block; color: var(--ink); }
+.mailbox { border: 1px solid var(--rule); background: var(--card); }
+.mb-h { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--rule); flex-wrap: wrap; }
+.mb-h b { display: inline-flex; gap: 8px; align-items: center; }
+.mb-h .pill.ok { background: var(--forest); border-color: var(--forest); color: #fff; }
+.mailbox pre { margin: 0; padding: 14px; white-space: pre-wrap; word-break: break-word; font: .84rem/1.7 ui-monospace, "SF Mono", Menlo, Consolas, monospace; color: var(--ink-2); max-height: 380px; overflow: auto; }
+.dm-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--rule); background: var(--card); }
+.dmt { width: 100%; min-width: 680px; border-collapse: collapse; font-size: .9rem; }
+.dmt th, .dmt td { padding: 8px 10px; border-bottom: 1px solid var(--rule-2); text-align: left; vertical-align: middle; }
+.dmt thead th { font-size: .78rem; color: var(--c); font-weight: 800; background: var(--paper-2); }
+.dmt tbody th { font-weight: 700; }
+.dmt select { height: 36px; border: 1.5px solid var(--rule); border-radius: 10px; background: var(--paper); color: var(--ink); padding: 0 8px; font: inherit; min-width: 3.4em; }
+.dm-name { height: 34px; width: 100%; border: 1.5px dashed var(--rule); border-radius: 8px; background: var(--paper); color: var(--ink); padding: 0 8px; font: inherit; font-weight: 800; font-size: .78rem; }
+.dmt .tot b { font-family: var(--disp); font-size: 1.6rem; color: var(--c); }
+.dm-bar { display: block; height: 8px; border-radius: 99px; background: var(--rule-2); overflow: hidden; margin-top: 4px; }
+.dm-bar i { display: block; height: 100%; width: 0; background: var(--c); transition: width .4s; }
+.rain-stage { position: relative; aspect-ratio: 16 / 8; overflow: hidden; border: 1px solid var(--rule); }
+.rain-stage svg.art { position: absolute; inset: 0; width: 100%; height: 100%; transition: filter .6s; }
+.rain-stage.on svg.art { filter: grayscale(.55) brightness(.68) contrast(1.05); }
+.rain-fx { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .5s; overflow: hidden; }
+.rain-stage.on .rain-fx { opacity: 1; }
+.rain-fx i { position: absolute; top: -10%; left: var(--x); width: 1.5px; height: var(--h); background: linear-gradient(transparent, rgba(215, 232, 255, .9)); animation: rainfall var(--d) linear var(--dl) infinite; transform: rotate(12deg); }
+@keyframes rainfall { to { top: 110%; } }
+.rain-bar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 10px 0; }
+svg.art .fall { stroke-dasharray: 6 8; animation: fallw 1.2s linear infinite; }
+@keyframes fallw { to { stroke-dashoffset: -28; } }
+svg.art .sway-s { animation: swaypalm 5s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 100%; }
+@keyframes swaypalm { 50% { transform: rotate(1.6deg); } }
+svg.art .beam { animation: beam 3s ease-in-out infinite alternate; }
+@keyframes beam { from { opacity: .5; } to { opacity: 1; } }
+svg.art .flame { animation: flame .35s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: 50% 100%; }
+@keyframes flame { to { transform: scale(1.08, .94); } }
+svg.art .chant { animation: chantb 2.4s ease-in-out infinite; }
+@keyframes chantb { 50% { transform: translateY(-1.5px); } }
+@media (prefers-reduced-motion: reduce) { .rain-fx i { animation: none !important; } }
+
+.food .sg { color: var(--red); } .food .my { color: var(--blue); } .food .id { color: var(--forest); }
 </style>
 <script>
 (function(){try{var t=localStorage.getItem('yvr7:theme');t=t?JSON.parse(t):(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t);var f=localStorage.getItem('yvr7:fs');if(f)document.documentElement.style.setProperty('--fs',JSON.parse(f));}catch(e){}})();
@@ -1362,6 +1435,43 @@ svg.art .aur { animation: aur 9s ease-in-out infinite alternate; transform-box: 
   };
   const BAR = 56;
 
+  /* ================= accordions ================= */
+  /* attached first: if a later init block throws (old browser, quirky WebView), folding must still work */
+  const hdr = (a) => a.querySelector(':scope > h3 > .acc-h, :scope > .acc-h');
+  function setAcc(a, open) {
+    a.classList.toggle('open', open);
+    const h = hdr(a);
+    if (h) h.setAttribute('aria-expanded', open);
+  }
+  function openUp(el) {
+    let a = el.closest('.acc'), changed = false;
+    while (a) {
+      if (!a.classList.contains('open')) { setAcc(a, true); changed = true; }
+      a = a.parentElement && a.parentElement.closest('.acc');
+    }
+    return changed;
+  }
+  document.addEventListener('click', (e) => {
+    const h = e.target.closest('.acc-h');
+    if (!h) return;
+    const a = h.closest('.acc');
+    setAcc(a, !a.classList.contains('open'));
+    if (a.classList.contains('open') && a.id && /^(s-|sc-|w-|d\d)/.test(a.id)) history.replaceState(null, '', '#' + a.id);
+  });
+  $$('[data-expand]').forEach((b) => b.addEventListener('click', () => $$('.acc', $('#' + b.dataset.expand)).forEach((a) => setAcc(a, true))));
+  $$('[data-collapse]').forEach((b) => b.addEventListener('click', () => $$('.acc', $('#' + b.dataset.collapse)).forEach((a) => setAcc(a, false))));
+  const btnAll = $('#btn-all');
+  if (btnAll) {
+    btnAll.addEventListener('click', () => {
+      const allOpen = $$('.acc:not(.status)').some((a) => !a.classList.contains('open')); // expand if anything is closed, else collapse (the chapter buttons may have changed things)
+      $$('.acc:not(.status)').forEach((a) => setAcc(a, allOpen));
+      btnAll.innerHTML = btnAll.dataset[allOpen ? 'c' : 'e'];
+      btnAll.setAttribute('aria-pressed', allOpen);
+    });
+    btnAll.dataset.e = btnAll.innerHTML;
+    btnAll.dataset.c = btnAll.innerHTML.replace(/<path[^>]*>/, '<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>');
+  }
+
   /* ================= font size ================= */
   const fsRange = $('#fs-range'), fsOut = $('#fs-out');
   function setFs(v, save = true) {
@@ -1396,41 +1506,6 @@ svg.art .aur { animation: aur 9s ease-in-out infinite alternate; transform-box: 
     document.querySelector('meta[name="theme-color"]').content = t === 'dark' ? '#14171a' : '#faf7f1';
   });
   if (root.dataset.theme === 'dark') document.querySelector('meta[name="theme-color"]').content = '#14171a';
-
-  /* ================= accordions ================= */
-  const hdr = (a) => a.querySelector(':scope > h3 > .acc-h, :scope > .acc-h');
-  function setAcc(a, open) {
-    a.classList.toggle('open', open);
-    const h = hdr(a);
-    if (h) h.setAttribute('aria-expanded', open);
-  }
-  function openUp(el) {
-    let a = el.closest('.acc'), changed = false;
-    while (a) {
-      if (!a.classList.contains('open')) { setAcc(a, true); changed = true; }
-      a = a.parentElement && a.parentElement.closest('.acc');
-    }
-    return changed;
-  }
-  document.addEventListener('click', (e) => {
-    const h = e.target.closest('.acc-h');
-    if (!h) return;
-    const a = h.closest('.acc');
-    setAcc(a, !a.classList.contains('open'));
-    if (a.classList.contains('open') && a.id && /^(s-|sc-|w-|d\d)/.test(a.id)) history.replaceState(null, '', '#' + a.id);
-  });
-  $$('[data-expand]').forEach((b) => b.addEventListener('click', () => $$('.acc', $('#' + b.dataset.expand)).forEach((a) => setAcc(a, true))));
-  $$('[data-collapse]').forEach((b) => b.addEventListener('click', () => $$('.acc', $('#' + b.dataset.collapse)).forEach((a) => setAcc(a, false))));
-  const btnAll = $('#btn-all');
-  let allOpen = false;
-  btnAll.addEventListener('click', () => {
-    allOpen = !allOpen;
-    $$('.acc:not(.status)').forEach((a) => setAcc(a, allOpen));
-    btnAll.innerHTML = btnAll.dataset[allOpen ? 'c' : 'e'];
-    btnAll.setAttribute('aria-pressed', allOpen);
-  });
-  btnAll.dataset.e = btnAll.innerHTML;
-  btnAll.dataset.c = btnAll.innerHTML.replace(/<path[^>]*>/, '<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>');
 
   function goTo(id, smooth = true) {
     const el = document.getElementById(id);
@@ -1493,10 +1568,24 @@ svg.art .aur { animation: aur 9s ease-in-out infinite alternate; transform-box: 
   /* ================= generic tabs ================= */
   $$('[data-tabs]').forEach((box) => {
     const btns = $$('[data-tab]', box), panels = $$('[data-panel]', box);
-    btns.forEach((b) => b.addEventListener('click', () => {
-      btns.forEach((x) => x.setAttribute('aria-selected', x === b));
+    const tabsId = 'tabs' + $$('[data-tabs]').indexOf(box);
+    btns.forEach((b) => {
+      const p = panels.find((x) => x.dataset.panel === b.dataset.tab);
+      if (p) { p.id = p.id || `${tabsId}-${b.dataset.tab}`; p.setAttribute('role', 'tabpanel'); b.setAttribute('aria-controls', p.id); b.id = b.id || `${p.id}-tab`; p.setAttribute('aria-labelledby', b.id); }
+      b.tabIndex = b.getAttribute('aria-selected') === 'true' ? 0 : -1;
+    });
+    const select = (b) => {
+      btns.forEach((x) => { x.setAttribute('aria-selected', x === b); x.tabIndex = x === b ? 0 : -1; });
       panels.forEach((p) => (p.hidden = p.dataset.panel !== b.dataset.tab));
-    }));
+    };
+    btns.forEach((b, i) => {
+      b.addEventListener('click', () => select(b));
+      b.addEventListener('keydown', (ev) => {
+        const j = ev.key === 'ArrowRight' ? (i + 1) % btns.length : ev.key === 'ArrowLeft' ? (i + btns.length - 1) % btns.length : ev.key === 'Home' ? 0 : ev.key === 'End' ? btns.length - 1 : -1;
+        if (j < 0) return;
+        ev.preventDefault(); btns[j].focus(); select(btns[j]);
+      });
+    });
   });
 
   /* ================= flip cards ================= */
@@ -1762,7 +1851,7 @@ svg.art .aur { animation: aur 9s ease-in-out infinite alternate; transform-box: 
   const player = $('#player'), plText = $('#pl-text'), plPlay = $('#pl-play'), plVoice = $('#pl-voice');
   const rateRange = $('#rate-range'), rateOut = $('#rate-out');
   const SUP = 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
-  const T = { items: [], i: 0, c: 0, state: 'idle', token: 0, rate: LS.get('rate', 1), voices: [], cur: null, errs: 0 };
+  const T = { items: [], i: 0, c: 0, state: 'idle', token: 0, rate: Math.min(1.6, Math.max(0.6, +LS.get('speed', 1) || 1)), voices: [], cur: null, errs: 0 };
   rateRange.value = T.rate; rateOut.textContent = T.rate.toFixed(1) + '×';
   const icon = {
     play: '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4l13 8-13 8z"/></svg>',
@@ -1781,7 +1870,7 @@ svg.art .aur { animation: aur 9s ease-in-out infinite alternate; transform-box: 
   }
   if (SUP) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
   plVoice.addEventListener('change', () => { LS.set('voice', plVoice.value); if (T.state === 'playing') restartChunk(); });
-  rateRange.addEventListener('input', () => { T.rate = +rateRange.value; rateOut.textContent = T.rate.toFixed(1) + '×'; LS.set('rate', T.rate); });
+  rateRange.addEventListener('input', () => { T.rate = +rateRange.value; rateOut.textContent = T.rate.toFixed(1) + '×'; LS.set('speed', T.rate); });
   rateRange.addEventListener('change', () => { if (T.state === 'playing') restartChunk(); });
 
   const MAP = [

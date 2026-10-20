@@ -10,6 +10,43 @@
   };
   const BAR = 56;
 
+  /* ================= accordions ================= */
+  /* attached first: if a later init block throws (old browser, quirky WebView), folding must still work */
+  const hdr = (a) => a.querySelector(':scope > h3 > .acc-h, :scope > .acc-h');
+  function setAcc(a, open) {
+    a.classList.toggle('open', open);
+    const h = hdr(a);
+    if (h) h.setAttribute('aria-expanded', open);
+  }
+  function openUp(el) {
+    let a = el.closest('.acc'), changed = false;
+    while (a) {
+      if (!a.classList.contains('open')) { setAcc(a, true); changed = true; }
+      a = a.parentElement && a.parentElement.closest('.acc');
+    }
+    return changed;
+  }
+  document.addEventListener('click', (e) => {
+    const h = e.target.closest('.acc-h');
+    if (!h) return;
+    const a = h.closest('.acc');
+    setAcc(a, !a.classList.contains('open'));
+    if (a.classList.contains('open') && a.id && /^(s-|sc-|w-|d\d)/.test(a.id)) history.replaceState(null, '', '#' + a.id);
+  });
+  $$('[data-expand]').forEach((b) => b.addEventListener('click', () => $$('.acc', $('#' + b.dataset.expand)).forEach((a) => setAcc(a, true))));
+  $$('[data-collapse]').forEach((b) => b.addEventListener('click', () => $$('.acc', $('#' + b.dataset.collapse)).forEach((a) => setAcc(a, false))));
+  const btnAll = $('#btn-all');
+  if (btnAll) {
+    btnAll.addEventListener('click', () => {
+      const allOpen = $$('.acc:not(.status)').some((a) => !a.classList.contains('open')); // expand if anything is closed, else collapse (the chapter buttons may have changed things)
+      $$('.acc:not(.status)').forEach((a) => setAcc(a, allOpen));
+      btnAll.innerHTML = btnAll.dataset[allOpen ? 'c' : 'e'];
+      btnAll.setAttribute('aria-pressed', allOpen);
+    });
+    btnAll.dataset.e = btnAll.innerHTML;
+    btnAll.dataset.c = btnAll.innerHTML.replace(/<path[^>]*>/, '<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>');
+  }
+
   /* ================= font size ================= */
   const fsRange = $('#fs-range'), fsOut = $('#fs-out');
   function setFs(v, save = true) {
@@ -44,41 +81,6 @@
     document.querySelector('meta[name="theme-color"]').content = t === 'dark' ? '#14171a' : '#faf7f1';
   });
   if (root.dataset.theme === 'dark') document.querySelector('meta[name="theme-color"]').content = '#14171a';
-
-  /* ================= accordions ================= */
-  const hdr = (a) => a.querySelector(':scope > h3 > .acc-h, :scope > .acc-h');
-  function setAcc(a, open) {
-    a.classList.toggle('open', open);
-    const h = hdr(a);
-    if (h) h.setAttribute('aria-expanded', open);
-  }
-  function openUp(el) {
-    let a = el.closest('.acc'), changed = false;
-    while (a) {
-      if (!a.classList.contains('open')) { setAcc(a, true); changed = true; }
-      a = a.parentElement && a.parentElement.closest('.acc');
-    }
-    return changed;
-  }
-  document.addEventListener('click', (e) => {
-    const h = e.target.closest('.acc-h');
-    if (!h) return;
-    const a = h.closest('.acc');
-    setAcc(a, !a.classList.contains('open'));
-    if (a.classList.contains('open') && a.id && /^(s-|sc-|w-|d\d)/.test(a.id)) history.replaceState(null, '', '#' + a.id);
-  });
-  $$('[data-expand]').forEach((b) => b.addEventListener('click', () => $$('.acc', $('#' + b.dataset.expand)).forEach((a) => setAcc(a, true))));
-  $$('[data-collapse]').forEach((b) => b.addEventListener('click', () => $$('.acc', $('#' + b.dataset.collapse)).forEach((a) => setAcc(a, false))));
-  const btnAll = $('#btn-all');
-  let allOpen = false;
-  btnAll.addEventListener('click', () => {
-    allOpen = $$('.acc:not(.status)').some((a) => !a.classList.contains('open')); // expand if anything is closed, else collapse (the chapter buttons may have changed things)
-    $$('.acc:not(.status)').forEach((a) => setAcc(a, allOpen));
-    btnAll.innerHTML = btnAll.dataset[allOpen ? 'c' : 'e'];
-    btnAll.setAttribute('aria-pressed', allOpen);
-  });
-  btnAll.dataset.e = btnAll.innerHTML;
-  btnAll.dataset.c = btnAll.innerHTML.replace(/<path[^>]*>/, '<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>');
 
   function goTo(id, smooth = true) {
     const el = document.getElementById(id);
