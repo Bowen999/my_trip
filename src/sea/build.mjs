@@ -46,7 +46,8 @@ function phBanner(k) {
   const p = ph(k);
   if (!p) return '';
   usedPhotos.add(k);
-  return `<img class="photo" src="${phSrc(p)}" alt="${esc(p.alt)}" loading="lazy" decoding="async" onerror="this.remove()">`;
+  // covers load eagerly; app-sea.js hides the drawn art (.ph-ok) only after the photo has decoded; if it fails, the art stays
+  return `<img class="photo" src="${phSrc(p)}" alt="${esc(p.alt)}" onerror="this.remove()">`;
 }
 function phGallery(keys = []) {
   const figs = keys.map((k) => {
@@ -63,7 +64,17 @@ const capLine = (k, drawn) => {
   return drawn ? `<p class="cap nosay">插图:${drawn}</p>` : '';
 };
 const PHOTO_CSS = `
+.pace.lv1 i.on { background: var(--forest); }
+.pace.lv2 i.on { background: var(--gold); }
+.pace.lv3 i.on { background: var(--red); }
+.lvl { display: inline-flex; align-items: center; gap: 4px; }
+.lvl b { font-weight: 800; }
+.lvl.lv1 b { color: var(--forest); } .lvl.lv2 b { color: var(--gold); } .lvl.lv3 b { color: var(--red); }
 .banner .photo { z-index: 0; }
+.banner.ph-ok svg.art { visibility: hidden; }
+.day-meta span > span, .day-meta span > b { padding: 0; border: 0; background: none; border-radius: 0; }
+/* the fixed side tabs (>= 900px wide) used to sit on top of the right edge of the content on 900–1300px screens */
+@media (min-width: 900px) and (max-width: 1300px) { main .wrap, footer .wrap { padding-right: 62px; } }
 .banner::after { z-index: 1; }
 .ph-row { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
 .ph { margin: 0; background: var(--paper-2); border: 1px solid var(--rule); }
@@ -107,7 +118,11 @@ function checklist(id, groups, label = '已确认') {
   <div class="pack">${groups.map((g, gi) => `<div class="pk"><h4>${g.g}</h4>${g.i.map((x, xi) => `<label class="ck"><input type="checkbox" data-k="${gi}-${xi}"><span>${x}</span></label>`).join('')}</div>`).join('')}</div></div>`;
 }
 const mail = (id, title, text) => `<div class="mailbox nosay"><div class="mb-h"><b>${ico('mail')}${title}</b><button class="pill" type="button" data-copy="${id}">${ico('copy')}复制</button></div><pre id="${id}">${esc(text)}</pre></div>`;
-const pace = (n) => `<span class="pace" role="img" aria-label="长辈强度 ${n}/5">${[1, 2, 3, 4, 5].map((i) => `<i class="${i <= n ? 'on' : ''}"></i>`).join('')}</span>`;
+// intensity: three levels (轻松 / 中等 / 高强度); the data keeps a 1–5 effort score: 1–2 → 轻松, 3 → 中等, 4–5 → 高强度
+const LEVELS = ['轻松', '中等', '高强度'];
+const levelOf = (n) => (n <= 2 ? 1 : n === 3 ? 2 : 3);
+const meter = (l) => `<span class="pace lv${l}" role="img" aria-label="强度:${LEVELS[l - 1]}">${[1, 2, 3].map((i) => `<i class="${i <= l ? 'on' : ''}"></i>`).join('')}</span>`;
+const intensity = (n) => { const l = levelOf(n); return `<span class="lvl lv${l}">强度 ${meter(l)}<b>${LEVELS[l - 1]}</b></span>`; };
 const kvl = (rows) => `<dl class="kvl">${rows.map(([k, v]) => `<div class="kv say"><dt class="lbl">${k}</dt><dd>${v}</dd></div>`).join('')}</dl>`;
 
 /* ---------- overview ---------- */
@@ -182,7 +197,7 @@ function cur3() {
 function dayBody(d) {
   return `<div class="dday">
   ${capLine(d.photo, '')}
-  <div class="day-meta"><span>${ico('cal')}${d.d}</span><span>${ico('pin')}${d.area}</span><span>${ico(d.plane ? 'plane' : 'car')}${d.move}</span><span class="nosay">长辈强度 ${pace(d.pace)}</span>${d.tags.map((t) => `<span>${t}</span>`).join('')}</div>
+  <div class="day-meta"><span>${ico('cal')}${d.d}</span><span>${ico('pin')}${d.area}</span><span>${ico(d.plane ? 'plane' : 'car')}${d.move}</span><span class="nosay">${intensity(d.pace)}</span>${d.tags.map((t) => `<span>${t}</span>`).join('')}</div>
   ${phGallery(d.gallery)}
   <ol class="tl">${d.steps.map(([t, x]) => `<li class="tl-i say"><span class="tl-t lbl">${t}</span><div class="tl-x">${x}</div></li>`).join('')}</ol>
   <div class="dgrid"><div class="dbox"><b class="l lbl">${ico('eat')}吃</b>${d.eat}</div><div class="dbox"><b class="l lbl">${ico('bed')}住</b>${d.stay}</div></div>
@@ -216,8 +231,8 @@ function chRoute() {
     return card({ id: `s-${s.id}`, art: scene(s.scene), photo: s.photo, badge: s.n, tags: `<span>${CTRY[s.c]}</span><span class="${rc}">${rc ? ico('star', { fill: true }) : ''}${rl}</span>`, title: s.name, en: s.en, body: sightBody(s) });
   }).join('');
   return `<section class="block wrap ch-route" id="route" aria-labelledby="route-h">
-  ${chead('route', '02', 'PART TWO · 9-DAY ITINERARY', '9 日行程', '每天一张卡:按小时排的时间线、吃住、容易踩的坑和备选方案。「长辈强度」是 1–5 的体力消耗参考。卡片头图优先用真实照片,没有照片的用手绘插画。下面还有沿途 9 个景点的小卡片。')}
-  <div class="legend rv nosay"><span>长辈强度:</span>${pace(1)} 轻松 ${pace(3)} 中等 ${pace(5)} 吃力</div>
+  ${chead('route', '02', 'PART TWO · 9-DAY ITINERARY', '9 日行程', '每天一张卡:按小时排的时间线、吃住、容易踩的坑和备选方案。「强度」分轻松、中等、高强度三档,是体力消耗的参考。卡片头图优先用真实照片,没有照片的用手绘插画。下面还有沿途 9 个景点的小卡片。')}
+  <div class="legend rv nosay"><span>强度:</span>${meter(1)} 轻松 ${meter(2)} 中等 ${meter(3)} 高强度</div>
   ${days}
   <h3 class="sub-h">沿途景点 <small>Sights</small></h3>
   ${sights}

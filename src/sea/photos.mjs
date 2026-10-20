@@ -203,5 +203,14 @@ export const PHOTOS = {
     "sourceUrl": "https://www.nowbali.co.id/tirtha-uluwatu-epic-venue-bali/",
     "title": "Tirtha Uluwatu pavilion and pool at dusk",
     "from": "NOW! Bali 文章"
+  },
+  "dpsairport": {
+    "file": "dpsairport.jpg",
+    "alt": "巴厘岛伍拉莱国际机场的巴厘风格入口",
+    "author": "Pinterpandai.com",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Bali_Airport_(DPS)_I_Gusti_Ngurah_Rai_International_Airport.jpg",
+    "title": "Bali Airport (DPS) I Gusti Ngurah Rai International Airport.jpg"
   }
 };

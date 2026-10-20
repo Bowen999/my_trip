@@ -9,70 +9,103 @@
     set(k, v) { try { localStorage.setItem('yvr7:sea.' + k, JSON.stringify(v)); } catch (e) { /* storage may be blocked */ } },
   };
 
-  /* ================= route map: plane flies between cities ================= */
+  /* ================= route map: plane on flight legs, car on the ground ================= */
   (() => {
     const svg = $('.sea-map');
     if (!svg) return;
-    const plane = $('#sm-plane'), mb = $('#mapbox');
+    const plane = $('#sm-plane'), car = $('#sm-car'), mb = $('#mapbox');
     const pins = {};
     $$('.mp-pin', svg).forEach((p) => { const m = /translate\(([\d.]+) ([\d.]+)\)/.exec(p.getAttribute('transform')); pins[p.dataset.k] = { el: p, x: +m[1], y: +m[2] }; });
-    // 9 days: D2 Guangzhou → KL, D5 KL → Singapore, D6 Singapore → Bali (the return is not planned on this page)
-    const LEG = { 2: $('#leg1'), 5: $('#leg2'), 6: $('#leg3') };
-    const LOC = { 1: 'can', 2: 'kul', 3: 'kul', 4: 'ns', 5: 'sin', 6: 'dps', 7: 'dps', 8: 'dps', 9: 'dps' };
+    // flight days: D1 the three batches fly into Guangzhou, D2 GZ → KL, D5 KL → Singapore, D6 Singapore → Bali
+    const LEG = { 1: $('#leg0'), 2: $('#leg1'), 5: $('#leg2'), 6: $('#leg3') };
+    // where the day ends (the car waits there); D4 is a round trip KL → Negeri Sembilan → KL by van
+    const CITY = { 1: 'can', 2: 'kul', 3: 'kul', 4: 'kul', 5: 'sin', 6: 'dps', 7: 'dps', 8: 'dps', 9: 'dps' };
     const ON = { 1: ['can'], 2: ['can', 'kul'], 3: ['kul'], 4: ['kul', 'ns'], 5: ['kul', 'sin'], 6: ['sin', 'dps'], 7: ['dps'], 8: ['dps'], 9: ['dps'] };
     const PIN_DAY = { can: 1, kul: 3, ns: 4, sin: 5, dps: 7 };
-    let cur = 0, raf = 0;
+    let cur = 0, raf = 0, token = 0;
     function follow(x) {
       if (!mb || mb.scrollWidth <= mb.clientWidth) return;
       const k = mb.scrollWidth / 900;
       mb.scrollLeft = Math.max(0, Math.min(mb.scrollWidth - mb.clientWidth, x * k - mb.clientWidth / 2));
     }
-    function at(key, rot = -30) {
-      const p = pins[key];
-      plane.setAttribute('transform', `translate(${p.x} ${p.y}) rotate(${rot})`);
-      follow(p.x);
-    }
+    function show(kind) { plane.style.display = kind === 'plane' ? '' : 'none'; car.style.display = kind === 'car' ? '' : 'none'; }
+    function placePlane(x, y, rot) { show('plane'); plane.setAttribute('transform', `translate(${x} ${y}) rotate(${rot})`); follow(x); }
+    function placeCar(x, y, dir = 1) { show('car'); car.setAttribute('transform', `translate(${x} ${y - 13}) scale(${dir < 0 ? -1 : 1} 1)`); follow(x); }
     function along(path, t) {
       const L = path.getTotalLength(), p = path.getPointAtLength(t * L), q = path.getPointAtLength(Math.min(L, t * L + 2)), q0 = path.getPointAtLength(Math.max(0, t * L - 2));
-      plane.setAttribute('transform', `translate(${p.x} ${p.y}) rotate(${(Math.atan2(q.y - q0.y, q.x - q0.x) * 180) / Math.PI})`);
-      follow(p.x);
+      placePlane(p.x, p.y, (Math.atan2(q.y - q0.y, q.x - q0.x) * 180) / Math.PI);
     }
-    function tween(ms, fn, done) {
+    function tween(ms, fn, done, tk) {
       cancelAnimationFrame(raf);
       if (reduce || ms <= 0) { fn(1); done && done(); return; }
       const t0 = performance.now();
       (function f(t) {
+        if (tk !== token) return;
         const k = Math.min(1, (t - t0) / ms), e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
         fn(e);
         if (k < 1) raf = requestAnimationFrame(f); else done && done();
       })(t0);
     }
+    const parkCar = (key) => placeCar(pins[key].x, pins[key].y, 1);
+    // a short loop around the city: the van is out and about
+    function cruise(key, tk, ms = 2200) {
+      const c = pins[key], r = 17;
+      tween(ms, (e) => {
+        const a = e * Math.PI * 2, x = c.x + Math.sin(a) * r, y = c.y + (1 - Math.cos(a)) * r * 0.5 - r * 0.5;
+        placeCar(x, y, Math.cos(a) >= 0 ? 1 : -1);
+      }, () => parkCar(key), tk);
+    }
+    function playDay(n, animate, tk) {
+      const leg = LEG[n], city = CITY[n];
+      if (n === 4) {
+        // D4: out to the schools in Negeri Sembilan and back
+        const a = pins.kul, b = pins.ns;
+        tween(animate ? 2600 : 0, (e) => {
+          const k = e < 0.5 ? e * 2 : (1 - e) * 2;
+          placeCar(a.x + (b.x - a.x) * k, a.y + (b.y - a.y) * k, e < 0.5 ? (b.x >= a.x ? 1 : -1) : (b.x >= a.x ? -1 : 1));
+        }, () => parkCar('kul'), tk);
+      } else if (leg) {
+        // flight: the plane flies the leg, then a car waits at the arrival city
+        tween(animate ? 1800 : 0, (e) => along(leg, e), () => parkCar(city), tk);
+      } else if (n === 9) {
+        // return day (not planned on this page): the plane waits in Bali, nose towards Guangzhou
+        const d = pins.dps, g = pins.can;
+        placePlane(d.x, d.y - 4, (Math.atan2(g.y - d.y, g.x - d.x) * 180) / Math.PI);
+      } else if (animate) cruise(city, tk);
+      else parkCar(city);
+    }
     function setDay(n, animate = true) {
       if (n === cur) return;
-      const prevLoc = n === 1 ? 'can' : LOC[n - 1];
-      if (Math.abs(n - cur) !== 1 || cur === 0) at(prevLoc);
-      const leg = LEG[n];
-      if (leg) tween(animate ? 1600 : 0, (e) => along(leg, e));
-      else at(LOC[n]);
+      cancelAnimationFrame(raf);
+      const tk = ++token;
       cur = n;
       Object.values(pins).forEach((p) => p.el.classList.remove('on'));
       ON[n].forEach((k) => pins[k] && pins[k].el.classList.add('on'));
       $$('.dchip').forEach((c) => c.classList.toggle('on', +c.dataset.day === n));
       const c = $(`.dchip[data-day="${n}"]`);
       $('#daysum').innerHTML = `<h4>第 ${n} 天 · ${c.dataset.title}</h4><p>${c.dataset.d} · ${c.dataset.sub} · ${c.dataset.move}</p><a href="#d${n}" data-open="d${n}">展开这一天的详细安排 →</a>`;
+      playDay(n, animate, tk);
     }
     $$('.dchip').forEach((c) => c.addEventListener('click', () => setDay(+c.dataset.day)));
     Object.entries(pins).forEach(([k, p]) => p.el.addEventListener('click', () => setDay(PIN_DAY[k])));
-    at('can');
+    parkCar('can');
     $$('.mp-route', svg).forEach((p) => { p.style.opacity = 0; p.style.transition = reduce ? 'none' : 'opacity 1.2s'; });
     const io = new IntersectionObserver((es) => es.forEach((e) => {
       if (!e.isIntersecting) return;
       io.disconnect();
       $$('.mp-route', svg).forEach((p) => (p.style.opacity = 1));
-      setTimeout(() => setDay(1), 500);
+      setTimeout(() => { if (!cur) setDay(1); }, 500); // don't override a day the reader already picked
     }), { threshold: 0.35 });
     io.observe(svg);
   })();
+
+  /* ================= card covers: once a real photo has loaded, hide the drawn art under it ================= */
+  $$('.banner img.photo').forEach((im) => {
+    const ok = () => im.parentNode.classList.add('ph-ok');
+    // switch only when the photo can actually be painted (decode() resolved), otherwise the cover would flash blank
+    const ready = () => (im.decode ? im.decode().then(ok, () => {}) : ok());
+    if (im.complete && im.naturalWidth) ready(); else im.addEventListener('load', ready, { once: true });
+  });
 
   /* ================= copy-to-clipboard ================= */
   document.addEventListener('click', (e) => {

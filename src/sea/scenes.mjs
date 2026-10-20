@@ -680,10 +680,13 @@ export function seaMap() {
   <text x="70" y="410" class="mp-reg sea" text-anchor="middle" transform="rotate(-30 70 410)">INDIAN OCEAN</text>
   <text x="520" y="196" class="mp-reg sea" text-anchor="middle">SOUTH CHINA SEA</text>
   ${legs.map(([id, d]) => `<path id="${id}" class="mp-route fly" d="${d}"/>`).join('')}
-  ${lab('can', 24, 8, 'start')}${lab('sin', 22, 20, 'start')}${lab('kul', -22, -8, 'end')}${lab('ns', -22, 30, 'end')}${lab('dps', -20, -22, 'end')}
+  <path id="leg0" d="M730 -18Q700 52 ${P.can[0]} ${P.can[1]}" fill="none" stroke="none"/>
+  ${lab('can', 24, 8, 'start')}${lab('sin', 22, 20, 'start')}${lab('kul', -22, -8, 'end')}${lab('ns', -34, 26, 'end')}${lab('dps', 24, -28, 'start')}
   ${Object.keys(P).map((k) => `<g class="mp-pin" data-k="${k}" transform="translate(${P[k][0]} ${P[k][1]})"><circle r="9"/><circle r="3.2" class="in"/></g>`).join('')}
   <g id="sm-plane" class="mp-vehicle" aria-hidden="true"><path d="M0 -11L3.4 -2.4L12 2.4L12 4.4L3.4 3.2L2.4 9.6L5.6 11.8L5.6 13L-5.6 13L-5.6 11.8L-2.4 9.6L-3.4 3.2L-12 4.4L-12 2.4L-3.4 -2.4Z" transform="rotate(90) scale(1.5)" stroke="#fff" stroke-width="1.4"/></g>
+  <g id="sm-car" class="mp-vehicle car" aria-hidden="true" style="display:none"><g transform="scale(1.35)"><rect x="-11" y="-6" width="22" height="11" rx="3.5"/><rect x="-6.5" y="-11" width="13" height="7" rx="2.5"/><circle cx="-6" cy="5" r="2.8" class="w"/><circle cx="6" cy="5" r="2.8" class="w"/></g></g>
   <g transform="translate(${W - 262} ${H - 40})" class="mp-key"><path d="M0 0h34" class="fly mp-route" style="animation:none"/><text x="44" y="4">飞行(共 3 段,返程另行安排)</text></g>
+  <g transform="translate(${W - 262} ${H - 64})" class="mp-key"><g class="mp-vehicle car" transform="translate(17 -1) scale(.9)"><rect x="-11" y="-6" width="22" height="11" rx="3.5"/><rect x="-6.5" y="-11" width="13" height="7" rx="2.5"/><circle cx="-6" cy="5" r="2.8" class="w"/><circle cx="6" cy="5" r="2.8" class="w"/></g><text x="44" y="4">地面:包车 / 打车</text></g>
   <text x="26" y="${H - 18}" class="mp-note">示意图,非严格比例;四地同一时区(UTC+8)</text>
   </svg>`;
   return { svg, P };
