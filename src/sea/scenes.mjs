@@ -276,7 +276,7 @@ scenes.marina = (uid = '') => {
   s.add(`<g transform="translate(140 394)"><path d="M0 0Q-8 -30 2 -52Q10 -62 24 -58L30 -46Q18 -40 22 -20Q24 -6 20 0Z" fill="#eee8e0"/><circle cx="22" cy="-52" r="3" fill="#333"/><path d="M26 -50Q50 -44 66 -30" stroke="#b9e3f6" stroke-width="4" fill="none" class="rip"/><path d="M-6 0Q-16 8 6 10T30 6V0Z" fill="#d9d2c8"/></g>`);
   s.add(`<rect x="0" y="414" width="800" height="36" fill="#14133a"/>`);
   people(s, [60, 90, 230, 260, 600, 640, 700], 424, 1.5);
-  return s.svg({ label: '滨海湾夜景与 Spectra 灯光水舞秀' });
+  return s.svg({ label: '滨海湾与鱼尾狮' });
 };
 
 scenes.chinatown = (uid = '') => {
@@ -650,7 +650,7 @@ export function seaMap() {
     kul: ['吉隆坡', 'Kuala Lumpur', '第 2–5 天'],
     ns: ['森美兰', 'Negeri Sembilan', '第 4 天探校(三所)'],
     sin: ['新加坡', 'Singapore', '第 5–6 天'],
-    dps: ['巴厘岛', 'Bali · Uluwatu', '乌鲁瓦图 · 第 6–8 天'],
+    dps: ['巴厘岛', 'Bali', '金巴兰别墅 · 第 6–8 天'],
   };
   const arc = (a, b, bend) => {
     const [x1, y1] = a, [x2, y2] = b;
@@ -676,12 +676,12 @@ export function seaMap() {
     <path d="M356 466Q500 440 660 456L662 482Q500 496 360 492Z"/>
     <ellipse cx="702" cy="474" rx="26" ry="14"/>
   </g>
-  <text x="540" y="40" class="mp-reg" text-anchor="middle">CHINA</text>
-  <text x="220" y="190" class="mp-reg" text-anchor="middle" transform="rotate(62 220 190)">MALAYSIA</text>
-  <text x="598" y="300" class="mp-reg" text-anchor="middle">BORNEO</text>
-  <text x="496" y="520" class="mp-reg" text-anchor="middle">JAVA SEA</text>
-  <text x="120" y="492" class="mp-reg sea" text-anchor="middle" transform="rotate(-30 120 492)">INDIAN OCEAN</text>
-  <text x="520" y="196" class="mp-reg sea" text-anchor="middle">SOUTH CHINA SEA</text>
+  <text x="540" y="40" class="mp-reg" text-anchor="middle">中国</text>
+  <text x="220" y="190" class="mp-reg" text-anchor="middle" transform="rotate(62 220 190)">马来西亚</text>
+  <text x="598" y="300" class="mp-reg" text-anchor="middle">婆罗洲</text>
+  <text x="496" y="520" class="mp-reg" text-anchor="middle">爪哇海</text>
+  <text x="120" y="492" class="mp-reg sea" text-anchor="middle" transform="rotate(-30 120 492)">印度洋</text>
+  <text x="520" y="196" class="mp-reg sea" text-anchor="middle">南海</text>
   ${legs.map(([id, d]) => `<path id="${id}" class="mp-route fly" d="${d}"/>`).join('')}
   <path id="leg0" d="M730 -18Q700 52 ${P.can[0]} ${P.can[1]}" fill="none" stroke="none"/>
   ${lab('can', 24, 8, 'start')}${lab('sin', 22, 20, 'start')}${lab('kul', -36, -10, 'end')}${lab('ns', -34, 26, 'end')}${lab('dps', 24, -28, 'start')}
@@ -690,7 +690,7 @@ export function seaMap() {
   <g id="sm-car" class="mp-vehicle car" aria-hidden="true" style="display:none">${carGlyph(1.5)}</g>
   <g transform="translate(${W - 262} ${H - 62})" class="mp-key"><g class="mp-vehicle" transform="translate(17 0)"><path d="M0 -11L3.4 -2.4L12 2.4L12 4.4L3.4 3.2L2.4 9.6L5.6 11.8L5.6 13L-5.6 13L-5.6 11.8L-2.4 9.6L-3.4 3.2L-12 4.4L-12 2.4L-3.4 -2.4Z" transform="rotate(90) scale(1)" stroke="#fff" stroke-width="1.4"/></g><text x="44" y="4">飞机:飞行途中</text></g>
   <g transform="translate(${W - 262} ${H - 40})" class="mp-key"><g class="mp-vehicle car" transform="translate(17 -2)">${carGlyph(1)}</g><text x="44" y="4">小车:落地后 / 当天在地面</text></g>
-  <g transform="translate(${W - 262} ${H - 18})" class="mp-key"><path d="M0 0h34" class="fly mp-route" style="animation:none"/><text x="44" y="4">航线(共 3 段)</text></g>
+  <g transform="translate(${W - 262} ${H - 18})" class="mp-key"><path d="M0 0h34" class="fly mp-route" style="animation:none"/><text x="44" y="4">去程航线(共 3 段)</text></g>
   <text x="26" y="${H - 18}" class="mp-note">示意图,非严格比例;四地同一时区(UTC+8)</text>
   </svg>`;
   return { svg, P };
@@ -703,7 +703,7 @@ export function nsInset() {
   const E = [
     ['kl', 'epsom', '约 40 分钟(学校官网)'],
     ['epsom', 'adcote', '约 25–30 分钟(估)'],
-    ['adcote', 'ktj', '午饭 Seremban · 共约 50 分钟(估)'],
+    ['adcote', 'ktj', '午饭在芙蓉 · 共约 50 分钟(估)'],
   ];
   const lines = E.map(([a, b, t]) => {
     const [x1, y1] = N[a], [x2, y2] = N[b];
@@ -716,11 +716,11 @@ export function nsInset() {
   });
   // return leg KTJ → KL, drawn as a curve along the bottom
   lines.push(`<path d="M${N.ktj[0]} ${N.ktj[1]}Q450 450 ${N.kl[0]} ${N.kl[1]}" class="ns-e est" fill="none"/><text x="450" y="304" text-anchor="middle" class="ns-t est">回吉隆坡 · 约 1–1.5 小时(估,晚高峰)</text>`);
-  const lab = { kl: ['吉隆坡市区', '07:45 出发 · 约 18:00 回'], epsom: ['① Epsom College', '09:00–10:30 · Enstek'], adcote: ['② Adcote Matrix', '11:00–12:30 · Sri Sendayan'], ktj: ['③ KTJ', '15:00–16:30 · Mantin'] };
+  const lab = { kl: ['吉隆坡市区', '07:45 出发 · 约 18:00 回'], epsom: ['① 爱普森学院', '09:00–10:30 · 恩斯德克'], adcote: ['② 阿德科特马特里克斯学校', '11:00–12:30 · 斯里仙达央'], ktj: ['③ 端姑嘉化学院', '15:00–16:30 · 文丁'] };
   const top = new Set(['epsom', 'ktj']);
   const nodes = Object.keys(N).map((k) => {
     const isSch = k !== 'kl';
     return `<g transform="translate(${N[k][0]} ${N[k][1]})"><circle r="${isSch ? 13 : 9}" class="ns-n${isSch ? ' sch' : ''}"/><text y="${top.has(k) ? -36 : 38}" text-anchor="middle" class="ns-l">${lab[k][0]}</text><text y="${top.has(k) ? -19 : 56}" text-anchor="middle" class="ns-s">${lab[k][1]}</text></g>`;
   });
-  return `<svg class="art ns-art" viewBox="0 0 ${W} ${H}" role="img" aria-label="森美兰三所学校的一天路线:吉隆坡、Epsom、Adcote Matrix、KTJ,再回吉隆坡"><rect class="ns-bg" width="${W}" height="${H}" rx="6"/>${lines.join('')}${nodes.join('')}<text x="26" y="${H - 14}" class="mp-note">示意图:标「学校官网」的车程来自学校官网,其余为估算,以导航为准;KTJ 与其他两校之间的车程未查到官方数据</text></svg>`;
+  return `<svg class="art ns-art" viewBox="0 0 ${W} ${H}" role="img" aria-label="森美兰三所学校的一天路线:吉隆坡、爱普森学院、阿德科特马特里克斯学校、端姑嘉化学院,再回吉隆坡"><rect class="ns-bg" width="${W}" height="${H}" rx="6"/>${lines.join('')}${nodes.join('')}<text x="26" y="${H - 14}" class="mp-note">示意图:标「学校官网」的车程来自学校官网,其余为估算,以导航为准;KTJ 与其他两校之间的车程未查到官方数据</text></svg>`;
 }

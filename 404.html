@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#002fa7">
+  <title>404 · 当前页面暂无信息</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    html, body { min-height: 100%; }
+
+    body {
+      margin: 0;
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+      min-height: 100svh;
+      padding: 32px 24px;
+      background: #002fa7;
+      color: #fff;
+      font-family: "Avenir Next", Avenir, "Helvetica Neue", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    main {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(28px, 7vw, 104px);
+      width: 100%;
+    }
+
+    .message {
+      max-width: 320px;
+      text-align: right;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Bodoni 72", Didot, "Iowan Old Style", "Times New Roman", serif;
+      font-size: clamp(21px, 3vw, 34px);
+      font-weight: 400;
+      line-height: 1.4;
+      letter-spacing: -.015em;
+    }
+
+    .zh {
+      margin: 20px 0 0;
+      font-family: "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", SimSun, serif;
+      font-size: 13px;
+      font-weight: 400;
+      line-height: 1.8;
+      letter-spacing: .18em;
+      opacity: .78;
+    }
+
+    .error { flex: none; }
+
+    .number {
+      margin: 0;
+      font-size: clamp(124px, 22vw, 288px);
+      font-weight: 300;
+      line-height: .78;
+      letter-spacing: -.075em;
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 32px 20px; }
+      main { gap: 24px; }
+      .zh { font-size: 12px; letter-spacing: .1em; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="message">
+      <h1 lang="en">There&rsquo;s nothing here.</h1>
+      <p class="zh">当前页面暂无信息。</p>
+    </div>
+    <div class="error" aria-label="404">
+      <p class="number" aria-hidden="true">404</p>
+    </div>
+  </main>
+</body>
+</html>

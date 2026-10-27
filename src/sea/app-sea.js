@@ -78,7 +78,7 @@
         // flight: the plane flies the leg, then a car waits at the arrival city
         tween(animate ? 1800 : 0, (e) => along(leg, e), () => parkCar(city), tk); // (reduced motion: straight to the end state)
       } else if (n === 9) {
-        // return day (not planned on this page): the plane waits in Bali, nose towards Guangzhou
+        // return day: the plane waits in Bali, nose towards Guangzhou (the return flights are not drawn as map legs)
         const d = pins.dps, g = pins.can;
         placePlane(d.x, d.y - 4, (Math.atan2(g.y - d.y, g.x - d.x) * 180) / Math.PI);
       } else if (animate) { follow(pins[city].x, pins[city].y); cruise(city, tk); }
@@ -214,7 +214,9 @@
     const NAME = { sgd: '新加坡元', myr: '马来西亚林吉特', idr: '印尼盾' };
     let c = 'sgd';
     const saved = LS.get('rates', {});
-    Object.keys(r).forEach((k) => { if (saved[k]) r[k].value = saved[k]; r[k].addEventListener('input', () => { const o = {}; Object.keys(r).forEach((x) => (o[x] = parseFloat(r[x].value) || 0)); LS.set('rates', o); fromLoc(); }); });
+    Object.keys(r).forEach((k) => { r[k].value = saved[k] || r[k].dataset.def || ''; r[k].addEventListener('input', () => { const o = {}; Object.keys(r).forEach((x) => (o[x] = parseFloat(r[x].value) || 0)); LS.set('rates', o); fromLoc(); }); });
+    const reset = $('#r-reset');
+    if (reset) reset.addEventListener('click', () => { Object.keys(r).forEach((k) => { r[k].value = r[k].dataset.def; }); LS.set('rates', {}); fromLoc(); });
     const rate = () => { const v = parseFloat(r[c].value); return v > 0 ? (c === 'idr' ? v / 10000 : v) : 0; };
     function fromLoc() { const x = rate(); if (x && loc.value !== '') cny.value = (loc.value * x).toFixed(2); else cny.value = ''; }
     loc.addEventListener('input', fromLoc);
@@ -224,5 +226,56 @@
       $$('#c3-cur button').forEach((x) => x.classList.toggle('on', x === b));
       lab.textContent = NAME[c]; loc.value = ''; cny.value = '';
     }));
+  })();
+  /* ================= photo viewer: tap a real photo to enlarge it ================= */
+  (() => {
+    const lb = document.createElement('div');
+    lb.className = 'lb'; lb.hidden = true;
+    lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-modal', 'true'); lb.setAttribute('aria-label', '照片大图');
+    lb.innerHTML = '<div class="lb-img"></div><div class="lb-cap"></div><button type="button" class="lb-x" aria-label="关闭">&times;</button><button type="button" class="lb-p" aria-label="上一张">&#8249;</button><button type="button" class="lb-n" aria-label="下一张">&#8250;</button>';
+    document.body.appendChild(lb);
+    const img = $('.lb-img', lb), cap = $('.lb-cap', lb), prev = $('.lb-p', lb), next = $('.lb-n', lb);
+    let set = [], i = 0, opener = null;
+    const bg = (el) => getComputedStyle(el).backgroundImage;
+    function render() {
+      const el = set[i];
+      img.style.backgroundImage = bg(el);
+      const fc = el.parentNode.querySelector('figcaption');
+      cap.textContent = (set.length > 1 ? (i + 1) + ' / ' + set.length + '  ' : '') + (fc ? fc.textContent : '');
+      prev.hidden = next.hidden = set.length < 2;
+    }
+    function open(el) {
+      set = $$('.ph-img', el.closest('.ph-row') || document);
+      i = Math.max(0, set.indexOf(el)); opener = el;
+      render(); lb.hidden = false;
+      document.documentElement.style.overflow = 'hidden';
+      $('.lb-x', lb).focus();
+    }
+    function close() {
+      if (lb.hidden) return;
+      lb.hidden = true;
+      document.documentElement.style.overflow = '';
+      if (opener) opener.focus();
+    }
+    const step = (d) => { if (set.length > 1) { i = (i + d + set.length) % set.length; render(); } };
+    document.addEventListener('click', (e) => { const el = e.target.closest('.ph-img'); if (el) open(el); });
+    document.addEventListener('keydown', (e) => {
+      if (lb.hidden) {
+        const el = e.target.closest && e.target.closest('.ph-img');
+        if (el && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); open(el); }
+        return;
+      }
+      if (e.key === 'Escape') close();
+      else if (e.key === 'ArrowLeft') step(-1);
+      else if (e.key === 'ArrowRight') step(1);
+    });
+    img.addEventListener('click', close);
+    cap.addEventListener('click', close);
+    $('.lb-x', lb).addEventListener('click', close);
+    prev.addEventListener('click', () => step(-1));
+    next.addEventListener('click', () => step(1));
+    let x0 = null;
+    lb.addEventListener('touchstart', (e) => { x0 = e.touches.length === 1 ? e.touches[0].clientX : null; }, { passive: true });
+    lb.addEventListener('touchend', (e) => { if (x0 == null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null; if (Math.abs(dx) > 50) step(dx < 0 ? 1 : -1); }, { passive: true });
   })();
 })();

@@ -1,0 +1,476 @@
+// Content for the New England road trip (Boston → Portland ME → Providence stop → Newport RI), 2026-11-04 → 11-10.
+// Organiser (guide) edition only. Facts checked 2026-10-25; anything not confirmed from an official page says so.
+// Readers: 5 international students in North America, all 21+, two cars. Skip generic US info; keep only what is local.
+// Style: short, direct Chinese; English place names stay in English (that is what the map and signs show).
+
+export const META = {
+  updated: '2026-10-26',
+  cn: '2026 年 10 月 26 日',
+  dates: '2026 年 11 月 4 日(周三)晚 – 11 月 10 日(周二)',
+  title: '新英格兰七日',
+  tag: '5 人 · 2 车',
+  hero: '波士顿 3 晚 → 缅因州波特兰 1 晚 → 路过普罗维登斯(Brown)→ 罗德岛纽波特 2 晚。自驾 7 天,只写你们不熟的本地吃喝和文化。',
+};
+
+/* ------------------------------------------------------------------ */
+/*  计划假设与待确认                                                    */
+/* ------------------------------------------------------------------ */
+export const ASSUME = [
+  ['日期', '<b>11/4(周三)晚上 → 11/10(周二)</b>。11/4 晚上在波士顿吃饭,人到齐;11/10 在纽波特吃完午饭各自走。'],
+  ['人和车', '5 人,<b>两辆自己的车</b>,各自从不同地方开到波士顿汇合,最后从纽波特各自开走。'],
+  ['住宿(都还没订)', '波士顿 3 晚(11/4、11/5、11/6)· 缅因波特兰 1 晚(11/7)· 纽波特 2 晚(11/8、11/9)。11/8 路上在普罗维登斯停半天,不住。每晚住哪个区见行程卡片。'],
+  ['节奏', '11 月 1 日已结束夏令时,<b>每天 16:25–16:35 就日落</b>。户外的(灯塔、海边、Cliff Walk)都放在白天,晚上吃饭喝酒。'],
+  ['喝酒', '5 人都满 21。晚上喝酒的地方都能走路到,或者打车;<b>每晚定一个不喝的司机</b>。国际学生进酒吧带护照(外国驾照有的店不认)。'],
+  ['不写的', '签证、货币、插头、小费、时差、一般美国常识都不写。全程美东时间(EST)。'],
+];
+
+export const PENDING = [
+  '11/4 大家几点能到齐?行程按 <b>18:00 前到波士顿酒店</b>写;晚到的直接去 North End 汇合。',
+  '住宿还没订:波士顿两辆车停三晚约 <b>$360–450</b>(酒店代客泊车 $60–75/车/晚)。能接受就住市中心(North Station / Government Center 一带);想省钱就住 Cambridge Kendall 一带(约 $52/晚),坐红线进城。',
+  '纽波特住市中心(走路去吃饭喝酒,但酒店停车约 $45/天)还是 Middletown(连锁酒店免费停车,开 10 分钟)?',
+  '11/9 晚饭 White Horse Tavern:<b>5 人要打电话订</b>(401-849-3600),网上只能订 4 人以下。',
+  '11/7 Eventide 改成午饭:11:00 开门就去,基本不用排;想吃晚饭就上 Resy 订(提前 2 周放少量位子)。',
+  '每天谁是不喝酒的司机,提前排好。',
+  '11/8 在普罗维登斯想看什么:行程按 <b>Brown 校园 + College Hill</b> 写;有人想进 Brown 的楼或参加导览,先看官网周日有没有。',
+  '11/10 大家几点要走?行程按 <b>吃完告别午饭 13:30 前后</b>各自出发写。',
+];
+
+export const STATUS = [
+  { k: 'warn', t: '日落很早:16:25–16:35', d: '11/1 起冬令时。11/7 波特兰 16:24 日落,Portland Head Light 所在的公园日落就关,所以排在中午去。海边、灯塔、Cliff Walk 都排在白天。' },
+  { k: 'warn', t: '纽波特:The Elms、Rosecliff 那几天不开', d: 'Rosecliff 11/1 已关;The Elms 和它的 Servant Life 屋顶导览 <b>11/16 才重开</b>。你们在的 11/8–11/10 只开 <b>The Breakers</b> 和 <b>Marble House</b>(每天 9:00–17:00,16:00 最后入场)。买「Breakers + 1」联票 $45。' },
+  { k: 'warn', t: '缅因收费公路只收现金或 E-ZPass', d: 'Maine Turnpike <b>不寄账单</b>(没有按车牌收费)。没有 E-ZPass 的车备好现金:York 收费站约 $4–5,来回各一次。外州 E-ZPass 按现金价收。新罕布什尔 Hampton 收费站 $2,也收现金。' },
+  { k: 'warn', t: '11 月是淡季,不少店已关', d: '已关或很可能关:Del\'s 冻柠檬水、Flo\'s Clam Shack、The Lobster Shack at Two Lights、Fort Williams 里的 Bite Into Maine 餐车、Portland Head Light 博物馆、Longfellow 故居。本页推荐的店都查过 11 月营业;「营业时间会变」的写了电话,去之前打一下。' },
+  { k: 'warn', t: '11/8 是周日', d: '普罗维登斯的州议会大厦(工作日才开)和 Providence Athenaeum(周二至周六)都不开,只看外面。Brown 校园周日可以随便走。' },
+  { k: 'info', t: '球赛', d: '<b>11/4(周三)19:30 凯尔特人主场</b>(TD Garden,North Station 楼上),对手各票务网站说法不一,买票前看官网;想看就把晚饭提前到 17:30。棕熊 11/4–11/6 没查到主场。<b>11/6(周五)19:00 凯尔特人客场打夏洛特</b>,可以找体育酒吧看。11/7 哈佛对哥伦比亚的橄榄球你们已经北上,看不了。' },
+  { k: 'info', t: '麻省没有酒水「欢乐时光」', d: '麻省 1984 年起禁止酒水打折(至今有效),所以波士顿的 happy hour 只打折吃的,比如 $1 生蚝(buck-a-shuck)。缅因、罗德岛没有这条。' },
+  { k: 'info', t: '要提前订时段的', d: 'The Breakers(定时入场)、Gardner 博物馆(时段常卖完)、Mapparium(定时)、Touro Synagogue 导览(要登记,不退款)。' },
+  { k: 'info', t: '已经关掉的名店', d: 'Island Creek Oyster Bar(Kenmore Square)2021 年已永久关门,别被旧攻略带过去。The Holy Donut 的 Exchange St 店也不在了,去 Commercial St 店。' },
+  { k: 'info', t: '纽波特市区停车 11 月免费', d: '市营停车场(Gateway Center、Mary St、Touro St、Long Wharf)11/1–4/30 免费;路边咪表也免费,但 18:00 前限停 3 小时。' },
+  { k: 'ok', t: '2026 是独立 250 周年', d: '波士顿今年活动多,Freedom Trail 一带人会比往年多。' },
+];
+
+/* ------------------------------------------------------------------ */
+/*  速览                                                               */
+/* ------------------------------------------------------------------ */
+export const STATS = [
+  { t: '7', l: '天 6 晚', s: '11/4 晚上 → 11/10 下午' },
+  { t: '3', l: '个州', s: '麻省 · 缅因 · 罗德岛(路过新罕布什尔)' },
+  { t: '~300', l: '英里车程', s: '不含各自来回;最长一段波特兰 → 普罗维登斯约 2 小时 40 分' },
+  { t: '16:30', l: '左右日落', s: '户外的都放在下午 4 点前' },
+  { t: '2', l: '座豪宅', s: 'The Breakers + Marble House(其余这几天不开)' },
+  { t: '20+', l: '样本地吃的', s: '大多数在别处吃不到正宗的' },
+];
+
+export const ROUTE_NOTE = {
+  shape: '波士顿 3 晚 → 一早北上缅因波特兰 1 晚 → 绕开波士顿南下,在普罗维登斯停半天 → 纽波特 2 晚,11/10 各自走。',
+  pace: '起得最早的是 <b>11/7</b>(7:00 出发去缅因)和 <b>11/8</b>(8:00 出发开 2 小时 40 分)。11/5、11/6 两天在波士顿走路多(每天 5–7 英里),穿好走的鞋。',
+};
+
+/* ------------------------------------------------------------------ */
+/*  一、本地文化                                                        */
+/* ------------------------------------------------------------------ */
+export const CULTURE = [
+  { ico: 'people', k: '清教徒 vs 「流氓岛」', s: '麻省和罗德岛是吵出来的', back: ['1630 年清教徒建波士顿,只容得下自己的教派。', '1636 年 Roger Williams 被麻省赶出去,建了普罗维登斯,主张宗教自由。', '所以罗德岛有美国最老的犹太会堂(Touro,1763)。麻省人当年叫它 Rogue\'s Island(流氓岛)。'] },
+  { ico: 'bubble', k: '本地话', s: '听到别愣住', back: ['wicked = 非常;packie = 酒铺;bubbler = 饮水机;rotary = 环岛。', 'frappe = 加冰淇淋的奶昔;jimmies = 巧克力彩针糖。', '罗德岛:cabinet = 奶昔;grinder = 潜艇三明治;downcity = 普罗维登斯市中心。'] },
+  { ico: 'coin', k: '镀金时代的「小屋」', s: '纽波特的豪宅叫 cottage', back: ['1890 年代纽约富豪的夏季别墅,一年只住 6–8 周。', 'The Breakers 是范德比尔特家的,70 个房间;Marble House 是他弟弟送老婆 Alva 的生日礼物。', 'Alva 后来在 Marble House 后院建了一座中式茶亭,还在这里办女性选举权集会。'] },
+  { ico: 'pin', k: '红袜是宗教', s: 'Fenway 是最老的大联盟球场', back: ['1912 年开,左外野的高墙叫 Green Monster。', '1918 年卖掉 Babe Ruth 后 86 年没拿冠军(「贝比鲁斯魔咒」),2004 年才破。', '第 8 局全场合唱《Sweet Caroline》。'] },
+  { ico: 'totem', k: '龙虾和「外地人」', s: '缅因:你们都是 from away', back: ['缅因去年捕了约 7900 万磅龙虾,占全州渔业产值约 3/4。', '本地人管外地人叫 from away 或 flatlander,半开玩笑。', '波特兰比俄勒冈那个更早:1845 年俄勒冈抛硬币才定名叫 Portland。'] },
+  { ico: 'warn', k: '帆船和海军', s: '纽波特 = 美国杯老家', back: ['1930–1983 年美洲杯帆船赛在纽波特办,纽约游艇俱乐部守了 132 年,1983 年输给澳大利亚。', '海军战争学院 1884 年就在这里。', '码头停满帆船,冬天很多上岸了,船坞里能看到。'] },
+];
+
+/* ------------------------------------------------------------------ */
+/*  二、本地吃的(只挑别处吃不到正宗的)                               */
+/* ------------------------------------------------------------------ */
+// w: BOS 波士顿 · PWM 缅因 · RI 罗德岛
+export const FOODS = [
+  { i: 'roastbeef', n: '北岸烤牛肉三明治', w: 'BOS', d: '点「<b>3-way</b>」:半生烤牛肉 + 烧烤酱 + 美式芝士 + 蛋黄酱,夹洋葱面包。Kelly\'s(Revere Beach)自称发源地。' },
+  { i: 'cannoli', n: 'cannoli 之争', w: 'BOS', d: 'North End 两家对门打了几十年:Mike\'s(游客多,带现金)vs Modern(现灌馅)。两家各买几个,当场投票。' },
+  { i: 'bostoncream', n: '波士顿奶油派', w: 'BOS', d: '其实是蛋糕。1856 年 Omni Parker House 酒店发明,麻省州甜点。同一家还发明了 Parker House 面包卷。' },
+  { i: 'oysters', n: '$1 生蚝', w: 'BOS', d: '麻省禁止酒水打折,所以 happy hour 打折的是生蚝(buck-a-shuck),一般 15:00–18:00。' },
+  { i: 'italiansandwich', n: '缅因「意大利三明治」', w: 'PWM', d: '和别处的不一样:软长面包、火腿、美式芝士、洋葱、青椒、橄榄、酸黄瓜、橄榄油。1902 年 Amato\'s 在波特兰码头开始卖。' },
+  { i: 'lobsterroll', n: '龙虾卷:缅因式', w: 'PWM', d: '缅因式是<b>凉的拌蛋黄酱</b>,康州式是热的淋黄油。Eventide 的焦黄油版(brown butter)是新做法,很出名。' },
+  { i: 'redsnapper', n: '红皮热狗', w: 'PWM', d: 'red snapper:天然肠衣染成鲜红,咬下去「啪」一声。全缅因只有 W.A. Bean 一家在做。' },
+  { i: 'potatodonut', n: '土豆甜甜圈', w: 'PWM', d: '面团里加缅因土豆泥,更湿更软。The Holy Donut,卖完就没。' },
+  { i: 'whoopie', n: 'Whoopie pie + Moxie', w: 'PWM', d: '两片巧克力蛋糕夹奶油,缅因「州甜点」;Moxie 是州饮料,苦味汽水,很多人第一口就放弃。超市、加油站都有。' },
+  { i: 'beer', n: '波特兰精酿', w: 'PWM', d: 'Allagash(比利时白啤)、Oxbow(农舍啤酒)、Rising Tide、Bissell Brothers。常被说是全美人均酒厂最多的城市。' },
+  { i: 'coffeemilk', n: 'Coffee milk', w: 'RI', d: '罗德岛州饮料:牛奶 + 咖啡糖浆(Autocrat 牌)。做成奶昔叫 coffee cabinet。' },
+  { i: 'stuffie', n: 'Stuffies', w: 'RI', d: '大圆蛤(quahog)壳里塞蛤肉、面包屑、葡萄牙辣香肠(chouriço),烤。有原味和辣味。' },
+  { i: 'clearchowder', n: '清汤巧达', w: 'RI', d: '罗德岛有三种 chowder:白(奶油)、红(番茄)、<b>清汤</b>。清汤的只有这里常见,配 clam cakes(炸蛤蜊面团)。' },
+  { i: 'calamari', n: '罗德岛炸鱿鱼', w: 'RI', d: '2014 年定为州开胃菜。炸好后拌<b>辣椒圈</b>(banana pepper)和蒜。' },
+  { i: 'hotwiener', n: 'Hot wieners', w: 'RI', d: '叫「New York System」但纽约没有。小香肠夹软面包,点「all the way」= 芥末 + 肉酱 + 洋葱 + 芹菜盐。Olneyville 开到凌晨 2 点。' },
+  { i: 'grilledpizza', n: '烤披萨', w: 'RI', d: '直接放炭火上烤的薄底披萨,1980 年代初 Al Forno 发明。' },
+  { i: 'pizzastrip', n: 'Pizza strips', w: 'RI', d: '面包房卖的长方形番茄披萨条,<b>不放芝士,常温吃</b>。本地人派对必备。' },
+  { i: 'rum', n: '纽波特朗姆', w: 'RI', d: '殖民时代纽波特是朗姆酒重镇(和三角贸易有关)。Newport Craft 的 Thomas Tew 朗姆是复兴的。' },
+];
+
+/* 吃喝清单(按城市)——行程里提到的店,加上备选 */
+export const EATS = [
+  { c: 'BOS', list: [
+    ['Regina Pizzeria', '原店 11½ Thacher St', '1926 年开,今年 100 周年。午饭和晚饭之间去人少。', '11/4 晚饭(二选一,另一家 11/6 吃)'],
+    ['Neptune Oyster', '63 Salem St', '不订位,常等 1 小时以上;先登记再去逛。龙虾卷热的冷的都有。', '11/4 晚饭(二选一,另一家 11/6 吃)'],
+    ['Mike\'s Pastry / Modern Pastry', 'Hanover St', 'Mike\'s 8:00–22:00,带现金;Modern 晚上也开(周三几点关以官网为准)。', '11/4 甜点'],
+    ['Omni Parker House', '60 School St', '工作日午餐 11:30–14:00。点 Boston cream pie。', '11/5 午饭'],
+    ['Union Oyster House', '41 Union St', '1826 年,自称全美最老餐厅。OpenTable 可订。', '11/5 晚饭'],
+    ['Boston Public Market', '100 Hanover St', '周三至周六 8:00–20:00。室内,摊主都来自新英格兰。', '11/6 早饭'],
+    ['$1 生蚝', 'Rochambeau(Back Bay)/ Petit Robert(South End)/ Warren Tavern(Charlestown)', '一般 15:00–18:00;来自《波士顿环球报》8 月的名单,去之前确认还有没有。', '11/6 下午(可选)'],
+    ['备选:Kelly\'s Roast Beef', '410 Revere Beach Blvd(蓝线 Revere Beach 站走 5 分钟)', '每天 11:00–20:00。点 3-way。11/7 一早出发吃不上,想吃就 11/5 或 11/6 坐蓝线去,单程约 30 分钟。', ''],
+    ['备选:South Shore bar pizza', 'Lynwood Café(Randolph,开车约 25 分钟)', '酒吧铁盘薄披萨,饼边烤焦。车停在酒店,要专门开过去,当 11/5 或 11/6 晚饭。', ''],
+  ] },
+  { c: 'PWM', list: [
+    ['The Holy Donut', '177 Commercial St', '周末 7:00 开,卖完即止。', '11/7 早饭'],
+    ['Eventide Oyster Co.', '86 Middle St', '每天 11:00–23:00。<b>11:00 开门就去基本不用排</b>;晚饭 Resy 少量订位,每桌限 2 小时。', '11/7 午饭'],
+    ['Allagash', '50 Industrial Way(Old Port 开 10–15 分钟)', '周六 11:00–20:00,周二、三关。比利时白啤的老家。', '11/7 下午'],
+    ['Oxbow Blending & Bottling', '49 Washington Ave', '周六 12:00–23:00。', '11/7 傍晚'],
+    ['Rising Tide', '103 Fox St', '周六 12:00–21:00,有吃的。', '11/7 傍晚(备选)'],
+    ['Duckfat', '43 Middle St', '每天 11:00–22:00,不订位。鸭油炸的薯条、poutine。', '11/7 晚饭'],
+    ['The Thirsty Pig', 'Exchange St', '红皮热狗(red snapper)。', '11/7 夜宵'],
+    ['Becky\'s Diner', '390 Commercial St', '每天 5:00 开,码头渔民的早饭馆。', '11/8 早饭'],
+    ['备选:Amato\'s', '71 India St(原店)', '缅因意大利三明治,可以买了 11/8 路上吃。', ''],
+  ] },
+  { c: 'RI', list: [
+    ['Olneyville N.Y. System', '18 Plainfield St,普罗维登斯', '开到凌晨 2 点。hot wieners「all the way」+ coffee milk。', '11/8 午饭'],
+    ['Anthony\'s Seafood', '963 Aquidneck Ave,Middletown', 'Stuffies、clam cakes、清汤巧达。<b>营业时间随季节变,先打电话</b> 401-846-9620。', '11/8 晚饭'],
+    ['Newport Creamery', '208 West Main Rd,Middletown', '7:00–21:00。Awful Awful 奶昔、coffee milk。', '11/9 早饭'],
+    ['The Mooring', 'Sayer\'s Wharf,纽波特', '11:30 开。点罗德岛炸鱿鱼。', '11/9 午饭'],
+    ['Castle Hill Inn 草坪', '590 Ocean Ave', '草坪的阿迪朗达克椅先到先得,只喝酒,不订位;满了不让进。冬季时间没查到,先打 401-849-3800。', '11/9 日落'],
+    ['White Horse Tavern', '26 Marlborough St', '周一 17:00–21:00。<b>5 人要打电话订</b> 401-849-3600。', '11/9 晚饭'],
+    ['Black Pearl', 'Bannister\'s Wharf,纽波特', '每天 11:00 开,不订位。招牌是巧达浓汤。', '11/10 告别午饭'],
+    ['备选:Newport Vineyards · Farm & Barrel Bistro', '909 E Main Rd,Middletown', '午餐 11:00–15:00(2026 年新开的餐厅,时间以官网为准);试酒不用订。往北走的车顺路。', ''],
+    ['备选:Al Forno', '577 S Water St,普罗维登斯', '烤披萨发源地,但周二至周六才开晚饭(17:00 起),11/8 周日吃不上。', ''],
+    ['备选:Newport Craft', '293 JT Connell Hwy', '周一至周四 12:00–21:00。啤酒 + Thomas Tew 朗姆。', ''],
+  ] },
+];
+
+/* ------------------------------------------------------------------ */
+/*  开车与停车(替代原来的「当地规矩」)                                */
+/* ------------------------------------------------------------------ */
+export const DRIVE = [
+  ['收费', '麻省全部电子收费,没有 E-ZPass 按车牌寄账单(更贵)。<b>缅因只收现金或 E-ZPass</b>。新罕布什尔 Hampton $2。纽波特 Pell 大桥:外州 E-ZPass $4,按车牌 $6(11/8 走 RI-24 进纽波特不用过;11/10 往西南走 RI-138 回家的车会过)。'],
+  ['环岛', '波士顿叫 rotary。<b>已经在环岛里的车先走</b>。本地人并线很凶,别犹豫也别抢。'],
+  ['波士顿停车', '路边写 Resident Permit 的只给本区居民,没写时间就是 24 小时有效;访客位一般限 2 小时。<b>11/4 停进酒店后,两辆车到 11/7 早上才动</b>。'],
+  ['波特兰停车', 'Old Port 咪表 $3/小时,周一至周六 9:00–19:00 收费(11/7 周六要交),周日免费。'],
+  ['普罗维登斯停车', '11/8 周日:College Hill 路边咪表周日一般免费(以咪表上写的为准);Thayer St 一带好找位。'],
+  ['纽波特停车', '市营停车场 11/1–4/30 免费;Cliff Walk 用 Narragansett Ave 尽头的咪表(Forty Steps 旁,限 4 小时)。'],
+  ['新罕布什尔', 'I-95 上 Hampton 一带有州营酒铺(NH 没有销售税,本地人专门去囤酒)。买了放后备箱,<b>车里不能有开封的酒</b>。'],
+  ['天黑', '16:30 以后缅因和罗德岛乡道很黑,注意鹿。'],
+  ['两辆车', '每段出发前约好汇合点和到达后停哪;路上用手机共享位置。'],
+];
+
+/* ------------------------------------------------------------------ */
+/*  三、7 日行程                                                        */
+/* ------------------------------------------------------------------ */
+// scene: illustration key (src/ne/scenes.mjs) · photo / gallery: keys in src/ne/photos.mjs
+// pace 1–3 · drive: the day's driving · stay: where to sleep (area level; nothing booked yet)
+export const DAYS = [
+  {
+    n: 1, d: '11/4 周三', scene: 'northend', photo: 'northend', gallery: ['cannoli'], area: '各地 → 波士顿', title: '波士顿汇合', sub: '晚上到齐 · North End 晚饭 · cannoli 投票', move: '各自开到波士顿', pace: 1, tags: ['晚上到齐', '凯尔特人主场 19:30'],
+    steps: [
+      ['18:00 前', '各自开到酒店,停车入住。<b>车停进去就别动了</b>,到 11/7 早上都靠走路和地铁(the T)。'],
+      ['18:30', '走路去 North End(意大利区)。晚饭二选一:<b>Regina Pizzeria</b>(1926 年开,今年 100 周年)或 <b>Neptune Oyster</b>(不订位,先到的人先去登记)。另一家留到 11/6。'],
+      ['20:00', '甜点:Mike\'s Pastry 和 Modern Pastry 各买几个 cannoli,5 人分着吃,投票。Mike\'s 带现金。'],
+      ['20:45', '沿 Hanover St 走到 Paul Revere 雕像和 Old North Church 外面(明天白天再进)。'],
+      ['21:30', '回酒店。'],
+    ],
+    eat: 'Regina 或 Neptune;甜点 Mike\'s vs Modern。',
+    drive: '各自开到波士顿。进城走 I-93 / Mass Pike(I-90)都是电子收费。',
+    stay: { name: '波士顿(未订)', night: '第 1 晚 / 共 3 晚', pts: ['推荐 North Station / Government Center 一带:走路 10 分钟到 North End 和 Beacon Hill,11/7 往北出城最快', '停车约 $60–75/车/晚,三晚两辆车 $360–450;想省钱住 Cambridge Kendall 一带(约 $52/晚),坐红线进城', '路边过夜停车基本不可能'] },
+    warn: '有人晚到:直接去 North End 汇合,先到的人先排 Neptune 的队。',
+    alt: '想看凯尔特人主场(19:30,TD Garden 就在 North Station 楼上):晚饭提前到 17:30 吃 Regina,甜点留到明天。对手各网站说法不一,买票前看官网。',
+    fun: 'North End 是波士顿最老的街区,1700 年代 Paul Revere 就住这里。',
+  },
+  {
+    n: 2, d: '11/5 周四', scene: 'beacon', photo: 'beacon', gallery: ['statehouse', 'faneuil', 'harvard'], area: '波士顿', title: '波士顿老城 + 哈佛', sub: 'Beacon Hill · Freedom Trail · Old North Church · Harvard', move: '走路 + 红线,不开车', pace: 3, tags: ['走路多', '16:34 日落'],
+    steps: [
+      ['09:00', '<b>Beacon Hill</b>:Acorn Street(趁早人少,住户在,小声)→ Louisburg Square → 州议会金顶(Massachusetts State House)。'],
+      ['10:00', '沿地上的红砖线(Freedom Trail)走:Boston Common → Granary Burying Ground(Sam Adams、John Hancock、Paul Revere 葬在这)→ Old State House(门前地上的圆圈是 1770 年波士顿屠杀的位置)→ Faneuil Hall。'],
+      ['11:45', '午饭 <b>Omni Parker House</b>:点 Boston cream pie 和 Parker House roll,两样都是这家发明的。'],
+      ['13:15', '走回 North End:<b>Paul Revere House</b>(市区最老的木房子)→ <b>Old North Church</b>(1775 年挂灯笼报信:一盏走陆路,两盏走水路),$10;想上钟楼选 $15 的导览(25 分钟,楼梯陡)。'],
+      ['15:00', '坐红线到 Harvard:<b>Harvard Yard</b>、John Harvard 雕像(「三个谎言的雕像」)、Widener 图书馆外面,再逛 Harvard Square。'],
+      ['16:30', '天黑前沿 Mass Ave 往 MIT 方向走,或者直接坐红线回城。'],
+      ['18:30', '晚饭 <b>Union Oyster House</b>(1826 年,自称全美最老的餐厅),可订位。'],
+    ],
+    eat: '午饭 Parker House;晚饭 Union Oyster House。',
+    drive: '不开车。红线 Park Street ↔ Harvard 约 15 分钟。',
+    stay: { name: '波士顿(同前一晚)', night: '第 2 晚 / 共 3 晚', pts: ['车继续停在酒店,不动'] },
+    warn: '全天走 5–7 英里,穿好走的鞋。',
+    alt: '想看独立战争的另一半:下午不去哈佛,从 North End 走过 Charlestown 大桥看 USS Constitution 和 Bunker Hill(外面免费),在 Warren Tavern(1780 年)吃 $1 生蚝。',
+    fun: 'John Harvard 雕像被叫「三个谎言」:雕的不是他本人、他不是创始人、年份也刻错了。',
+  },
+  {
+    n: 3, d: '11/6 周五', scene: 'gardner', photo: 'gardner', gallery: ['bpl', 'fenway'], area: '波士顿', title: 'Back Bay 与博物馆', sub: 'Haymarket · BPL · Mapparium · Gardner · Fenway', move: '走路 + 绿线,不开车', pace: 2, tags: ['16:33 日落', '凯尔特人客场 19:00'],
+    steps: [
+      ['08:00', '<b>Haymarket</b>:只在周五、周六开的露天果蔬市场,1830 年代就有,只收现金,便宜。'],
+      ['08:30', '旁边的 <b>Boston Public Market</b> 吃早饭。'],
+      ['10:00', '坐绿线到 Copley:<b>Boston Public Library</b> 老馆(McKim Building),看 Bates Hall 阅览室,免费。'],
+      ['11:00', '走 10 分钟到 <b>Mapparium</b>:走进一个直径 9 米的彩色玻璃地球仪(1935 年的世界地图),$6,要订时段。'],
+      ['12:00', '午饭在 Back Bay(Newbury St 一带)随便吃。'],
+      ['13:30', '去 <b>Gardner 博物馆</b>(17:00 关门):看 1990 年失窃后一直空着的画框。学生 $15,订时段。'],
+      ['15:30', '走 10 分钟到 <b>Fenway Park</b>:外面看 Jersey St、Green Monster 背面;想进去就参加冬季导览(整点出发,$30)。'],
+      ['16:45', '可选:Kenmore Square 的 CITGO 灯牌天黑后亮;$1 生蚝 happy hour 去 Rochambeau(Back Bay)。'],
+      ['18:00', '晚饭:回 North End 吃 11/4 没吃的那家(Regina 或 Neptune)。'],
+      ['19:00', '凯尔特人客场打夏洛特,在 North Station 一带找家体育酒吧看。'],
+    ],
+    eat: '早饭 Public Market;午饭 Back Bay;晚饭 Regina / Neptune 另一家。',
+    drive: '不开车。绿线 Government Center ↔ Copley 约 10 分钟。',
+    stay: { name: '波士顿(同前一晚)', night: '第 3 晚 / 共 3 晚', pts: ['明早 7:00 出发去缅因,行李今晚收好、退房手续能提前办就提前办'] },
+    warn: 'Gardner 和 Mapparium <b>都要提前订时段</b>。',
+    alt: '想看 MIT 或哈佛没看够:把 BPL + Mapparium 换掉。',
+    fun: 'Gardner 失窃的 13 件作品(含维米尔《音乐会》)至今没找回,悬赏 1000 万美元。',
+  },
+  {
+    n: 4, d: '11/7 周六', scene: 'headlight', photo: 'headlight', gallery: ['oldport', 'lobstertraps', 'lobsterroll'], area: '波士顿 → 波特兰(缅因)', title: '缅因一整天', sub: '一早北上 · 龙虾卷 · 灯塔 · 精酿', move: '开约 2 小时(I-95 北)', pace: 2, tags: ['7:00 出发', '16:24 日落', '缅因收费只收现金 / E-ZPass'],
+    steps: [
+      ['07:00', '退房取车,两辆车一起出发:I-93 北 → I-95 北,约 2 小时。新罕布什尔 Hampton 收费 $2;进缅因 York 收费站<b>只收现金或 E-ZPass</b>。'],
+      ['09:15', '到波特兰,车停 Old Port(周六咪表 9:00 起收费)。早饭 <b>The Holy Donut</b>(Commercial St):缅因土豆甜甜圈。'],
+      ['09:45', '逛 <b>Old Port</b>:红砖楼、石子路、码头上的龙虾笼和龙虾船。'],
+      ['11:00', '午饭 <b>Eventide Oyster Co.</b>:开门就进,缅因生蚝 + 焦黄油龙虾卷。'],
+      ['12:30', '开 15 分钟到 Cape Elizabeth:<b>Portland Head Light</b>(Fort Williams Park),沿悬崖走一圈。11 月博物馆不开,灯塔不能上。'],
+      ['14:15', '开 20 分钟到 <b>Allagash</b>(周六开到 20:00):试比利时白啤。司机别喝。'],
+      ['15:45', '入住 Old Port,车停好,晚上不再开。'],
+      ['16:30', '走路 / 打车去 East Bayside 喝精酿:<b>Oxbow</b>(开到 23:00)或 <b>Rising Tide</b>(开到 21:00)。'],
+      ['18:30', '晚饭 <b>Duckfat</b>:鸭油薯条、poutine,不订位。'],
+      ['20:30', '逛 Old Port 的石子路;想吃红皮热狗去 Exchange St 的 The Thirsty Pig。'],
+    ],
+    eat: '早饭 Holy Donut;午饭 Eventide;晚饭 Duckfat;夜宵 red snapper。',
+    drive: '波士顿 → I-93 / I-95 北 → NH Hampton($2)→ Maine Turnpike York(现金 / E-ZPass,约 $4–5)→ I-295 → 波特兰。约 2 小时。',
+    stay: { name: '波特兰 Old Port(未订)', night: '1 晚(11/7)', pts: ['住 Old Port:晚上走路喝酒吃饭', '酒店代客泊车约 $35–45/车/晚,附近停车楼 $24–45', '省钱选:South Portland(Maine Mall 一带)连锁酒店免费停车,到 Old Port 开 10 分钟,但晚上要打车'] },
+    warn: '灯塔所在的公园<b>日落(16:24)就关</b>,所以放在中午。Allagash 和 Oxbow 都去的话,今天要有一个人全天不喝。',
+    alt: '不想喝酒:下午去 South Portland 的 Bug Light Park 看港口和城市天际线。想买户外装备:往北开 25 分钟到 Freeport 的 L.L.Bean 旗舰店。',
+    fun: '1866 年 7 月 4 日大火烧了波特兰约 1800 栋房子,Old Port 的红砖楼几乎都是火后一年内重建的。',
+  },
+  {
+    n: 5, d: '11/8 周日', scene: 'providence', photo: 'providence', gallery: ['benefit', 'risd', 'oceandrive'], area: '波特兰 → 普罗维登斯 → 纽波特', title: '南下 · 路过 Brown', sub: 'Brown 校园 · College Hill · hot wieners · Ocean Drive 日落', move: '开约 2 小时 40 分 + 40 分钟', pace: 2, tags: ['8:00 出发', '16:34 日落'],
+    steps: [
+      ['07:15', '<b>Becky\'s Diner</b>(码头边,5:00 就开)吃早饭。'],
+      ['08:00', '出发:I-95 南 → I-495 南 → I-95 南 → 普罗维登斯,<b>不经过波士顿</b>。约 2 小时 40 分。'],
+      ['10:45', '到普罗维登斯,车停 College Hill。<b>Brown 大学</b>:从 Van Wickle 大门(只在开学和毕业开)进 Main Green,看 University Hall(1770 年),再走 Thayer St。'],
+      ['11:45', '往下走 <b>Benefit Street</b>(「历史一英里」,约 200 栋 18–19 世纪老房子),路过 Providence Athenaeum(周日不开)和 RISD 校园。'],
+      ['12:30', '<b>Prospect Terrace</b>:Roger Williams 雕像俯看全城和州议会的大理石圆顶。'],
+      ['13:00', '午饭开 10 分钟去 <b>Olneyville N.Y. System</b>:hot wieners「all the way」+ coffee milk。'],
+      ['14:00', '开 40 分钟去纽波特(I-195 东 → RI-24 南,不收费)。'],
+      ['15:00', '直接开 <b>Ocean Drive</b>(约 10 英里海岸路),随停随拍。'],
+      ['15:45', '<b>Brenton Point State Park</b> 等日落(16:34),免费停车。海风很大。'],
+      ['17:00', '入住。'],
+      ['18:30', '晚饭 <b>Anthony\'s Seafood</b>(Middletown):stuffies、clam cakes、清汤巧达。先打电话确认营业(401-846-9620)。'],
+    ],
+    eat: '早饭 Becky\'s;午饭 Olneyville;晚饭 Anthony\'s。',
+    drive: '波特兰 → 普罗维登斯约 157 英里、2 小时 40 分,收费 York(现金 / E-ZPass)+ Hampton $2。普罗维登斯 → 纽波特约 40 分钟,走 RI-24 不过 Pell 大桥。路上休息:Kennebunk 服务区。',
+    stay: { name: '纽波特(未订)', night: '第 1 晚 / 共 2 晚', pts: ['市中心:走路到码头和 Thames St,酒店停车约 $45/天', 'Middletown:连锁酒店免费停车,开 10 分钟到市区,两辆车更省事'] },
+    warn: '今天周日:罗德岛州议会大厦和 Athenaeum 都不开,只看外面。RISD Museum 周日开(10:00–17:00),想进就把午饭挪晚,Ocean Drive 缩短。',
+    alt: '想吃意大利区:午饭换成 Federal Hill(Atwells Ave 的松果拱门,面包房的 pizza strips)。',
+    fun: 'Brown 是美国第七老的大学(1764),洛夫克拉夫特就住在 College Hill,墓碑上刻着「I AM PROVIDENCE」。',
+  },
+  {
+    n: 6, d: '11/9 周一', scene: 'cliffwalk', photo: 'cliffwalk', gallery: ['breakers', 'marble', 'castlehill'], area: '纽波特', title: '纽波特一整天', sub: 'Cliff Walk · The Breakers · Marble House · 草坪日落', move: '市内开车,每段 5–10 分钟', pace: 2, tags: ['16:33 日落'],
+    steps: [
+      ['08:30', '早饭 <b>Newport Creamery</b>(Middletown,7:00 开):点 coffee milk,或者 Awful Awful 奶昔。'],
+      ['09:30', '<b>Cliff Walk</b>:停在 Narragansett Ave 尽头(Forty Steps 旁边的咪表),往北走到 Easton\'s Beach 再折回,约 1.5 小时,路上就能看到 The Breakers 的后院。往南那段 2022 年塌了要绕路,别走。'],
+      ['11:15', '<b>The Breakers</b>(范德比尔特家的「夏季小屋」,1895):买「Breakers + 1」联票 $45,Breakers 订时段。自带耳机听语音导览,约 1.5 小时。'],
+      ['13:00', '午饭 <b>The Mooring</b>:点罗德岛炸鱿鱼。'],
+      ['14:30', '<b>Marble House</b>(用联票的第二座),16:00 最后入场。看后院的中式茶亭。'],
+      ['16:00', '<b>Castle Hill Inn</b> 草坪喝一杯看日落(16:33):椅子先到先得,不订位。'],
+      ['18:30', '晚饭 <b>White Horse Tavern</b>(自称 1673 年起,美国最老的酒馆)。'],
+      ['20:30', 'Thames St 的小酒吧喝罐 Narragansett(罗德岛本地啤酒)。'],
+    ],
+    eat: '早饭 Newport Creamery;午饭 The Mooring;晚饭 White Horse Tavern。',
+    drive: '市内开车。Cliff Walk 停 Narragansett Ave 咪表(限 4 小时);市区停市营停车场(免费)。',
+    stay: { name: '纽波特(同前一晚)', night: '第 2 晚 / 共 2 晚', pts: ['明早退房,车先停市营停车场'] },
+    warn: 'White Horse Tavern <b>5 人要打电话订</b>(401-849-3600)。The Breakers 要订时段。',
+    alt: '下雨:Cliff Walk 换成 International Tennis Hall of Fame(10:00–17:00,学生 $21.50),还能看到草地网球场。',
+    fun: 'The Breakers 有 70 个房间,范德比尔特家一年只来住 6–8 周。',
+  },
+  {
+    n: 7, d: '11/10 周二', scene: 'wharf', photo: 'touro', gallery: ['bowens', 'fortadams'], area: '纽波特 → 各地', title: '告别 · 各自回家', sub: 'Fort Adams · Touro 会堂 · 码头告别午饭', move: '吃完午饭各自开走', pace: 1, tags: ['13:30 前后各自出发'],
+    steps: [
+      ['09:00', '退房,车停到市营停车场(Gateway Center,11 月免费)。'],
+      ['09:30', '<b>Fort Adams</b>(9:30 开,看纽波特港和 Pell 大桥)或 <b>International Tennis Hall of Fame</b>(10:00 开),二选一。'],
+      ['11:00', '<b>Touro Synagogue</b> 导览(1763 年,美国现存最老的犹太会堂),$18,约 45 分钟,<b>要提前网上登记</b>(周二 11:00 或 12:15)。'],
+      ['12:00', '告别午饭 <b>Black Pearl</b>(Bannister\'s Wharf,不订位):巧达浓汤,看码头的帆船。要开车的人别喝。'],
+      ['13:30', '各自出发。'],
+    ],
+    eat: '告别午饭 Black Pearl。',
+    drive: '往北(波士顿方向)走 RI-24;往西(康州、纽约方向)走 RI-138 过 Pell 大桥(收费)。',
+    stay: null,
+    warn: '出发前两辆车互相确认没落东西;Touro 导览不退款。',
+    alt: '往北走的车:午饭换成 Middletown 的 Newport Vineyards(顺路,11:00 开)。',
+    fun: '华盛顿 1790 年给 Touro 会众写信:「不认可偏执,不助长迫害」——美国宗教自由最早的公开承诺之一。',
+  },
+];
+
+/* ------------------------------------------------------------------ */
+/*  四、景点                                                            */
+/* ------------------------------------------------------------------ */
+// c: BOS / PWM / NPT / PVD · r: must | worth
+export const SIGHTS = [
+  { id: 'beacon', n: 1, c: 'BOS', r: 'must', name: 'Beacon Hill 与 Freedom Trail', en: 'Beacon Hill & Freedom Trail', scene: 'beacon', photo: 'beacon', gallery: ['statehouse', 'faneuil'], cap: '橡子街(Acorn Street)。',
+    blurb: '波士顿最老的街区和独立战争的起点,走路串起来。',
+    pts: ['Acorn Street:鹅卵石小路,波士顿拍得最多的一条街,住户很烦游客,小声', 'Granary Burying Ground:Sam Adams、John Hancock、Paul Revere 葬在这', 'Old State House:门前地上的圆圈是波士顿屠杀的位置', '河对岸 Charlestown 那段(Bunker Hill、USS Constitution)没排进去,想去见 11/5 的备选'],
+    facts: { time: '约 3 小时', when: '11/5 上午', cost: '外观都免费', how: '从酒店走路' },
+    tip: '地上的红砖线就是路线,不用看地图。',
+    fun: '州议会的圆顶二战时漆成黑色,怕被当成轰炸目标。' },
+  { id: 'northend', n: 2, c: 'BOS', r: 'must', name: 'North End 与 Old North Church', en: 'North End', scene: 'northend', photo: 'northend', gallery: ['cannoli'], cap: 'Hanover St。',
+    blurb: '意大利区:吃饭、cannoli、以及 1775 年挂灯笼的老北教堂。',
+    pts: ['Old North Church:「一盏走陆路,两盏走水路」;钟楼导览 $15,25 分钟', 'Paul Revere House:波士顿市区最老的木房子', 'Mike\'s vs Modern:两家各买,自己评'],
+    facts: { time: '晚饭 2 小时 + 教堂 1 小时', when: '11/4 晚;11/5 下午', cost: '教堂 $10 / $15', how: '从酒店走 10 分钟' },
+    tip: '教堂周一至周六 10:00–17:00;地下墓室导览 10/31 已结束。',
+    fun: 'Regina Pizzeria 今年满 100 年。' },
+  { id: 'gardner', n: 3, c: 'BOS', r: 'must', name: 'Gardner 博物馆', en: 'Isabella Stewart Gardner Museum', scene: 'gardner', photo: 'gardner', gallery: ['gardner2'], cap: '中庭花园。',
+    blurb: '一位富家女按威尼斯宫殿建的私人博物馆,摆设按她的遗嘱不许动。最有名的是 1990 年失窃后墙上留着的空画框。',
+    pts: ['1990 年 3 月 18 日,两人扮警察 81 分钟偷走 13 件作品,含维米尔《音乐会》、伦勃朗唯一的海景画', '至今没找回,悬赏 1000 万美元', '中庭花园一年四季换花'],
+    facts: { time: '约 2 小时', when: '11/6 13:30', cost: '成人 $25,学生 $15', how: '从 Mapparium 走 15 分钟或坐绿线 E 线' },
+    news: '周五 11:00–17:00,周二闭馆。时段常卖完,提前在官网订。',
+    tip: '博物馆自己说「遗嘱规定必须留空画框」是误传。',
+    fun: '凭名字叫 Isabella 的人免费入场。' },
+  { id: 'bpl', n: 4, c: 'BOS', r: 'worth', name: '波士顿公共图书馆 + Mapparium', en: 'BPL McKim Building & Mapparium', scene: 'boston', photo: 'bpl', gallery: ['bpl2'], cap: 'Bates Hall 阅览室。',
+    blurb: '两个 30–45 分钟就够的地方,挨得很近。',
+    pts: ['BPL 老馆(1895):美国第一座大型免费公共图书馆;Bates Hall 绿台灯阅览室', 'Mapparium:走进直径约 9 米的彩色玻璃地球仪,地图停在 1935 年;球心说话有回声效果'],
+    facts: { time: '共约 1.5 小时', when: '11/6 10:00', cost: 'BPL 免费;Mapparium $6', how: '绿线到 Copley,两地走 10 分钟' },
+    tip: 'Mapparium 要订时段。',
+    fun: 'Mapparium 里还能看到「暹罗」「法属印度支那」这些旧国名。' },
+  { id: 'fenway', n: 5, c: 'BOS', r: 'worth', name: 'Fenway Park', en: 'Fenway Park', scene: 'fenway', photo: 'fenway', gallery: ['fenway2'], cap: 'Green Monster。',
+    blurb: '1912 年开的球场,大联盟现存最老。11 月没比赛,在外面转一圈,或者参加冬季导览。',
+    pts: ['Green Monster:左外野 11 米高的绿墙', 'Kenmore Square 的 CITGO 灯牌,天黑后亮', '导览:11–3 月 10:00–17:00 整点出发,$30,约 1 小时,不能带双肩包'],
+    facts: { time: '外面 30 分钟;导览 1 小时', when: '11/6 15:30', cost: '外面免费;导览 $30', how: '从 Gardner 走 10 分钟' },
+    tip: '想进去就把 Mapparium 换成导览。',
+    fun: '球场里有一个红色座位,标记 1946 年 Ted Williams 打出的最远本垒打落点。' },
+  { id: 'headlight', n: 6, c: 'PWM', r: 'must', name: 'Portland Head Light', en: 'Portland Head Light', scene: 'headlight', photo: 'headlight', gallery: ['headlight2'], cap: '悬崖上的灯塔和守塔人小屋。',
+    blurb: '1791 年点亮,缅因最老的灯塔,在 Cape Elizabeth 的 Fort Williams Park 里,沿着悬崖有步道。',
+    pts: ['公园全年开,日出到日落', '11 月博物馆和礼品店不开;灯塔本身平时不开放', '停车:旺季 $6 起(只收卡);11 月据旧报道免费,2026 年没核实'],
+    facts: { time: '约 1 小时', when: '11/7 12:30', cost: '免费(停车见上)', how: '从 Old Port 开 15 分钟' },
+    tip: '16:24 日落,公园日落就关,所以放在中午。',
+    fun: '据说华盛顿亲自批准建造这座灯塔。' },
+  { id: 'oldport', n: 7, c: 'PWM', r: 'must', name: 'Old Port', en: 'Old Port, Portland', scene: 'oldport', photo: 'oldport', gallery: ['oldport2', 'lobstertraps'], cap: '红砖楼和石子路。',
+    blurb: '1866 年大火后重建的红砖码头区,现在是吃饭喝酒的地方。码头还停着龙虾船。',
+    pts: ['Commercial St 沿码头,Exchange St 和 Fore St 是小店和酒吧', '码头上堆着龙虾笼和浮标', 'East Bayside(走 15 分钟)是酒厂区'],
+    facts: { time: '一晚', when: '11/7 晚上', cost: '—', how: '住这里就走路' },
+    tip: '石子路晚上滑,别穿高跟鞋。',
+    fun: '俄勒冈的波特兰是抛硬币抛出来的:一个缅因人赢了一个波士顿人。' },
+  { id: 'breakers', n: 8, c: 'NPT', r: 'must', name: 'The Breakers', en: 'The Breakers', scene: 'breakers', photo: 'breakers', cap: '面朝大海的意大利文艺复兴式豪宅。',
+    blurb: '范德比尔特二世 1895 年建的「夏季小屋」,纽波特最大的豪宅。',
+    pts: ['70 个房间;大厅高 15 米', '语音导览自带耳机', '后露台在修,不开放', '加钱可选:Beneath The Breakers(地下设备层,$25,12 人)、三楼导览($25)'],
+    facts: { time: '约 1.5 小时', when: '11/9 11:15', cost: '「Breakers + 1」$45(Breakers 订时段,第二座不限时)', how: '市区开 5 分钟,有停车场' },
+    news: '11/20 前每天 9:00–17:00,16:00 最后入场;11/21 起改圣诞季时间。',
+    tip: '联票第二座选 Marble House(这几天只有它开)。',
+    fun: '建筑师 Richard Morris Hunt 也设计了大都会博物馆的正门。' },
+  { id: 'marble', n: 9, c: 'NPT', r: 'must', name: 'Marble House', en: 'Marble House', scene: 'breakers', photo: 'marble', cap: '大理石外立面。',
+    blurb: 'William K. Vanderbilt 送给太太 Alva 的 39 岁生日礼物,1892 年完工,用了约 50 万立方英尺大理石。',
+    pts: ['金色舞厅(Gold Ballroom)', '后院悬崖边的<b>中式茶亭</b>(Chinese Tea House),Alva 1914 年建', 'Alva 离婚后在这里办女性选举权集会'],
+    facts: { time: '约 1 小时', when: '11/9 14:30', cost: '联票第二座(单买 $25)', how: '从 Bellevue Ave 开过去' },
+    tip: '16:00 最后入场。',
+    fun: '这栋房子据说花了 1100 万美元,其中 700 万花在大理石上。' },
+  { id: 'cliffwalk', n: 10, c: 'NPT', r: 'must', name: 'Cliff Walk', en: 'Cliff Walk', scene: 'cliffwalk', photo: 'cliffwalk', gallery: ['fortysteps'], cap: '悬崖步道,一边是海一边是豪宅后院。',
+    blurb: '全长 3.5 英里的海边悬崖步道,豪宅的后院和大西洋之间。',
+    pts: ['日出到日落开放', '2022 年塌方的一段(Narragansett Ave 到 Webster St)还在绕路,2029 年才修好', '推荐:从 Forty Steps 往北走到 Easton\'s Beach 再折回,不用绕路', '南段是岩石路,难走'],
+    facts: { time: '约 1.5 小时', when: '11/9 09:30', cost: '免费;咪表 $1.25–2/小时', how: 'Narragansett Ave 尽头停车' },
+    tip: '风大,带帽子和手套。',
+    fun: '步道能一直保留,是因为渔民的「沿海通行权」写在罗德岛宪法里。' },
+  { id: 'oceandrive', n: 11, c: 'NPT', r: 'must', name: 'Ocean Drive 与 Brenton Point', en: 'Ocean Drive & Brenton Point', scene: 'oceandrive', photo: 'oceandrive', gallery: ['fortadams'], cap: '海岸路边的礁石。',
+    blurb: '约 10 英里的海岸路,开车随停;中间的 Brenton Point 州立公园看日落最好。',
+    pts: ['从 Bellevue Ave 南端开始,到 Fort Adams 附近结束', 'Brenton Point:免费停车,日出到日落', 'Fort Adams:9:30–16:00,能看纽波特港和 Pell 大桥'],
+    facts: { time: '1.5 小时', when: '11/8 15:00–16:34', cost: '免费', how: '自己开' },
+    tip: '日落后海边很冷,车里备厚外套。',
+    fun: 'Ocean Drive 上的 Hammersmith Farm 是杰奎琳·肯尼迪少女时代的夏季住所,1953 年她和肯尼迪的婚宴就在那里办。' },
+  { id: 'colonial', n: 12, c: 'NPT', r: 'worth', name: '殖民时期的纽波特', en: 'Touro Synagogue & White Horse Tavern', scene: 'wharf', photo: 'touro', gallery: ['whitehorse', 'bowens'], cap: 'Touro Synagogue。',
+    blurb: '豪宅之前的纽波特:宗教自由、码头贸易、老酒馆。',
+    pts: ['Touro Synagogue:1763 年,美国现存最老的犹太会堂;导览 $18,周一、二 11:00 / 12:15(周日没有)', 'White Horse Tavern:自称 1673 年起,美国最老的酒馆,只做晚饭', 'Bowen\'s / Bannister\'s Wharf:码头和帆船'],
+    facts: { time: '各 1 小时', when: 'White Horse 11/9 晚;Touro 11/10 上午', cost: 'Touro $18', how: '市区走路' },
+    tip: 'Touro 要提前登记,不退款。',
+    fun: '纽波特 1639 年建城,比纽约改名「纽约」还早。' },
+  { id: 'castlehill', n: 13, c: 'NPT', r: 'worth', name: 'Castle Hill Inn 草坪', en: 'Castle Hill Inn', scene: 'oceandrive', photo: 'castlehill', gallery: ['beavertail'], cap: 'Castle Hill 灯塔。',
+    blurb: '海湾口的老酒店,草坪上放着一排木椅,本地人日落时来喝一杯。',
+    pts: ['草坪的木椅先到先得,只喝酒', '满了不让进;冬季时间没查到,先打电话 401-849-3800', '旁边有小路通 Castle Hill 灯塔'],
+    facts: { time: '1 小时', when: '11/9 16:00', cost: '酒水自付', how: 'Ocean Drive 上' },
+    tip: '去不了:Brenton Point 再看一次日落,也很好。',
+    fun: '这栋房子原来是一位海洋学家的夏季住所。' },
+  { id: 'collegehill', n: 14, c: 'PVD', r: 'must', name: 'Brown 与 College Hill', en: 'Brown University · Benefit St · RISD', scene: 'providence', photo: 'benefit', gallery: ['athenaeum', 'risd', 'providence'], cap: 'Benefit Street 的老房子。',
+    blurb: '普罗维登斯的老城:Brown 和 RISD 两所学校在这座山上,山脚是州议会。11/8 从缅因南下路过,停半天。',
+    pts: ['Brown 大学:1764 年建,常春藤之一;Van Wickle 大门、Main Green、University Hall(1770 年)', 'Benefit Street:「历史一英里」,约 200 栋 18–19 世纪老房子', 'Providence Athenaeum:周二至周六 10:00–18:00,<b>周日不开</b>', 'RISD Museum:周二至周日 10:00–17:00,周一闭馆', 'State House:只在工作日开,<b>11/8 周日只能看外面</b>', 'Prospect Terrace:看全城和州议会圆顶'],
+    facts: { time: '约 2 小时', when: '11/8 10:45–13:00', cost: '多数免费;RISD 要买票', how: 'College Hill 路边停车' },
+    tip: 'WaterFire(河上篝火)11/7 晚上有,你们那天在缅因,错过。',
+    fun: '州议会的大理石圆顶是世界上最大的自承重大理石圆顶之一。' },
+  { id: 'fedhill', n: 15, c: 'PVD', r: 'worth', name: 'Federal Hill', en: 'Federal Hill', scene: 'fedhill', photo: 'fedhill', cap: 'Atwells Ave 的松果拱门。',
+    blurb: '普罗维登斯的意大利区,Atwells Ave 一条街全是餐厅、面包房和意大利食品店。',
+    pts: ['La Pigna 松果拱门', 'DePasquale Square 的小广场', '面包房的 pizza strips'],
+    facts: { time: '30–60 分钟', when: '11/8 午饭(备选)', cost: '—', how: 'College Hill 开 5 分钟' },
+    tip: '周日不少面包房早关,营业时间没核实。',
+    fun: '每年 9 月这里办 Feast of St. Joseph 等街头节,11 月没有。' },
+];
+
+/* ------------------------------------------------------------------ */
+/*  出发前                                                              */
+/* ------------------------------------------------------------------ */
+export const TIMELINE = [
+  ['现在(10/26 起)', '订 3 个地方的住宿:波士顿 3 晚、波特兰 1 晚、纽波特 2 晚(注意问停车费、两辆车有没有位子);打电话订 White Horse Tavern 11/9 晚饭(5 人)。想看 11/4 凯尔特人主场就早点买票。'],
+  ['出发前 1 周', '订 Gardner 11/6 时段、Mapparium 11/6 时段、The Breakers 11/9 时段(买「Breakers + 1」)、Touro 11/10 导览。确认谁带 E-ZPass、没有的车备好现金。'],
+  ['出发前 2 天', '打电话确认 Anthony\'s Seafood(11/8)和 Castle Hill Inn 草坪(11/9)的冬季时间。看天气,下雨就把 Cliff Walk 和 Tennis Hall of Fame 换一下。'],
+  ['出发当天(11/4)', '车里放好现金、护照(进酒吧)、学生证(Gardner、Tennis Hall of Fame 学生价)、手套和帽子。'],
+];
+
+export const PACK = [
+  { g: '证件与钱', i: ['护照(国际学生进酒吧用)', '学生证(Gardner $15、Tennis Hall of Fame $21.50)', 'E-ZPass(没有就备 $20 以上零钱现金)', '现金:Haymarket、Mike\'s Pastry、缅因收费站'] },
+  { g: '衣物', i: ['分层穿:白天 9–12 ℃,晚上 2–5 ℃', '防风外套(灯塔、Cliff Walk、Brenton Point 风很大)', '帽子、手套', '防水鞋或好走的鞋(石子路、悬崖步道)', '折叠伞(11 月约三分之一的日子下雨)'] },
+  { g: '车上', i: ['手机支架和车充', '两车共享位置', '保温杯', '后备箱留空间放酒和吃的(缅因的 whoopie pie、Moxie,NH 酒铺)'] },
+];
+
+export const SOURCES = [
+  ['NIST · 夏令时规则(2026 年 11 月 1 日结束)', 'https://www.nist.gov/pml/time-and-frequency-division/popular-links/daylight-saving-time-dst'],
+  ['波士顿日出日落 2026-11', 'https://www.surf-life.blue/us/sunrisesunset/boston-ma/202611/'],
+  ['凯尔特人 2026–27 赛程', 'https://fanduel.com/research/2026-27-boston-celtics-schedule-results-tv-channel'],
+  ['NESN · 棕熊 2026–27 赛程', 'https://nesn.com/boston-bruins/news/bruins-schedule-2026-27-best-games-nhl-season/23977f49bbc52d5d745963e3'],
+  ['Harvard 2026 橄榄球赛程', 'https://fbschedules.com/harvard-announces-2026-football-schedule/'],
+  ['Isabella Stewart Gardner Museum · 参观', 'https://www.gardnermuseum.org/visit'],
+  ['Mapparium · 门票', 'https://www.christianscience.com/howdoyouseetheworld'],
+  ['Fenway Park 导览', 'https://www.mlb.com/redsox/ballpark/tours'],
+  ['Boston Public Library · Central', 'https://www.bpl.org/locations/central/'],
+  ['Old North Church · 参观', 'https://www.oldnorth.com/visit/'],
+  ['Boston Public Market', 'https://bostonpublicmarket.org/'],
+  ['Mike\'s Pastry', 'https://www.mikespastry.com/'],
+  ['Modern Pastry', 'https://www.modernpastry.com/'],
+  ['Neptune Oyster', 'https://www.neptuneoyster.com/'],
+  ['Union Oyster House', 'https://www.unionoysterhouse.com/'],
+  ['Omni Parker House 餐厅', 'https://www.historichotels.org/us/hotels-resorts/omni-parker-house-boston/dining.php'],
+  ['Island Creek Oyster Bar Kenmore 关门', 'https://bostonuncovered.com/eastern-standard-island-creek-bar-close/'],
+  ['Boston Globe · $1 生蚝名单(2026-08)', 'https://www.bostonglobe.com/2026/08/05/arts/dollar-oyster-buck-a-shuck/'],
+  ['Kelly\'s Roast Beef · Revere Beach', 'https://www.kellysroastbeef.com/location/revere-beach'],
+  ['Woodman\'s of Essex', 'https://www.woodmans.com/'],
+  ['Axios · 麻省为什么没有 happy hour', 'https://www.axios.com/local/boston/2023/06/20/boston-happy-hour-history-ban'],
+  ['Boston.gov · 居民停车', 'https://www.boston.gov/departments/parking-clerk/resident-parking-permits'],
+  ['Portland Head Light · 开放与停车', 'https://portlandheadlight.com/contact'],
+  ['Maine Turnpike · 收费', 'https://maineturnpike.com/Traveler-Services/Tolls'],
+  ['Eventide Oyster Co.', 'https://eventideoysterco.com/portland'],
+  ['Duckfat', 'https://www.duckfat.com'],
+  ['The Holy Donut', 'https://theholydonut.com'],
+  ['Becky\'s Diner', 'https://www.beckysdiner.com'],
+  ['Oxbow Portland', 'https://www.oxbowbeer.com/location/portland/'],
+  ['Rising Tide', 'https://www.risingtidebrewing.com/visit'],
+  ['Allagash · 参观', 'https://www.allagash.com/visit/portland-brewery/'],
+  ['Press Herald · 缅因热狗(red snapper)', 'https://www.pressherald.com/2026/05/04/13-maine-hot-dog-spots-to-visit-this-summer/'],
+  ['Portland Landmarks · 1866 年大火', 'https://www.portlandlandmarks.org/great-fire-of-1866'],
+  ['Oregon Encyclopedia · Portland Penny', 'https://www.oregonencyclopedia.org/articles/portland_penny'],
+  ['Maine DMR · 2025 年渔业产值', 'https://www.maine.gov/dmr/news/fri-03062026-1200-2025-maine-commercial-fisheries-value-again-tops-600-million'],
+  ['Newport Mansions · 开放日历', 'https://www.newportmansions.org/plan-a-visit/?view=year'],
+  ['Newport Mansions · 门票', 'https://www.newportmansions.org/tickets/'],
+  ['Newport Restoration · Rough Point', 'https://www.newportrestoration.org/buy-tickets'],
+  ['Discover Newport · Cliff Walk', 'https://discovernewport.org/things-to-do/cliff-walk'],
+  ['Turn to 10 · Cliff Walk 修复(2026-10)', 'https://turnto10.com/news/local/newport-cliff-walk-repairs-clear-major-hurdle-with-completion-eyed-for-2029-october-15-2026'],
+  ['Discover Newport · 停车指南', 'https://www.discovernewport.org/blog/post/the-ultimate-guide-to-parking-in-newport-ri/'],
+  ['Touro Synagogue · 导览', 'https://www.thetourosynagogue.org/tours/'],
+  ['White Horse Tavern', 'https://www.whitehorsenewport.com/'],
+  ['International Tennis Hall of Fame', 'https://tennisfame.com/visit/hours-and-admission'],
+  ['Castle Hill Inn · The Lawn', 'https://www.castlehillinn.com/dining/the-lawn'],
+  ['Black Pearl', 'https://www.blackpearlnewport.com/'],
+  ['Newport Creamery', 'https://www.newportcreamery.com/locations'],
+  ['Newport Vineyards · 参观', 'https://www.newportvineyards.com/visit'],
+  ['GoLocalProv · Farm & Barrel Bistro', 'https://www.golocalprov.com/food/family-owned-newport-vineyards-unveils-new-dining-experience-farm-barrel-bistro'],
+  ['Newport Craft', 'https://www.newportcraft.com/'],
+  ['Flo\'s Clam Shacks(11/1 关)', 'https://www.flosclamshacks.com/'],
+  ['RI 州议会 · 炸鱿鱼定为州开胃菜', 'https://webserver.rilegislature.gov/BillText14/HouseText14/H7446.htm'],
+  ['RISD Museum · 开放时间', 'https://risdmuseum.org/hours-admission'],
+  ['Providence Athenaeum', 'https://www.providenceathenaeum.org/visit/'],
+  ['RI State House 导览', 'https://www.sos.ri.gov/divisions/civics-and-education/ri-state-house/state-house-tours'],
+  ['WaterFire 2026 日程', 'https://waterfire.org/schedule/'],
+  ['Al Forno', 'https://www.alforno.com/'],
+  ['TickPick · 凯尔特人 11/4 主场', 'https://www.tickpick.com/buy-boston-celtics-vs-milwaukee-bucks-tickets-td-garden-11-4-26-7pm/8204201/'],
+  ['Olneyville New York System', 'https://www.olneyvillenewyorksystem.com/'],
+  ['H.P. Lovecraft 在罗德岛', 'https://www.hplovecraft.com/creation/sites/rhode.aspx'],
+];

@@ -13,7 +13,7 @@ export const PHOTOS = {
   },
   "klcc": {
     "file": "klcc.jpg",
-    "alt": "KLCC 公园与双子塔",
+    "alt": "城中城公园与双子塔",
     "author": "Bruce Poon",
     "license": "CC BY-SA 4.0",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
@@ -31,7 +31,7 @@ export const PHOTOS = {
   },
   "merdeka": {
     "file": "merdeka.jpg",
-    "alt": "独立广场的 Sultan Abdul Samad 大楼",
+    "alt": "独立广场的苏丹阿都沙末大厦",
     "author": "Shesmax",
     "license": "CC BY-SA 4.0",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
@@ -40,7 +40,7 @@ export const PHOTOS = {
   },
   "petaling": {
     "file": "petaling.jpg",
-    "alt": "Petaling Street(茨厂街)牌楼",
+    "alt": "茨厂街牌楼",
     "author": "IQRemix",
     "license": "CC BY-SA 2.0",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
@@ -49,7 +49,7 @@ export const PHOTOS = {
   },
   "birdpark": {
     "file": "birdpark.jpg",
-    "alt": "KL 飞禽公园",
+    "alt": "吉隆坡飞禽公园",
     "author": "Bjørn Christian Tørrissen",
     "license": "CC BY-SA 3.0",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
@@ -58,7 +58,7 @@ export const PHOTOS = {
   },
   "seremban": {
     "file": "seremban.jpg",
-    "alt": "森美兰 Seri Menanti 的米南加保牛角屋顶",
+    "alt": "森美兰斯里梅南蒂(Seri Menanti)的米南加保牛角屋顶",
     "author": "Adhmi",
     "license": "CC BY-SA 4.0",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
@@ -67,7 +67,7 @@ export const PHOTOS = {
   },
   "adcote": {
     "file": "adcote.jpg",
-    "alt": "Adcote Matrix(原名 Matrix Global Schools)校门",
+    "alt": "阿德科特马特里克斯学校(原名马特里克斯环球学校)校门",
     "author": "AyyanD",
     "license": "CC BY-SA 4.0",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
@@ -76,7 +76,7 @@ export const PHOTOS = {
   },
   "jewel": {
     "file": "jewel.jpg",
-    "alt": "星耀樟宜的 Rain Vortex 瀑布",
+    "alt": "星耀樟宜的雨漩涡瀑布",
     "author": "kallerna",
     "license": "CC BY-SA 4.0",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
@@ -94,7 +94,7 @@ export const PHOTOS = {
   },
   "cloudforest": {
     "file": "cloudforest.jpg",
-    "alt": "云雾林里的云雾山和 Cloud Walk",
+    "alt": "云雾林里的云雾山和云端步道",
     "author": "Marcin Konsek",
     "license": "CC BY-SA 4.0",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
@@ -121,7 +121,7 @@ export const PHOTOS = {
   },
   "laupasat": {
     "file": "laupasat.jpg",
-    "alt": "Lau Pa Sat 老市集的夜晚",
+    "alt": "老巴刹老市集的夜晚",
     "author": "Allie Caulfield",
     "license": "CC BY 2.0",
     "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
@@ -139,7 +139,7 @@ export const PHOTOS = {
   },
   "kecak": {
     "file": "kecak.jpg",
-    "alt": "乌鲁瓦图悬崖剧场的 Kecak 火舞",
+    "alt": "乌鲁瓦图悬崖剧场的克差舞(火舞)",
     "author": "Johannnindito Adisuryo (Yohanes Nindito Adisuryo)",
     "license": "CC BY-SA 4.0",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
@@ -148,7 +148,7 @@ export const PHOTOS = {
   },
   "jimbaran": {
     "file": "jimbaran.jpg",
-    "alt": "Jimbaran 海滩",
+    "alt": "金巴兰海滩",
     "author": "Akmaie Ajam",
     "license": "CC BY-SA 4.0",
     "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
@@ -157,7 +157,7 @@ export const PHOTOS = {
   },
   "alila": {
     "file": "alila.jpg",
-    "alt": "Alila Villas Uluwatu",
+    "alt": "阿丽拉乌鲁瓦图别墅酒店",
     "author": "a.canvas.of.light from Melbourne, Australia",
     "license": "CC BY 2.0",
     "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
@@ -166,7 +166,7 @@ export const PHOTOS = {
   },
   "epsom": {
     "file": "epsom.jpg",
-    "alt": "Epsom College Malaysia 校园航拍",
+    "alt": "爱普森学院(马来西亚)校园航拍",
     "author": "Epsom College in Malaysia 官网",
     "license": "无授权声明,仅个人使用",
     "licenseUrl": "https://www.epsomcollege.edu.my/wp-content/uploads/2025/08/Epsom-Homepage.jpg",
@@ -176,7 +176,7 @@ export const PHOTOS = {
   },
   "ktj": {
     "file": "ktj.jpg",
-    "alt": "KTJ 校园主楼",
+    "alt": "端姑嘉化学院校园主楼",
     "author": "Kolej Tuanku Ja'afar 官网",
     "license": "无授权声明,仅个人使用",
     "licenseUrl": "https://www.ktj.edu.my/userfiles/ktjmvc/imagery/header-images/01-about/header-about-welcome.jpg",
@@ -186,7 +186,7 @@ export const PHOTOS = {
   },
   "tirtha": {
     "file": "tirtha.jpg",
-    "alt": "Tirtha Uluwatu 悬崖场地航拍(可见玻璃教堂的三角屋顶)",
+    "alt": "蒂尔塔乌鲁瓦图悬崖场地航拍(可见玻璃教堂的三角屋顶)",
     "author": "NOW! Bali",
     "license": "无授权声明,仅个人使用",
     "licenseUrl": "https://www.nowbali.co.id/wp-content/uploads/2018/06/MG_0511-2.jpg",
@@ -196,7 +196,7 @@ export const PHOTOS = {
   },
   "tirtha2": {
     "file": "tirtha2.jpg",
-    "alt": "Tirtha Uluwatu 餐饮亭与泳池的黄昏",
+    "alt": "蒂尔塔乌鲁瓦图餐饮亭与泳池的黄昏",
     "author": "NOW! Bali",
     "license": "无授权声明,仅个人使用",
     "licenseUrl": "https://www.nowbali.co.id/wp-content/uploads/2018/02/The-pool-reflected-with-Sunset-Lights.jpg",
