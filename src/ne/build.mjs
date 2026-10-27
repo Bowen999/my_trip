@@ -343,11 +343,17 @@ function chCulture() {
     const list = `<ul class="eats">${e.list.map(([n, a, t, w]) => `<li class="eat${/^备选/.test(n) ? ' alt' : ''}"><div class="e-main"><div class="e-n lbl">${n}</div>${a ? `<div class="e-a nosay">${a}</div>` : ''}</div><div class="e-t">${t}</div>${w ? `<div class="e-w">${w}</div>` : ''}</li>`).join('')}</ul>`;
     return sec({ id: `c-eat-${e.c.toLowerCase()}`, no: `1.${3 + i}`, title: `${REGION[e.c] || e.c}:去哪吃`, sub: `${e.list.length} 处 · 地址、营业提醒、排在哪一天`, body: list });
   }).join('\n  ');
+  // 逛和买: same row layout as 去哪吃
+  const shopSecs = (C.SHOPS || []).map((e, i) => {
+    const list = `<ul class="eats">${e.list.map(([n, a, t, w]) => `<li class="eat${/^备选/.test(n) ? ' alt' : ''}"><div class="e-main"><div class="e-n lbl">${n}</div>${a ? `<div class="e-a nosay">${a}</div>` : ''}</div><div class="e-t">${t}</div>${w ? `<div class="e-w">${w}</div>` : ''}</li>`).join('')}</ul>`;
+    return sec({ id: `c-shop-${e.c.toLowerCase()}`, no: `1.${3 + C.EATS.length + i}`, title: `${e.t}:逛和买`, sub: `${e.list.length} 处 · 排在哪一天`, body: list });
+  }).join('\n  ');
   return `<section class="block wrap ch-culture" id="culture" aria-labelledby="culture-h">
-  ${chead('culture', '01', '第一部分 · 本地文化与吃的', '本地文化与吃的', '只写你们不熟的本地吃喝和文化。具体哪天吃哪家,在下面的「去哪吃」和行程卡片里。')}
+  ${chead('culture', '01', '第一部分 · 本地文化与吃的', '本地文化与吃的', '只写你们不熟的本地吃喝和文化。具体哪天吃哪家,在下面的「去哪吃」和行程卡片里;缅因和普罗维登斯还有「逛和买」。')}
   ${sec({ id: 'c-cul', no: '1.1', title: '六个文化关键词', sub: '点卡片翻面', body: flips, open: true })}
   ${sec({ id: 'c-food', no: '1.2', title: '吃什么', sub: `${C.FOODS.length} 样本地味道,可按地区筛选`, body: foods })}
   ${eatSecs}
+  ${shopSecs}
 </section>`;
 }
 

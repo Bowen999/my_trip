@@ -159,6 +159,25 @@ export const EATS = [
   ] },
 ];
 
+/* 逛和买(按城市)——[名字, 地址, 说明, 排在哪天];「备选:」开头的不在行程里 */
+export const SHOPS = [
+  { c: 'PWM', t: '缅因', list: [
+    ['逛:Old Port 的 Exchange St / Fore St', 'Old Port', '一路都是独立小店:缅因本地手作、航海风杂货、书店。石子路,穿平底鞋。', '11/7 上午 + 晚饭后'],
+    ['逛:Commercial St 码头', 'Commercial St', '码头上堆着龙虾笼,停着渔船,沿街有海鲜铺子。', '11/7 上午'],
+    ['买:缅因特产', 'Old Port 小店;超市、加油站也有', '野生蓝莓果酱、Moxie 汽水、whoopie pie、枫糖浆、缅因海盐。<b>缅因衣服要收 5.5% 税</b>,在这里只买吃的。', '11/7'],
+    ['买:ISF 的海胆带走', '390 Commercial St', '自备保冷袋加冰。第二天要开 3 个多小时车,<b>最好当晚就吃掉</b>。', '11/7 11:00'],
+    ['买:Allagash / Oxbow 瓶装啤酒', '酒厂直接买', '放后备箱,<b>车里不能有开封的酒</b>。', '11/7 下午'],
+    ['备选:Freeport 的 L.L.Bean 旗舰店', '95 Main St,Freeport(Old Port 往北开 25 分钟)', 'Bean Boots、Boat and Tote 包的老家,周围一圈 outlet。旗舰店 2026 年 9 月刚翻新重开,<b>24 小时营业</b>,所以晚饭后让不喝酒的司机开过去也行。', ''],
+  ] },
+  { c: 'PVD', t: '普罗维登斯', list: [
+    ['逛:Thayer St', 'College Hill,Brown 门口', 'Brown 的学生街:咖啡店、小餐馆、二手店。', '11/8 上午'],
+    ['逛:RISD Store', '30 N Main St(College Hill 山脚,走 Benefit St 下来就到)', '罗德岛设计学院的店:画材、学生设计的小物件(RISD Works)、文具、校名周边。官网写周末 10:00–17:00。对面 27 N Main St 还有一家 RISD Store 3D(周末 12:00–17:00)。', '11/8 上午'],
+    ['逛:Federal Hill · DePasquale Square', 'Atwells Ave 一带', '意大利区:意大利食品店、面包房、松果拱门,去 Pastiche 顺路。周日不少店早关,时间没核实。', '11/8 下午'],
+    ['逛:India Point Park', 'Wickenden St 往南走几分钟', '海边小公园,吃完 Jahunger 走一走消食。', '11/8 午饭后'],
+    ['买:Autocrat 咖啡糖浆', '罗德岛任何超市都有(如 Stop & Shop)', '罗德岛 coffee milk 就是用它兑牛奶,便宜又少见,适合送人。普罗维登斯来不及买,就到纽波特 / Middletown 的超市买。', '11/8–11/10'],
+  ] },
+];
+
 /* ------------------------------------------------------------------ */
 /*  开车与停车(替代原来的「当地规矩」)                                */
 /* ------------------------------------------------------------------ */
@@ -243,7 +262,7 @@ export const DAYS = [
     steps: [
       ['07:00', '退房取车,两辆车一起出发:I-93 北 → I-95 北,约 2 小时。新罕布什尔 Hampton 收费 $2;进缅因 York 收费站<b>只收现金或 E-ZPass</b>。'],
       ['09:15', '到波特兰,车停 Old Port(周六咪表 9:00 起收费)。早饭 <b>The Holy Donut</b>(Commercial St):缅因土豆甜甜圈,有<b>蓝莓味</b>就点。'],
-      ['09:45', '逛 <b>Old Port</b>:红砖楼、石子路、码头上的龙虾笼和龙虾船。蓝莓果酱、蓝莓汽水可以在这一带的小店买。'],
+      ['09:45', '逛 <b>Old Port</b>:红砖楼、石子路,Exchange St / Fore St 的小店,码头上的龙虾笼和龙虾船。缅因特产(蓝莓果酱、Moxie、枫糖浆)在这一带买。'],
       ['11:00', '<b>ISF Trading</b>(390 Commercial St):海胆加工厂,楼下点单、楼上吃,现开的缅因海胆很便宜。少吃点,留肚子。'],
       ['11:45', '午饭 <b>Eventide Oyster Co.</b>:缅因生蚝 + 焦黄油<b>龙虾卷</b>。'],
       ['13:00', '开 15 分钟到 Cape Elizabeth:<b>Portland Head Light</b>(Fort Williams Park),沿悬崖走一圈。11 月博物馆不开,灯塔不能上。'],
@@ -257,7 +276,7 @@ export const DAYS = [
     drive: '波士顿 → I-93 / I-95 北 → NH Hampton($2)→ Maine Turnpike York(现金 / E-ZPass,约 $4–5)→ I-295 → 波特兰。约 2 小时。',
     stay: { name: '波特兰 Old Port(未订)', night: '1 晚(11/7)', pts: ['住 Old Port:晚上走路喝酒吃饭', '酒店代客泊车约 $35–45/车/晚,附近停车楼 $24–45', '省钱选:South Portland(Maine Mall 一带)连锁酒店免费停车,到 Old Port 开 10 分钟,但晚上要打车'] },
     warn: '灯塔所在的公园<b>日落(16:24)就关</b>,所以放在中午。Allagash 和 Oxbow 都去的话,今天要有一个人全天不喝。',
-    alt: '不想喝酒:下午去 South Portland 的 Bug Light Park 看港口和城市天际线。想买户外装备:往北开 25 分钟到 Freeport 的 L.L.Bean 旗舰店。',
+    alt: '想去 L.L.Bean 旗舰店(Freeport,24 小时营业):晚饭后让不喝酒的司机开过去,单程 25 分钟。不想喝酒:下午去 South Portland 的 Bug Light Park 看港口和城市天际线。想买户外装备:往北开 25 分钟到 Freeport 的 L.L.Bean 旗舰店。',
     fun: '1866 年 7 月 4 日大火烧了波特兰约 1800 栋房子,Old Port 的红砖楼几乎都是火后一年内重建的。',
   },
   {
@@ -266,7 +285,7 @@ export const DAYS = [
       ['07:15', '<b>Becky\'s Diner</b>(码头边,5:00 就开)吃早饭。'],
       ['08:00', '出发:I-95 南 → I-495 南 → I-95 南 → 普罗维登斯,<b>不经过波士顿</b>。约 2 小时 40 分。'],
       ['10:45', '到普罗维登斯,车停 College Hill。<b>Brown 大学</b>:从 Van Wickle 大门(只在开学和毕业开)进 Main Green,看 University Hall(1770 年),再走 Thayer St。'],
-      ['11:45', '往下走 <b>Benefit Street</b>(「历史一英里」,约 200 栋 18–19 世纪老房子),路过 Providence Athenaeum(周日不开)和 RISD 校园。'],
+      ['11:30', '往下走 <b>Benefit Street</b>(「历史一英里」,约 200 栋 18–19 世纪老房子),路过 Providence Athenaeum(周日不开)和 RISD 校园,到山脚逛 <b>RISD Store</b>(30 N Main St,周日 10:00 开)。'],
       ['12:15', '<b>Prospect Terrace</b>:Roger Williams 雕像俯看全城和州议会的大理石圆顶。'],
       ['12:40', '午饭 <b>Jahunger</b>(333 Wickenden St,College Hill 山脚,开车 5 分钟):新疆手工拉面、大盘鸡。网上说周日 12:00 开。'],
       ['13:45', '开 10 分钟到 Federal Hill:<b>Pastiche Fine Desserts</b>(92 Spruce St)吃招牌水果塔,顺便看 Atwells Ave 的松果拱门。'],
@@ -509,5 +528,8 @@ export const SOURCES = [
   ['Newport Lobster Shack', 'https://www.visitrhodeisland.com/listing/newport-lobster-shack/11575/'],
   ['Corner Cafe Newport', 'https://www.visitrhodeisland.com/listing/corner-cafe/9024/'],
   ['Bar \'Cino Newport(OpenTable)', 'https://opentable.ca/r/bar-cino-newport'],
+  ['RISD Store · 营业时间', 'https://risdstore.com/service/hours'],
+  ['L.L.Bean · Freeport 旗舰店', 'https://www.llbean.com/freeport'],
+  ['Stop & Shop · Autocrat 咖啡糖浆', 'https://stopandshop.com/groceries/beverages/hot-chocolate-cocoa/autocrat-coffee-syrup-32-oz-btl.html'],
   ['H.P. Lovecraft 在罗德岛', 'https://www.hplovecraft.com/creation/sites/rhode.aspx'],
 ];
